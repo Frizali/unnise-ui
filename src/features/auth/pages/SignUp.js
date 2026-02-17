@@ -1,32 +1,10 @@
-import { useState } from "react";
 import { Box, Grid, Typography, Link } from "@mui/material";
 import UiFormGroup from "../../../components/UiFormGroup/UiFormGroup";
 import UiButton from "../../../components/UiButton/UiButton";
 import { useSignUp } from "../hooks/useSignUp";
 
 function SignUp() {
-  const {loading, error, validationError, register} = useSignUp();
-
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    globalName: "",
-    username: ""
-  })
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleRegister = async () => {
-    await register(form);
-  }
+  const { loading, error, validationError, handleChange, register} = useSignUp();
 
   return (
     <Grid container sx={{ minHeight: "100vh" }}>
@@ -112,7 +90,7 @@ function SignUp() {
             >
               Username
             </UiFormGroup>
-            <UiButton size="large" fullWidth={true} loading={loading} onClick={handleRegister}>
+            <UiButton size="large" fullWidth={true} loading={loading} onClick={register}>
               Create Account
             </UiButton>
           </Box>

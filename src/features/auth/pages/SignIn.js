@@ -1,8 +1,11 @@
-import { Box, Grid, Typography, Link } from "@mui/material";
+import { Box, Grid, Typography, Link, Alert, AlertTitle } from "@mui/material";
 import UiFormGroup from "../../../components/UiFormGroup/UiFormGroup";
 import UiButton from "../../../components/UiButton/UiButton";
+import { useSignIn } from "../hooks/useSignIn";
 
 function SignIn() {
+  const { loading, error, validationError, handleChange, login } = useSignIn();
+
   return (
     <Grid container sx={{ minHeight: "100vh" }}>
       <Grid
@@ -32,13 +35,24 @@ function SignIn() {
           <Box
             sx={{ display: "flex", flexDirection: "column", rowGap: "0.5rem" }}
           >
-            <UiFormGroup type="email" placeholder="Email">
+            <UiFormGroup 
+              id="identity" 
+              placeholder="Identity"
+              onChange={handleChange}
+              error={validationError?.identity}
+            >
               Username or email address
             </UiFormGroup>
-            <UiFormGroup type="password" placeholder="Password">
+            <UiFormGroup 
+              id="password" 
+              type="password" 
+              placeholder="Password"
+              onChange={handleChange}
+              error={validationError?.password}
+            >
               Password
             </UiFormGroup>
-            <UiButton size="large" fullWidth={true}>
+            <UiButton size="large" fullWidth={true} loading={loading} onClick={login}>
               Sign In
             </UiButton>
             <Typography sx={{ textAlign: "center" }}>
