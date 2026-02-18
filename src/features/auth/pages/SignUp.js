@@ -4,7 +4,7 @@ import UiButton from "../../../components/UiButton/UiButton";
 import { useSignUp } from "../hooks/useSignUp";
 
 function SignUp() {
-  const { loading, error, validationError, handleChange, register} = useSignUp();
+  const { loading, validationError, handleChange, register} = useSignUp();
 
   return (
     <Grid container sx={{ minHeight: "100vh" }}>

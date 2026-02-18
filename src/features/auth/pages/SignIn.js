@@ -1,10 +1,10 @@
-import { Box, Grid, Typography, Link, Alert, AlertTitle } from "@mui/material";
+import { Box, Grid, Typography, Link } from "@mui/material";
 import UiFormGroup from "../../../components/UiFormGroup/UiFormGroup";
 import UiButton from "../../../components/UiButton/UiButton";
 import { useSignIn } from "../hooks/useSignIn";
 
 function SignIn() {
-  const { loading, error, validationError, handleChange, login } = useSignIn();
+  const { loading, validationError, handleChange, login } = useSignIn();
 
   return (
     <Grid container sx={{ minHeight: "100vh" }}>

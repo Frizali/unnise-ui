@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
+import { useAlert } from "../../../context/AlertContext";
 
 export const useSignIn = () => {
+  const showAlert = useAlert();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
 
   const [form, setForm] = useState({
@@ -22,13 +23,13 @@ export const useSignIn = () => {
 
   const login = async () => {
     setLoading(true);
-    setError(null);
 
     try {
-      await authService.login(form);
+      const response = await authService.login(form);
+      localStorage.setItem("accessToken", response);
     } catch (err) {
       setValidationError(err.validation);
-      setError(err.detail || "Sign in failed");
+      showAlert(err.title, err.detail, "error");
     } finally {
       setLoading(false);
     }
@@ -36,7 +37,6 @@ export const useSignIn = () => {
 
   return {
     loading,
-    error,
     validationError,
     handleChange,
     login,

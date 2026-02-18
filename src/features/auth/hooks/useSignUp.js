@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
+import { useAlert } from "../../../context/AlertContext";
 
 export const useSignUp = () => {
+  const showAlert = useAlert();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
 
   const [form, setForm] = useState({
@@ -25,13 +26,12 @@ export const useSignUp = () => {
 
   const register = async () => {
     setLoading(true);
-    setError(null);
 
     try {
       await authService.register(form);
     } catch (err) {
         setValidationError(err.validation);
-        setError(err.detail || "Register failed");
+        showAlert(err.title, err.detail, "error");
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,6 @@ export const useSignUp = () => {
 
   return {
     loading,
-    error,
     validationError,
     handleChange,
     register,
