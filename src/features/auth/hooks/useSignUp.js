@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
 import { useAlert } from "../../../context/AlertContext";
+import { useNavigate } from "react-router-dom";
 
 export const useSignUp = () => {
   const showAlert = useAlert();
