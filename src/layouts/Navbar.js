@@ -19,9 +19,14 @@ function Navbar({ children }) {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap:1 }}>
           {children}
-          <img src={logo} alt="Logo" width="24" />
+          <img
+            src={logo}
+            alt="Logo"
+            width="24"
+            style={{ borderRadius: "3px" }}
+          />
           <Typography fontWeight={600} color="black" variant="body2">
             Unnise
           </Typography>

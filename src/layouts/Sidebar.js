@@ -6,39 +6,33 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import ProjectMenu from "../features/project/components/ProjectMenu";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function Sidebar() {
   const listMenu = [
     {
       title: "My Work",
-      icon: <AssignmentOutlinedIcon color="icon.main" />,
-      children: [],
+      icon: <AssignmentOutlinedIcon sx={{ color:"icon.main"}} />,
     },
     {
       title: "Calendar",
-      icon: <CalendarMonthOutlinedIcon color="icon.main" />,
-      children: [],
-    },
-    {
-      title: "Project",
-      icon: <RocketLaunchOutlinedIcon color="icon.main" />,
-      children: [],
+      icon: <CalendarMonthOutlinedIcon sx={{ color:"icon.main"}} />,
     },
   ];
 
   return (
     <Box
       sx={{
-        height:'100%'
+        padding:'12px 0'
       }}
     >
       <List sx={{ flexGrow:1 }} disablePadding dense>
         {listMenu.map((menu) => (
           <ListItem disablePadding dense>
-            <ListItemButton sx={{ columnGap: "0.3rem" }} key={menu.title}>
+            <ListItemButton sx={{ gap: 1 }} key={menu.title}>
               <ListItemIcon
                 sx={{
                   minWidth: "24px",
@@ -53,6 +47,7 @@ function Sidebar() {
             </ListItemButton>
           </ListItem>
         ))}
+        <ProjectMenu/>
       </List>
     </Box>
   );
