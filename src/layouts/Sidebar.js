@@ -5,19 +5,19 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ProjectMenu from "../features/project/components/ProjectMenu";
 
 function Sidebar() {
   const listMenu = [
     {
-      title: "My Work",
-      icon: <AssignmentOutlinedIcon sx={{ color: "icon.main" }} />,
+      title: "For you",
+      icon: <AccountCircleOutlinedIcon sx={{ color: "icon.main" }} fontSize="small" />,
     },
     {
       title: "Calendar",
-      icon: <CalendarMonthOutlinedIcon sx={{ color: "icon.main" }} />,
+      icon: <CalendarMonthOutlinedIcon sx={{ color: "icon.main" }} fontSize="small" />,
     },
   ];
 
@@ -29,7 +29,7 @@ function Sidebar() {
     >
       <List sx={{ flexGrow: 1 }} disablePadding dense>
         {listMenu.map((menu) => (
-          <ListItemButton sx={{ gap: 1 }} key={menu.title}>
+          <ListItemButton sx={{ gap:".25rem" }} key={menu.title}>
             <ListItemIcon
               sx={{
                 minWidth: "24px",

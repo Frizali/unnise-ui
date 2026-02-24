@@ -20,7 +20,7 @@ function Navbar({ children }) {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap:"0.25rem" }}>
           {children}
           <img
             src={logo}
@@ -32,20 +32,6 @@ function Navbar({ children }) {
             Unnise
           </Typography>
         </Box>
-
-        {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        
-          <Avatar sx={{ width: 24, height: 24 }} />
-          <Typography
-            fontWeight={600}
-            color="black"
-            variant="body2"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            Ali
-          </Typography>
-        </Box> */}
-
         <ProfileMenu/>
       </Toolbar>
     </AppBar>

@@ -7,6 +7,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import UiButtonIcon from "../components/UiButton/UiButtonIcon";
 
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -26,9 +27,9 @@ export default function MainLayout() {
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <Navbar>
         {isMobile && (
-          <IconButton onClick={toggleDrawer} color="black">
+          <UiButtonIcon onClick={toggleDrawer}>
             <MenuIcon />
-          </IconButton>
+          </UiButtonIcon>
         )}
       </Navbar>
 

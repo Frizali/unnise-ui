@@ -1,21 +1,29 @@
 import { useState } from "react";
 const user = {
-    email:"frizali@gmail.com",
-    globalName:"Frizali"
-}
+  email: "frizali@gmail.com",
+  globalName: "Frizali",
+};
 
-function useProfileMenu(){
-    const [open, setOpen] = useState(false);
+function useProfileMenu() {
+  const [anchorEl, setAnchorEl] = useState(null);
 
-    function handleOpen() {
-        setOpen(!open);
-    }
+  const handleOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    return {
-        user,
-        open,
-        handleOpen,
-    }
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return {
+    user,
+    anchorEl,
+    open,
+    handleOpen,
+    handleClose
+  };
 }
 
 export default useProfileMenu;

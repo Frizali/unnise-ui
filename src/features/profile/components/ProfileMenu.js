@@ -2,7 +2,7 @@ import { ButtonBase, Avatar, Tooltip, Menu, MenuItem } from "@mui/material";
 import useProfileMenu from "../hooks/useProfileMenu";
 
 function ProfileMenu() {
-  const { user, open, handleOpen } = useProfileMenu();
+  const  { user, anchorEl, open, handleOpen, handleClose } = useProfileMenu();
 
   return (
     <>
@@ -10,7 +10,6 @@ function ProfileMenu() {
         <ButtonBase
           sx={{
             padding: 0,
-            textTransform: "none",
             minWidth: 0,
           }}
           onClick={handleOpen}
@@ -18,15 +17,24 @@ function ProfileMenu() {
           <Avatar sx={{ width: 24, height: 24 }} />
         </ButtonBase>
       </Tooltip>
-      {/* <Menu
+
+      <Menu
+        anchorEl={anchorEl}
         open={open}
-        transformOrigin={{ vertical: "bottom" }}
-        anchorOrigin={{ vertical: "bottom" }}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
       >
-        <MenuItem>Profile</MenuItem>
-        <MenuItem>My account</MenuItem>
-        <MenuItem>Logout</MenuItem>
-      </Menu> */}
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleClose}>Logout</MenuItem>
+      </Menu>
     </>
   );
 }
