@@ -1,5 +1,6 @@
-import { AppBar, Avatar, Box, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, Box, Toolbar, Typography, ButtonBase } from "@mui/material";
 import logo from "../assets/logo.png";
+import ProfileMenu from "../features/profile/components/ProfileMenu";
 
 function Navbar({ children }) {
   return (
@@ -19,7 +20,7 @@ function Navbar({ children }) {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap:1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {children}
           <img
             src={logo}
@@ -32,7 +33,8 @@ function Navbar({ children }) {
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        
           <Avatar sx={{ width: 24, height: 24 }} />
           <Typography
             fontWeight={600}
@@ -42,7 +44,9 @@ function Navbar({ children }) {
           >
             Ali
           </Typography>
-        </Box>
+        </Box> */}
+
+        <ProfileMenu/>
       </Toolbar>
     </AppBar>
   );

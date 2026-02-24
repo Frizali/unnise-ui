@@ -1,7 +1,6 @@
 import {
   Box,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -9,45 +8,42 @@ import {
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ProjectMenu from "../features/project/components/ProjectMenu";
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function Sidebar() {
   const listMenu = [
     {
       title: "My Work",
-      icon: <AssignmentOutlinedIcon sx={{ color:"icon.main"}} />,
+      icon: <AssignmentOutlinedIcon sx={{ color: "icon.main" }} />,
     },
     {
       title: "Calendar",
-      icon: <CalendarMonthOutlinedIcon sx={{ color:"icon.main"}} />,
+      icon: <CalendarMonthOutlinedIcon sx={{ color: "icon.main" }} />,
     },
   ];
 
   return (
     <Box
       sx={{
-        padding:'12px 0'
+        padding: "12px 0",
       }}
     >
-      <List sx={{ flexGrow:1 }} disablePadding dense>
+      <List sx={{ flexGrow: 1 }} disablePadding dense>
         {listMenu.map((menu) => (
-          <ListItem disablePadding dense>
-            <ListItemButton sx={{ gap: 1 }} key={menu.title}>
-              <ListItemIcon
-                sx={{
-                  minWidth: "24px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {menu.icon}
-              </ListItemIcon>
-              <ListItemText color="text.primary" primary={menu.title} />
-            </ListItemButton>
-          </ListItem>
+          <ListItemButton sx={{ gap: 1 }} key={menu.title}>
+            <ListItemIcon
+              sx={{
+                minWidth: "24px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {menu.icon}
+            </ListItemIcon>
+            <ListItemText color="text.primary" primary={menu.title} />
+          </ListItemButton>
         ))}
-        <ProjectMenu/>
+        <ProjectMenu />
       </List>
     </Box>
   );
