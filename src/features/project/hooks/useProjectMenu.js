@@ -6,11 +6,11 @@ const data = [
 ];
 
 export const useProjectMenu = () => {
-  const [open, setOpen] = useState(true);
+  const [openMenu, setOpenMenu] = useState(true);
 
-  const handleOpen = () => {
-    setOpen(!open);
+  function handleOpenMenu () {
+    setOpenMenu(!openMenu);
   };
 
-  return { data, open, handleOpen };
+  return { data, openMenu, handleOpenMenu };
 };

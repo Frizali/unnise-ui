@@ -15,7 +15,7 @@ export const authService = {
 
   async refresh() {
     const res = await apiClient.post("/refresh-token");
-    setAccessToken(res.data);
+    setAccessToken(res.data); 
     return res.data;
   },
 };

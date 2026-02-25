@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Box, Toolbar, Typography, ButtonBase } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 import logo from "../assets/logo.png";
 import ProfileMenu from "../features/profile/components/ProfileMenu";
 
