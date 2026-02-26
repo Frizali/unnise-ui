@@ -28,7 +28,7 @@ function Navbar({ children }) {
             width="24"
             style={{ borderRadius: "3px" }}
           />
-          <Typography fontWeight={600} color="black" variant="body2">
+          <Typography fontWeight={600} color="text.primary" variant="body2">
             Unnise
           </Typography>
         </Box>
