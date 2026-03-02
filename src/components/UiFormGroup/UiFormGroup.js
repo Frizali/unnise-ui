@@ -23,12 +23,24 @@ const UiFormGroup = ({
 
   return (
     <FormGroup>
-      <FormLabel htmlFor={id}>{children}</FormLabel>
+      <FormLabel
+        sx={{
+          fontSize: size == "extraSmall" ? "14px" : "1rem",
+        }}
+        htmlFor={id}
+      >
+        {children}
+      </FormLabel>
       <TextField
+        size={size === "medium" ? "medium" : "small"}
+        sx={{
+          "& .MuiInputBase-input": {
+            fontSize: size === "extraSmall" ? "14px" : "1rem",
+          },
+        }}
         error={isValidationError(errorText)}
         id={id}
         name={id}
-        size={size}
         placeholder={placeholder}
         type={type}
         {...props}

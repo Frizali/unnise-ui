@@ -1,16 +1,37 @@
-import { useState } from "react";
-const data = [
-  { id: "1", name: "Project Management Gamification" },
-  { id: "2", name: "Navigate Bike" },
-  { id: "3", name: "Human Resource" },
-];
+import { useState, useCallback, useEffect } from "react";
+import { projectService } from "../../../services/projectService";
+import { useNavigate } from "react-router-dom";
 
 export const useProjectMenu = () => {
   const [openMenu, setOpenMenu] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  function handleOpenMenu () {
+  function handleOpenMenu() {
     setOpenMenu(!openMenu);
-  };
+  }
 
-  return { data, openMenu, handleOpenMenu };
+  const fetchProjects = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await projectService.projects();
+      setProjects(res);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  return {
+    projects,
+    loading,
+    openMenu,
+    handleOpenMenu,
+    fetchProjects,
+    navigate,
+  };
 };

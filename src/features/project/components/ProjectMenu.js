@@ -6,6 +6,7 @@ import {
   ListItemText,
   Collapse,
   Tooltip,
+  Skeleton,
 } from "@mui/material";
 import { useProjectMenu } from "../hooks/useProjectMenu";
 import { useProject } from "../hooks/useProject";
@@ -17,7 +18,7 @@ import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 const ProjectMenu = () => {
-  const { data, openMenu, handleOpenMenu } = useProjectMenu();
+  const { projects, loading, openMenu, handleOpenMenu, navigate } = useProjectMenu();
   const projectState = useProject();
 
   return (
@@ -64,20 +65,27 @@ const ProjectMenu = () => {
       {/* Collapse Menu */}
       <Collapse in={openMenu} timeout="auto" unmountOnExit>
         <List disablePadding dense>
-          {data.map((item) => (
-            <ListItemButton key={item.id} sx={{ pl: 4 }}>
-              <Tooltip title={item.name} placement="right">
-                <ListItemText
-                  sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                  primary={item.name}
+          {loading
+            ? Array.from(new Array(3)).map((_, index) => (
+                <Skeleton key={index}
+                  variant="rectangle"
+                  sx={{ height: "28px", mb: "8px", ml: 4, borderRadius: "3px" }}
                 />
-              </Tooltip>
-            </ListItemButton>
-          ))}
+              ))
+            : projects.map((item) => (
+                <ListItemButton key={item.id} sx={{ pl: 4 }} onClick={() => navigate(`/main/projects/${item.id}`)}>
+                  <Tooltip title={item.name} placement="right">
+                    <ListItemText
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      primary={item.name}
+                    />
+                  </Tooltip>
+                </ListItemButton>
+              ))}
         </List>
       </Collapse>
 

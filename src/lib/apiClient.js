@@ -1,13 +1,5 @@
 import axios from "axios";
 
-let accessToken = null;
-
-export const setAccessToken = (token) => {
-  accessToken = token;
-};
-
-export const getAccessToken = () => accessToken;
-
 export const apiClient = axios.create({
   baseURL: "http://localhost:5157/api",
   headers: {
@@ -16,12 +8,18 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
-apiClient.interceptors.request.use((config) => {
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -43,7 +41,7 @@ apiClient.interceptors.response.use(
 
         const newToken = res.data;
 
-        setAccessToken(newToken);
+        localStorage.setItem("accessToken", newToken);
 
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
 

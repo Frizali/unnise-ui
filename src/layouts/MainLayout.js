@@ -10,6 +10,7 @@ import UiButtonIcon from "../components/UiButton/UiButtonIcon";
 
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { Outlet } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -54,7 +55,9 @@ export default function MainLayout() {
         )}
 
         {/* Content */}
-        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>Content</Box>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+          <Outlet/>
+        </Box>
       </Box>
     </Box>
   );

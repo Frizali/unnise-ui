@@ -9,7 +9,7 @@ function UiButtonIcon({ children, title, size = "medium", ...prop }) {
         color="icon.main"
         sx={{
           minWidth: dimension,
-          minHeight: dimension,
+          height: dimension,
           padding: 0,
           color: "icon.main",
           display: "flex",
