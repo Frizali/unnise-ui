@@ -7,7 +7,17 @@ export function useProjectHeader() {
   const { id } = useParams();
   const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(0);
+  const [inviteDialog, setInviteDialog] = useState(false);
   const showAlert = useAlert();
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleInviteDialog = () => {
+    setInviteDialog(!inviteDialog)
+  }
 
   const fetchProject = useCallback(async () => {
     setLoading(true);
@@ -26,5 +36,5 @@ export function useProjectHeader() {
     fetchProject();
   }, [id]);
 
-  return { project, loading };
+  return { project, loading, value, inviteDialog, handleChange, handleInviteDialog };
 }
