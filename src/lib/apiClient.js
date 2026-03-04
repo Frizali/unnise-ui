@@ -8,11 +8,67 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
+const getTokenExpiration = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000;
+  } catch {
+    return null;
+  }
+};
+
+const isTokenExpired = (token) => {
+  const exp = getTokenExpiration(token);
+  if (!exp) return true;
+
+  return Date.now() >= exp;
+};
+
+const getCookie = (name) => {
+  const match = document.cookie.match(
+    new RegExp("(^| )" + name + "=([^;]+)")
+  );
+  return match ? match[2] : null;
+};
+
+const refreshAccessToken = async () => {
+  const refreshToken = getCookie("refreshToken");
+
+  if (!refreshToken) {
+    throw new Error("Refresh token not found");
+  }
+
+  const res = await axios.post(
+    "http://localhost:5157/api/user/refresh-token",
+    {
+      refreshToken: refreshToken,
+    },
+    { withCredentials: true }
+  );
+
+  const newToken = res.data;
+
+  localStorage.setItem("accessToken", newToken);
+
+  return newToken;
+};
+
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("accessToken");
+  async (config) => {
+    let token = localStorage.getItem("accessToken");
+
+    console.log(token)
 
     if (token) {
+      if (isTokenExpired(token)) {
+        try {
+          token = await refreshAccessToken();
+        } catch (error) {
+          localStorage.removeItem("accessToken");
+          return Promise.reject(error);
+        }
+      }
+
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -22,45 +78,12 @@ apiClient.interceptors.request.use(
 );
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
-
-      try {
-        const res = await axios.post(
-          "http://localhost:5157/api/refresh-token",
-          {},
-          { withCredentials: true }
-        );
-
-        const newToken = res.data;
-
-        localStorage.setItem("accessToken", newToken);
-
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-        return apiClient(originalRequest);
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
-
-apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response) {
       return Promise.reject(error.response.data);
     }
+
     return Promise.reject({ message: "Network error" });
   }
 );
