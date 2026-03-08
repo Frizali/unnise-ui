@@ -8,4 +8,8 @@ export const invitationService = {
   async getByToken(token) {
     return await apiClient.get(`/invitations/${token}`);
   },
+
+  async getMemberSuggestions(payload){
+    return await apiClient.post(`/invitations/member-suggestions`, payload)
+  }
 };

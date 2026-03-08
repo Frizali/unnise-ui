@@ -4,19 +4,13 @@ import {
   Stack,
   Tabs,
   Tab,
-  Dialog,
-  Autocomplete,
-  TextField,
-  CircularProgress,
 } from "@mui/material";
 import { useProjectHeader } from "../hooks/useProjectHeader";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import styled from "@emotion/styled";
-import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
-import React from "react";
+import { ProjectInviteMember } from "./ProjectInviteMember";
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -97,64 +91,7 @@ export function ProjectHeader() {
           </Tabs>
         </Box>
       </Box>
-      <Dialog open={inviteDialog}>
-        <Box
-          sx={{
-            minWidth: "600px",
-            padding: "1.5rem",
-          }}
-        >
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="h5" fontWeight="600" color="text.primary">
-              Invite to this project
-            </Typography>
-            <UiButtonIcon title="Close" onClick={handleInviteDialog}>
-              <CloseOutlinedIcon />
-            </UiButtonIcon>
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            Assign points for completing tasks, deadlines, and collaboration
-            activities.
-          </Typography>
-
-          <Autocomplete
-            sx={{
-              margin: "1rem 0",
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.title === value.title
-            }
-            getOptionLabel={(option) => option.title}
-            options={[]}
-            loading={loading}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Search by username or email address"
-                size="small"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    fontSize: "14px",
-                  },
-                }}
-                slotProps={{
-                  input: {
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  },
-                }}
-              />
-            )}
-          />
-        </Box>
-      </Dialog>
+      <ProjectInviteMember inviteDialog={inviteDialog} handleInviteDialog={handleInviteDialog}/>
     </>
   );
 }

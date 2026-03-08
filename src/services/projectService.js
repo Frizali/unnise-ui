@@ -15,5 +15,9 @@ export const projectService = {
 
     async getById(id){
         return await apiClient.get(`/projects/${id}`)
+    },
+    
+    async getMembers(id){
+        return await apiClient.get(`/projects/${id}/members`)
     }
 }

@@ -23,8 +23,6 @@ export function useProject() {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    console.log(name);
-
     setProject((prev) => ({
       ...prev,
       [name]: value,

@@ -57,8 +57,6 @@ apiClient.interceptors.request.use(
   async (config) => {
     let token = localStorage.getItem("accessToken");
 
-    console.log(token)
-
     if (token) {
       if (isTokenExpired(token)) {
         try {
