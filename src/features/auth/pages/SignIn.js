@@ -56,7 +56,7 @@ function SignIn() {
               Sign In
             </UiButton>
             <Typography sx={{ textAlign: "center" }}>
-              New to Unnise?{" "}
+              New to Unnise?
               <Link href="/" underline="hover">
                 Create Account
               </Link>

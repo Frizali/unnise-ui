@@ -10,31 +10,31 @@ import {
   Stack,
   Select,
   MenuItem,
-  FormGroup,
-  FormLabel,
+  Skeleton,
 } from "@mui/material";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
-import React from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { useProjectInviteMember } from "../hooks/useProjectInviteMember";
 import UiButton from "../../../components/UiButton/UiButton";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 
 export function ProjectInviteMember({
   children,
   inviteDialog,
   handleInviteDialog,
-  ...props
 }) {
   const {
     options,
     keyword,
     loading,
     sendingInvite,
+    members,
+    membersLooading,
     handleOptionChange,
     handleKeywordChange,
     handleSendInvite,
-  } = useProjectInviteMember({inviteDialog});
+  } = useProjectInviteMember({ inviteDialog });
 
   return (
     <Dialog open={inviteDialog}>
@@ -66,14 +66,17 @@ export function ProjectInviteMember({
             loading={loading}
             inputValue={keyword}
             onInputChange={(event, newKeyword, reason) => {
-                handleKeywordChange(newKeyword);
+              handleKeywordChange(newKeyword);
             }}
             onChange={(event, selectedOption) => {
               handleOptionChange(selectedOption?.id ?? null);
             }}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             getOptionLabel={(option) => option.username}
-            getOptionDisabled={(option) => option.status !== ""}
+            getOptionDisabled={(option) =>
+              option.status === "Member already joined" ||
+              option.status === "Invitation already sent"
+            }
             renderOption={(props, option) => {
               const { key, ...rest } = props;
 
@@ -143,74 +146,96 @@ export function ProjectInviteMember({
           <Typography variant="body2" color="text.primary" fontWeight={500}>
             Already in the project
           </Typography>
+
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Avatar sx={{ width: 36, height: 36 }} />
+            {members.map((item) => (
               <Box
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
+                key={item.id}
+                sx={{ display: "flex", gap: 1, alignItems: "center" }}
               >
-                <Box>
-                  <Typography variant="body2" color="text.primary">
-                    Frizali
-                  </Typography>
-                  <Typography fontSize="12px" color="text.secondary">
-                    m.fahrizalipradana@gmail.com
-                  </Typography>
-                </Box>
-                <Box>
-                  <Select
-                    variant="standard"
-                    disableUnderline
-                    value="admin"
-                    // onChange={(e) => setValue(e.target.value)}
-                    IconComponent={KeyboardArrowDownOutlinedIcon}
-                    sx={{
-                      fontSize: "14px",
-                      "&:before": { display: "none" },
-                      "&:after": { display: "none" },
-                      "& .MuiSelect-select": {
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                        paddingLeft: 0,
-                        paddingRight: "20px",
-                      },
-                    }}
-                  >
-                    <MenuItem value="admin">
-                      <Typography variant="body2" color="text.primary">
-                        Admin
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem value="member">
-                      <Typography variant="body2" color="text.primary">
-                        Member
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem value="viewer">
-                      <Typography variant="body2" color="text.primary">
-                        Viewer
-                      </Typography>
-                    </MenuItem>
-                  </Select>
+                {membersLooading ? (
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={36}
+                    height={36}
+                  />
+                ) : (
+                  <Avatar sx={{ width: 36, height: 36 }} />
+                )}
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ flex: 1 }}>
+                    {membersLooading ? (
+                      <>
+                        <Skeleton animation="wave" height={14} width="60%" />
+                        <Skeleton animation="wave" height={12} width="40%" />
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="body2" color="text.primary">
+                          {item.globalName}
+                        </Typography>
+                        <Typography fontSize="12px" color="text.secondary">
+                          {item.username}
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                  <Box>
+                    {item.role !== "Owner" ? (
+                      <Select
+                        variant="standard"
+                        disableUnderline
+                        value={item.role}
+                        // onChange={(e) => setValue(e.target.value)}
+                        IconComponent={KeyboardArrowDownOutlinedIcon}
+                        sx={{
+                          fontSize: "14px",
+                          "&:before": { display: "none" },
+                          "&:after": { display: "none" },
+                          "& .MuiSelect-select": {
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            paddingLeft: 0,
+                            paddingRight: "20px",
+                          },
+                        }}
+                      >
+                        <MenuItem value="Admin">
+                          <Typography variant="body2" color="text.primary">
+                            Admin
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem value="Member">
+                          <Typography variant="body2" color="text.primary">
+                            Member
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem value="Viewer">
+                          <Typography variant="body2" color="text.primary">
+                            Viewer
+                          </Typography>
+                        </MenuItem>
+                      </Select>
+                    ) : (
+                      <Box sx={{ display: "flex" }}>
+                        <Typography variant="body2" color="text.primary">
+                          Owner
+                        </Typography>
+                        <CheckCircleOutlineOutlinedIcon sx={{color:"icon.primary"}}/>
+                      </Box>
+                    )}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Avatar sx={{ width: 36, height: 36 }} />
-              <Box>
-                <Typography variant="body2" color="text.primary">
-                  Ali
-                </Typography>
-                <Typography fontSize="12px" color="text.secondary">
-                  alidev@gmail.com
-                </Typography>
-              </Box>
-            </Box>
+            ))}
           </Box>
         </Box>
       </Box>

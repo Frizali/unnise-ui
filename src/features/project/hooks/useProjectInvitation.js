@@ -22,9 +22,21 @@ export function useProjectInvitation() {
     }
   });
 
+  const acceptInvitation = async () => {
+    setLoading(true);
+
+    try {
+      await invitationService.acceptInvitation({ token });
+    } catch (err) {
+      showAlert(err.title, err.detail, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchInvitation();
   }, [token]);
 
-  return { invitation, loading };
+  return { invitation, loading, acceptInvitation };
 }

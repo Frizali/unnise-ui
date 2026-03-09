@@ -11,5 +11,9 @@ export const invitationService = {
 
   async getMemberSuggestions(payload){
     return await apiClient.post(`/invitations/member-suggestions`, payload)
+  },
+
+  async acceptInvitation(payload){
+    return await apiClient.post('/invitations/accept', payload)
   }
 };

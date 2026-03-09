@@ -83,7 +83,8 @@ export function useProjectInviteMember({inviteDialog}) {
     setMembersLooading(true);
 
     try {
-      await projectService.getMembers(id);
+      var members = await projectService.getMembers(id);
+      setMembers(members);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     } finally {
@@ -96,6 +97,8 @@ export function useProjectInviteMember({inviteDialog}) {
     keyword,
     loading,
     sendingInvite,
+    members,
+    membersLooading,
     handleOptionChange,
     handleKeywordChange,
     handleSendInvite,
