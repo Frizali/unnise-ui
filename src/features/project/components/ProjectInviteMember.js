@@ -41,7 +41,7 @@ export function ProjectInviteMember({
       <Box
         sx={{
           minWidth: "600px",
-          padding: "1.5rem",
+          padding: "1.5rem 1.5rem 3rem 1.5rem",
           boxSizing: "border-box",
         }}
       >

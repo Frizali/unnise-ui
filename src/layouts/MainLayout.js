@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Drawer,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import UiButtonIcon from "../components/UiButton/UiButtonIcon";
 
@@ -55,8 +50,16 @@ export default function MainLayout() {
         )}
 
         {/* Content */}
-        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
-          <Outlet/>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "calc(100vh - 48px)",
+            overflow: "auto",
+            p: 2,
+          }}
+        >
+          <Outlet />
         </Box>
       </Box>
     </Box>
