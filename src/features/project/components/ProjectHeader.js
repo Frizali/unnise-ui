@@ -78,7 +78,7 @@ export function ProjectHeader() {
             sx={{
               minHeight: 0,
               "& .MuiTabs-indicator": {
-                height: "1px",
+                height: "2px",
                 borderRadius: 2,
               },
             }}

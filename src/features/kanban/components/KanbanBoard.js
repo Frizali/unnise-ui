@@ -331,14 +331,15 @@ export default function KanbanBoard() {
   return (
     <div
       style={{
-        minHeight: "calc(100vh - 48px)",
+        height: "100%",
+        overflowX: "auto",
       }}
     >
       <div
         style={{
           display: "flex",
-          gap: 16,
-          padding: "24px 24px 40px",
+          gap: "1rem",
+          padding: "12px 20px",
           overflowX: "auto",
           alignItems: "flex-start",
         }}

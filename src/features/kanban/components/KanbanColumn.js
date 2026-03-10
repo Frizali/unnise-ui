@@ -36,13 +36,11 @@ export function KanbanColumn({
         onColDrop(column.id);
       }}
       style={{
-        flex: "1 1 240px",
-        minWidth: 240,
-        maxWidth: 300,
-        // background: isColOver ? "#1a1a30" : "#16162a",
-        border: `1px solid ${isColOver ? column.color + "70" : "rgba(255,255,255,0.05)"}`,
-        borderRadius: 16,
-        padding: "16px 14px",
+        flex: "1 1 300px",
+        minWidth: 300,
+        maxWidth: 350,
+        border: `1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`,
+        borderRadius: 6,
         transition: "border-color 0.15s, background 0.15s",
         display: "flex",
         flexDirection: "column",
@@ -64,33 +62,12 @@ export function KanbanColumn({
           display: "flex",
           alignItems: "center",
           gap: 8,
-          marginBottom: 16,
           cursor: "grab",
           userSelect: "none",
-          padding: "4px 2px",
+          padding: "12px 20px",
+          borderBottom:`1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`
         }}
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 2.5,
-            opacity: 0.4,
-            flexShrink: 0,
-          }}
-        >
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              style={{
-                width: 3,
-                height: 3,
-                borderRadius: "50%",
-                background: "icon.primary",
-              }}
-            />
-          ))}
-        </div>
         <div
           style={{
             width: 10,
@@ -110,21 +87,21 @@ export function KanbanColumn({
             borderRadius: 20,
             padding: "1px 8px",
             fontSize: 11,
-            fontWeight: 700,
-            fontFamily: "monospace",
+            fontWeight:500
           }}
         >
           {cards.length}
         </span>
       </div>
 
-      <div style={{ flex: 1, minHeight: 60 }}>
+      <div style={{ flex: 1, minHeight: 60, padding:"12px 1rem" }}>
         {cards.map((card) => (
           <KanbanCard
             key={card.id}
             card={card}
             onDelete={onDeleteCard}
             onMoveCard={onMoveCard}
+            column={column}
             columns={allColumns}
             isDropTarget={cardDropTargetId === card.id}
             onDragStart={onCardDragStart}
@@ -133,7 +110,7 @@ export function KanbanColumn({
             onDrop={onCardDropOnCard}
           />
         ))}
-        {cards.length === 0 && (
+        {/* {cards.length === 0 && (
           <div
             style={{
               border: `1px dashed ${isColOver ? column.color + "80" : "rgba(255,255,255,0.08)"}`,
@@ -148,10 +125,10 @@ export function KanbanColumn({
           >
             {isColOver ? "Release to drop" : "Drop cards here"}
           </div>
-        )}
+        )} */}
       </div>
 
-      <button
+      {/* <button
         onClick={() => setShowModal(true)}
         style={{
           marginTop: 12,
@@ -188,7 +165,7 @@ export function KanbanColumn({
           onAdd={onAddCard}
           onClose={() => setShowModal(false)}
         />
-      )}
+      )} */}
     </div>
   );
 }

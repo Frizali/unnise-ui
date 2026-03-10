@@ -52,6 +52,7 @@ export default function MainLayout() {
         {/* Content */}
         <Box
           sx={{
+            width:"100%",
             display: "flex",
             flexDirection: "column",
             height: "calc(100vh - 48px)",
