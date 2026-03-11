@@ -1,13 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { invitationService } from "../../../services/invitationService";
 import { useAlert } from "../../../context/AlertContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+
 
 export function useProjectInvitation() {
+  const { user } = useAuth();
   const { token } = useParams();
   const showAlert = useAlert();
   const [invitation, setInvitation] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchInvitation = useCallback(async () => {
     setLoading(true);
@@ -27,6 +32,7 @@ export function useProjectInvitation() {
 
     try {
       await invitationService.acceptInvitation({ token });
+      navigate('/main');
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     } finally {
@@ -38,5 +44,5 @@ export function useProjectInvitation() {
     fetchInvitation();
   }, [token]);
 
-  return { invitation, loading, acceptInvitation };
+  return { user, invitation, loading, acceptInvitation };
 }

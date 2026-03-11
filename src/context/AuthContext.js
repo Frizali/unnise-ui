@@ -1,50 +1,27 @@
-import { createContext, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { } from "./authService";
-import { setAccessToken } from "./api";
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [accessToken, setTokenState] = useState(null);
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const setToken = (token) => {
-    setAccessToken(token);
-    setTokenState(token);
-  };
-
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-  };
 
   useEffect(() => {
-    if (accessToken) {
-      const decoded = jwtDecode(accessToken);
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      const decoded = jwtDecode(token);
       setUser(decoded);
-    } else {
-      setUser(null);
     }
-  }, [accessToken]);
-
-  const value = useMemo(
-    () => ({
-      user,
-      accessToken,
-      isAuthenticated: !!accessToken,
-      logout,
-      loading,
-    }),
-    [user, accessToken, loading]
-  );
-
-  if (loading) return null;
+  }, []);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

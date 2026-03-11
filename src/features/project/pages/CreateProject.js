@@ -43,7 +43,7 @@ export function CreateProject({
   validationError,
   create,
   handleChange,
-  handleOpen,
+  handleOpen
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState(null);

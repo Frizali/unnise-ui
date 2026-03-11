@@ -342,6 +342,7 @@ export default function KanbanBoard() {
           padding: "12px 20px",
           overflowX: "auto",
           alignItems: "flex-start",
+          height: "100%",
         }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={() => {

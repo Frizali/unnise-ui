@@ -17,7 +17,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { useProjectInviteMember } from "../hooks/useProjectInviteMember";
 import UiButton from "../../../components/UiButton/UiButton";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 
 export function ProjectInviteMember({
   children,
@@ -143,9 +143,13 @@ export function ProjectInviteMember({
         </Stack>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography variant="body2" color="text.primary" fontWeight={500}>
-            Already in the project
-          </Typography>
+          {membersLooading ? (
+            <Skeleton animation="wave" height={14} width="20%" />
+          ) : (
+            <Typography variant="body2" color="text.primary" fontWeight={500}>
+              Already in the project
+            </Typography>
+          )}
 
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             {members.map((item) => (
@@ -188,51 +192,72 @@ export function ProjectInviteMember({
                       </>
                     )}
                   </Box>
-                  <Box>
-                    {item.role !== "Owner" ? (
-                      <Select
-                        variant="standard"
-                        disableUnderline
-                        value={item.role}
-                        // onChange={(e) => setValue(e.target.value)}
-                        IconComponent={KeyboardArrowDownOutlinedIcon}
-                        sx={{
-                          fontSize: "14px",
-                          "&:before": { display: "none" },
-                          "&:after": { display: "none" },
-                          "& .MuiSelect-select": {
-                            paddingTop: 0,
-                            paddingBottom: 0,
-                            paddingLeft: 0,
-                            paddingRight: "20px",
-                          },
-                        }}
-                      >
-                        <MenuItem value="Admin">
+                  {membersLooading ? (
+                    <Skeleton animation="wave" height={14} width="15%" />
+                  ) : (
+                    <Box>
+                      {item.role !== "Owner" ? (
+                        <Select
+                          variant="standard"
+                          disableUnderline
+                          value={item.role}
+                          // onChange={(e) => setValue(e.target.value)}
+                          IconComponent={KeyboardArrowDownOutlinedIcon}
+                          sx={{
+                            fontSize: "14px",
+                            "&:before": { display: "none" },
+                            "&:after": { display: "none" },
+                            "& .MuiSelect-select": {
+                              paddingTop: 0,
+                              paddingBottom: 0,
+                              paddingLeft: 0,
+                              paddingRight: "24px",
+                            },
+                          }}
+                        >
+                          <MenuItem value="Admin">
+                            <Typography variant="body2" color="text.primary">
+                              Admin
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value="Member">
+                            <Typography variant="body2" color="text.primary">
+                              Member
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value="Viewer">
+                            <Typography variant="body2" color="text.primary">
+                              Viewer
+                            </Typography>
+                          </MenuItem>
+                        </Select>
+                      ) : (
+                        <Box sx={{ display: "flex", gap: ".25rem" }}>
                           <Typography variant="body2" color="text.primary">
-                            Admin
+                            Owner
                           </Typography>
-                        </MenuItem>
-                        <MenuItem value="Member">
-                          <Typography variant="body2" color="text.primary">
-                            Member
-                          </Typography>
-                        </MenuItem>
-                        <MenuItem value="Viewer">
-                          <Typography variant="body2" color="text.primary">
-                            Viewer
-                          </Typography>
-                        </MenuItem>
-                      </Select>
-                    ) : (
-                      <Box sx={{ display: "flex" }}>
-                        <Typography variant="body2" color="text.primary">
-                          Owner
-                        </Typography>
-                        <CheckCircleOutlineOutlinedIcon sx={{color:"icon.primary"}}/>
-                      </Box>
-                    )}
-                  </Box>
+                          <Box
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <CheckCircleOutlineOutlinedIcon
+                              fontSize="small"
+                              sx={{
+                                color: "white",
+                                background: "#2D71F8",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
                 </Box>
               </Box>
             ))}

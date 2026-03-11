@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { projectService } from "../../../services/projectService";
 import { useAlert } from "../../../context/AlertContext";
+import { useNavigate } from "react-router-dom";
 
-export function useProject() {
+export function useProject({fetchProjects}) {
   const showAlert = useAlert();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [project, setProject] = useState({
     name: "",
@@ -33,7 +35,10 @@ export function useProject() {
     setLoading(true);
 
     try {
-      await projectService.create(project);
+      var res = await projectService.create(project);
+      handleOpen();
+      await fetchProjects();
+      navigate(`/main/projects/${res.id}`)
     } catch (err) {
       setValidationError(err.validation);
       showAlert(err.title, err.detail, "error");

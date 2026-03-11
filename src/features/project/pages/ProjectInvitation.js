@@ -1,90 +1,93 @@
 import { useProjectInvitation } from "../hooks/useProjectInvitation";
-import { Grid, Box, Typography, Link } from "@mui/material";
+import { Avatar, Box, Typography, Link } from "@mui/material";
 import UiButton from "../../../components/UiButton/UiButton";
+import logo from "../../../assets/logo.png";
 
 export function ProjectInvitation() {
-  const { invitation, loading, acceptInvitation } = useProjectInvitation();
+  const { user, invitation, loading, acceptInvitation } =
+    useProjectInvitation();
 
   return (
-    <Grid container sx={{ minHeight: "100vh" }}>
-      <Grid
-        item
-        size={{ xs: 12, md: 6 }}
-        sx={{ padding: { xs: "0 1rem", md: "0 5rem" } }}
-      >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        width: "100%",
+      }}
+    >
+      {invitation !== null && (
         <Box
           sx={{
+            borderRadius: 1.5,
+            maxWidth: "500px",
+            padding: "3rem",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            minHeight: "100vh",
-            width: "100%",
+            gap: "1.5rem",
+            border: "1px solid #D9D9D9",
           }}
         >
-          {invitation !== null && (
-            <>
-              <Box>
-                <Box sx={{ marginBottom: "1rem", textAlign: "center" }}>
-                  <Typography
-                    color="text.primary"
-                    variant="h4"
-                    fontWeight={700}
-                  >
-                    Accept your invitation
-                  </Typography>
+          <Box display="flex" justifyContent="center">
+            <img
+              src={logo}
+              alt="Logo"
+              width="70px"
+              style={{ borderRadius: "3px" }}
+            />
+          </Box>
+          <Box>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography color="text.primary" variant="h4" fontWeight={700}>
+                Accept your invitation
+              </Typography>
 
-                  <Typography color="text.secondary" variant="subtitle1">
-                    <b>{invitation.inviter}</b> has invited you to join the
-                    project <b>"{invitation.project}"</b> on our Kanban Board.
-                  </Typography>
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  rowGap: "0.5rem",
-                }}
-              >
-                <UiButton
-                  size="large"
-                  fullWidth={true}
-                  loading={loading}
-                  onClick={acceptInvitation}
-                >
-                  Accept Invitaton
-                </UiButton>
-              </Box>
-            </>
-          )}
+              <Typography color="text.secondary" variant="subtitle1">
+                <b>{invitation.inviter}</b> has invited you to join the project{" "}
+                <b>"{invitation.project}"</b> on our Kanban Board.
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="center"
+            flexDirection="column"
+            alignItems="center"
+          >
+            <Typography variant="body2" color="text.secondary">
+              You're signed in as
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <Avatar sx={{ width: 36, height: 36 }} />
+              <Typography variant="body2" color="text.primary">
+                {user.email}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: "0.5rem",
+              alignItems:"center"
+            }}
+          >
+            <UiButton
+              size="large"
+              fullWidth={true}
+              loading={loading}
+              onClick={acceptInvitation}
+            >
+              Accept Invitaton
+            </UiButton>
+            <Link href="/signin" underline="hover">
+              <Typography variant="body2">Login with another account</Typography>
+            </Link>
+          </Box>
         </Box>
-      </Grid>
-      <Grid
-        item
-        size={{ xs: false, md: 6 }}
-        sx={{
-          display: { xs: "none", md: "block" },
-          backgroundColor: "primary.main",
-          padding: { xs: "0 1rem", md: "0 5rem" },
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Typography color="white" variant="h4" fontWeight={700}>
-            Welcome Back to Unnise Your Journey to Project Mastery Continues
-          </Typography>
-          <Typography color="white" variant="subtitle1">
-            Log in to track your progress, complete tasks, and climb the
-            leaderboard with your team.
-          </Typography>
-        </Box>
-      </Grid>
-    </Grid>
+      )}
+    </Box>
   );
 }

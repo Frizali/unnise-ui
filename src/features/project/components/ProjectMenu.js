@@ -18,8 +18,8 @@ import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 const ProjectMenu = () => {
-  const { projects, loading, openMenu, handleOpenMenu, navigate } = useProjectMenu();
-  const projectState = useProject();
+  const { projects, loading, openMenu, handleOpenMenu, navigate, fetchProjects } = useProjectMenu();
+  const projectState = useProject({fetchProjects});
 
   return (
     <>
