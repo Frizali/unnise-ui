@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { KanbanColumn } from "./KanbanColumn";
+import { useColumn } from "../hooks/useColumn";
 
 const INIT_COLUMNS = [
   { id: "todo", label: "To Do", color: "#6366f1" },
@@ -148,7 +149,9 @@ function ToolbarButton({ icon, label, active, children }) {
 }
 
 export default function KanbanBoard() {
-  const [columns, setColumns] = useState(INIT_COLUMNS);
+  const { columns, setColumns, loading } = useColumn();
+
+  // const [columns, setColumns] = useState(INIT_COLUMNS);
   const [cards, setCards] = useState(INITIAL_CARDS);
 
   const dragRef = useRef({ type: null, cardId: null, columnId: null });
@@ -199,33 +202,46 @@ export default function KanbanBoard() {
 
   const handleColDrop = (targetColId) => {
     const d = dragRef.current;
+
     if (d.type === "column") {
       const srcId = d.columnId;
+
       if (srcId && srcId !== targetColId) {
         setColumns((prev) => {
           const arr = [...prev];
+
           const si = arr.findIndex((c) => c.id === srcId);
           const ti = arr.findIndex((c) => c.id === targetColId);
+
           if (si === -1 || ti === -1) return prev;
+
           const [moved] = arr.splice(si, 1);
           arr.splice(ti, 0, moved);
-          return arr;
+
+          return arr.map((col, index) => ({
+            ...col,
+            position: index + 1,
+          }));
         });
       }
+
       dragRef.current = { type: null, columnId: null, cardId: null };
       setOverCol(null);
     } else if (d.type === "card") {
       const srcId = d.cardId;
+
       if (srcId) {
         setCards((prev) => {
-          const pos = prev.filter(
-            (c) => c.column === targetColId && c.id !== srcId,
-          ).length;
+          const pos =
+            prev.filter((c) => c.columnId === targetColId && c.id !== srcId)
+              .length + 1;
+
           return prev.map((c) =>
-            c.id === srcId ? { ...c, column: targetColId, position: pos } : c,
+            c.id === srcId ? { ...c, columnId: targetColId, position: pos } : c,
           );
         });
       }
+
       dragRef.current = { type: null, columnId: null, cardId: null };
       setCardDropTarget(null);
       setOverCol(null);

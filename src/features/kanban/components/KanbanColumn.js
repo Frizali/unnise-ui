@@ -78,7 +78,7 @@ export function KanbanColumn({
             flexShrink: 0,
           }}
         />
-        <Typography variant="body2" color="text.primary" fontWeight={500}>{column.label}</Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={500}>{column.title}</Typography>
 
         <span
           style={{
@@ -110,22 +110,6 @@ export function KanbanColumn({
             onDrop={onCardDropOnCard}
           />
         ))}
-        {/* {cards.length === 0 && (
-          <div
-            style={{
-              border: `1px dashed ${isColOver ? column.color + "80" : "rgba(255,255,255,0.08)"}`,
-              borderRadius: 10,
-              padding: "24px 0",
-              textAlign: "center",
-              color: isColOver ? column.color : "#334155",
-              fontSize: 12,
-              fontFamily: "'Sora',sans-serif",
-              transition: "all 0.15s",
-            }}
-          >
-            {isColOver ? "Release to drop" : "Drop cards here"}
-          </div>
-        )} */}
       </div>
 
       {/* <button
