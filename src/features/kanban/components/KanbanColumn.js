@@ -110,8 +110,14 @@ export function KanbanColumn({
             onDrop={onCardDropOnCard}
           />
         ))}
-      </div>
 
+        {cards.length === 0 && (
+          <Typography variant="body2" color="text.primary">
+            {column.description}
+          </Typography>
+        )}
+      </div>
+      
       {/* <button
         onClick={() => setShowModal(true)}
         style={{

@@ -18,12 +18,10 @@ export function useProjectInviteMember({inviteDialog}) {
 
   const handleOptionChange = (selectedOption) => {
     setSelected(selectedOption);
-    console.log(selectedOption);
   };
 
   const handleKeywordChange = (newKeyword) => {
     setKeyword(newKeyword);
-    console.log(newKeyword);
   };
 
   const fetchSuggestions = async () => {
@@ -56,7 +54,6 @@ export function useProjectInviteMember({inviteDialog}) {
   }, [keyword]);
 
   useEffect(() => {
-    console.log(inviteDialog)
     if (!inviteDialog) return;
 
     getProjectMembers();

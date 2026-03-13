@@ -1,13 +1,9 @@
 import { useState, useRef } from "react";
 import { KanbanColumn } from "./KanbanColumn";
 import { useColumn } from "../hooks/useColumn";
-
-const INIT_COLUMNS = [
-  { id: "todo", label: "To Do", color: "#6366f1" },
-  { id: "inprogress", label: "In Progress", color: "#f59e0b" },
-  { id: "review", label: "Review", color: "#8b5cf6" },
-  { id: "done", label: "Done", color: "#10b981" },
-];
+import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import { AddColumnModal } from "./AddColumnModal";
 
 const INITIAL_CARDS = [
   {
@@ -83,87 +79,17 @@ const SORT_OPTIONS = [
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
-function Dropdown({ onClose, children }) {
-  return (
-    <>
-      <div
-        style={{ position: "fixed", inset: 0, zIndex: 200 }}
-        onClick={onClose}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: "calc(100% + 8px)",
-          left: 0,
-          zIndex: 201,
-          background: "#1e1e2e",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 12,
-          boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-          minWidth: 210,
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </div>
-    </>
-  );
-}
-
-function ToolbarButton({ icon, label, active, children }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ position: "relative" }}>
-      <button
-        onClick={() => children && setOpen((o) => !o)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "7px 14px",
-          borderRadius: 8,
-          border: `1px solid ${active ? "rgba(99,102,241,0.5)" : "rgba(255,255,255,0.08)"}`,
-          background: active
-            ? "rgba(99,102,241,0.15)"
-            : "rgba(255,255,255,0.03)",
-          color: active ? "#a5b4fc" : "#94a3b8",
-          cursor: "pointer",
-          fontSize: 13,
-          fontFamily: "'Sora',sans-serif",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span>{icon}</span>
-        {label}
-        {children && <span style={{ fontSize: 10, opacity: 0.6 }}>▾</span>}
-      </button>
-      {children && open && (
-        <Dropdown onClose={() => setOpen(false)}>
-          {typeof children === "function"
-            ? children(() => setOpen(false))
-            : children}
-        </Dropdown>
-      )}
-    </div>
-  );
-}
-
 export default function KanbanBoard() {
-  const { columns, setColumns, loading } = useColumn();
-
-  // const [columns, setColumns] = useState(INIT_COLUMNS);
+  const { columns, setColumns, reorder, createColumn } = useColumn({});
+  const [showModal, setShowModal] = useState(false);
   const [cards, setCards] = useState(INITIAL_CARDS);
-
   const dragRef = useRef({ type: null, cardId: null, columnId: null });
-
   const [overCol, setOverCol] = useState(null);
   const [cardDropTarget, setCardDropTarget] = useState(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [filterPrios, setFilterPrios] = useState([]);
-  const [filterMembers, setFilterMembers] = useState([]);
-  const [sortBy, setSortBy] = useState("none");
+  const handleShowModal = () => {
+    setShowModal(!showModal);
+  };
 
   const addCard = (card) =>
     setCards((prev) => {
@@ -184,6 +110,28 @@ export default function KanbanBoard() {
     dragRef.current = { type: "column", columnId, cardId: null };
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", `col:${columnId}`);
+  };
+
+  const addColumn = async (column) => {
+    try {
+      const pos =
+        columns.length > 0
+          ? Math.max(...columns.map((c) => c.position)) + 1
+          : 1;
+
+      const newColumn = {
+        ...column,
+        position: pos,
+      };
+
+      var res = await createColumn(newColumn);
+
+      console.log(res)
+
+      setColumns((prev) => [...prev, res]);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleColHeaderDragEnd = () => {
@@ -218,10 +166,14 @@ export default function KanbanBoard() {
           const [moved] = arr.splice(si, 1);
           arr.splice(ti, 0, moved);
 
-          return arr.map((col, index) => ({
+          const updated = arr.map((col, index) => ({
             ...col,
             position: index + 1,
           }));
+
+          reorder(updated);
+
+          return updated;
         });
       }
 
@@ -306,43 +258,9 @@ export default function KanbanBoard() {
     let r = cards
       .filter((c) => c.column === colId)
       .sort((a, b) => a.position - b.position);
-    if (searchQuery.trim())
-      r = r.filter(
-        (c) =>
-          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.desc.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    if (filterPrios.length)
-      r = r.filter((c) => filterPrios.includes(c.priority));
-    if (filterMembers.length)
-      r = r.filter((c) => filterMembers.includes(c.assignee));
-    if (sortBy === "title_asc")
-      r = [...r].sort((a, b) => a.title.localeCompare(b.title));
-    if (sortBy === "title_desc")
-      r = [...r].sort((a, b) => b.title.localeCompare(a.title));
-    if (sortBy === "priority_high")
-      r = [...r].sort(
-        (a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority],
-      );
-    if (sortBy === "priority_low")
-      r = [...r].sort(
-        (a, b) => PRIORITY_ORDER[b.priority] - PRIORITY_ORDER[a.priority],
-      );
+
     return r;
   };
-
-  const togglePrio = (p) =>
-    setFilterPrios((prev) =>
-      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p],
-    );
-  const toggleMember = (id) =>
-    setFilterMembers((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
-  const activeFilterCount = filterPrios.length + filterMembers.length;
-  const isFiltered =
-    !!searchQuery || activeFilterCount > 0 || sortBy !== "none";
-  const doneCards = cards.filter((c) => c.column === "done").length;
 
   return (
     <div
@@ -389,6 +307,16 @@ export default function KanbanBoard() {
             onCardDropOnColumn={handleColDrop}
           />
         ))}
+
+        <UiButtonIcon
+          title="Add a new column"
+          bordered={true}
+          onClick={handleShowModal}
+        >
+          <AddOutlinedIcon />
+        </UiButtonIcon>
+
+        <AddColumnModal showModal={showModal} onClose={handleShowModal} onAddColumn={addColumn} />
       </div>
     </div>
   );

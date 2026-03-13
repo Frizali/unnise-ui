@@ -1,6 +1,12 @@
 import { Button, Tooltip } from "@mui/material";
 
-function UiButtonIcon({ children, title, size = "medium", ...prop }) {
+function UiButtonIcon({
+  children,
+  title,
+  size = "medium",
+  bordered = false,
+  ...prop
+}) {
   const dimension = size === "small" ? "24px" : "2rem";
 
   return (
@@ -15,6 +21,7 @@ function UiButtonIcon({ children, title, size = "medium", ...prop }) {
           display: "flex",
           justifyContent: "center",
           justifyItems: "center",
+          border: bordered ? "1px solid #D9D9D9" : "none",
           "&:hover": {
             backgroundColor: "#0B120E24",
           },
