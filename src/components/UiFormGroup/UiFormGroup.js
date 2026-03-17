@@ -25,7 +25,7 @@ const UiFormGroup = ({
     <FormGroup>
       <FormLabel
         sx={{
-          fontSize: size == "extraSmall" ? "14px" : "1rem",
+          fontSize: size === "extraSmall" ? "14px" : "1rem",
         }}
         htmlFor={id}
       >

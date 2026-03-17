@@ -4,57 +4,7 @@ import { useColumn } from "../hooks/useColumn";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { AddColumnModal } from "./AddColumnModal";
-
-const INITIAL_CARDS = [
-  {
-    id: "c1",
-    title: "Design wireframes",
-    desc: "Create initial mockups for all pages",
-    column: "todo",
-    priority: "high",
-    position: 0,
-  },
-  {
-    id: "c2",
-    title: "Set up CI/CD pipeline",
-    desc: "Configure GitHub Actions for deployment",
-    column: "todo",
-    priority: "medium",
-    position: 1,
-  },
-  {
-    id: "c3",
-    title: "Build auth system",
-    desc: "JWT-based authentication flow",
-    column: "inprogress",
-    priority: "high",
-    position: 0,
-  },
-  {
-    id: "c4",
-    title: "Write unit tests",
-    desc: "Coverage for core modules",
-    column: "inprogress",
-    priority: "low",
-    position: 1,
-  },
-  {
-    id: "c5",
-    title: "API integration",
-    desc: "Connect frontend to REST endpoints",
-    column: "review",
-    priority: "medium",
-    position: 0,
-  },
-  {
-    id: "c6",
-    title: "Launch v1.0",
-    desc: "Initial public release",
-    column: "done",
-    priority: "high",
-    position: 0,
-  },
-];
+import { useCard } from "../hooks/useCard";
 
 const PRIORITY_META = {
   high: { label: "High", color: "#dc2626" },
@@ -81,8 +31,9 @@ const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
 export default function KanbanBoard() {
   const { columns, setColumns, reorder, createColumn } = useColumn({});
+  const { cards, setCards, cardsLoading } = useCard();
+
   const [showModal, setShowModal] = useState(false);
-  const [cards, setCards] = useState(INITIAL_CARDS);
   const dragRef = useRef({ type: null, cardId: null, columnId: null });
   const [overCol, setOverCol] = useState(null);
   const [cardDropTarget, setCardDropTarget] = useState(null);
@@ -125,8 +76,6 @@ export default function KanbanBoard() {
       };
 
       var res = await createColumn(newColumn);
-
-      console.log(res)
 
       setColumns((prev) => [...prev, res]);
     } catch (err) {
@@ -231,20 +180,20 @@ export default function KanbanBoard() {
     setCards((prev) => {
       const target = prev.find((c) => c.id === targetCardId);
       if (!target) return prev;
-      const col = target.column;
+      const col = target.columnId;
       const src = prev.find((c) => c.id === srcId);
       if (!src) return prev;
 
       let siblings = prev
-        .filter((c) => c.column === col && c.id !== srcId)
+        .filter((c) => c.columnId === col && c.id !== srcId)
         .sort((a, b) => a.position - b.position);
 
       const insertAt = siblings.findIndex((c) => c.id === targetCardId);
-      siblings.splice(insertAt, 0, { ...src, column: col });
+      siblings.splice(insertAt, 0, { ...src, columnId: col });
 
       const reindexed = siblings.map((c, i) => ({ ...c, position: i }));
       return [
-        ...prev.filter((c) => c.column !== col && c.id !== srcId),
+        ...prev.filter((c) => c.columnId !== col && c.id !== srcId),
         ...reindexed,
       ];
     });
@@ -256,7 +205,7 @@ export default function KanbanBoard() {
 
   const getVisible = (colId) => {
     let r = cards
-      .filter((c) => c.column === colId)
+      .filter((c) => c.columnId === colId)
       .sort((a, b) => a.position - b.position);
 
     return r;

@@ -33,7 +33,7 @@ export function useColumn({onAddColumn}) {
     }));
   };
 
-  const fetchColumn = useCallback(async () => {
+  const fetchColumns = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -50,19 +50,19 @@ export function useColumn({onAddColumn}) {
     try {
       await columnService.reorder(id, columns);
     } catch (err) {
-      fetchColumn();
+      fetchColumns();
     }
   };
 
   useEffect(() => {
-    fetchColumn();
+    fetchColumns();
   }, [id]);
 
   const createColumn = async (column) => {
     try {
       return await columnService.create(id, { projectId: id, ...column });
     } catch (error) {
-      fetchColumn();
+      fetchColumns();
     }
   };
 

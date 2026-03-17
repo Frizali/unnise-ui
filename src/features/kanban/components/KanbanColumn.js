@@ -1,7 +1,10 @@
 import { KanbanCard } from "./KanbanCard";
 import { useState } from "react";
 import { AddCardModal } from "./AddCardModal";
-import { Typography } from "@mui/material";
+import { Typography, Box, TextField } from "@mui/material";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 
 export function KanbanColumn({
   column,
@@ -24,9 +27,12 @@ export function KanbanColumn({
 }) {
   const [showModal, setShowModal] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isHover, setIsHover] = useState(false);
 
   return (
-    <div
+    <Box
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
       onDragOver={(e) => {
         e.preventDefault();
         onColDragOver(column.id);
@@ -48,7 +54,7 @@ export function KanbanColumn({
       }}
     >
       {/* Draggable header */}
-      <div
+      <Box
         draggable
         onDragStart={(e) => {
           onColHeaderDragStart(e, column.id);
@@ -58,43 +64,59 @@ export function KanbanColumn({
           onColHeaderDragEnd(e);
           setIsDragging(false);
         }}
-        style={{
+        sx={{
           display: "flex",
           alignItems: "center",
-          gap: 8,
+          justifyContent: "space-between",
           cursor: "grab",
           userSelect: "none",
           padding: "12px 20px",
-          borderBottom:`1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`
+          borderBottom: `1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`
         }}
       >
-        <div
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: "50%",
-            background: column.color,
-            boxShadow: `0 0 8px ${column.color}`,
-            flexShrink: 0,
-          }}
-        />
-        <Typography variant="body2" color="text.primary" fontWeight={500}>{column.title}</Typography>
+        <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <Box
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              background: column.color,
+              boxShadow: `0 0 8px ${column.color}`,
+              flexShrink: 0,
+            }}
+          />
+          <Typography variant="body2" color="text.primary" fontWeight={500}>{column.title}</Typography>
 
-        <span
-          style={{
-            background: column.color + "22",
-            color: column.color,
-            borderRadius: 20,
-            padding: "1px 8px",
-            fontSize: 11,
-            fontWeight:500
-          }}
-        >
-          {cards.length}
-        </span>
-      </div>
+          <span
+            style={{
+              background: column.color + "22",
+              color: column.color,
+              borderRadius: 20,
+              padding: "1px 8px",
+              fontSize: 11,
+              fontWeight: 500
+            }}
+          >
+            {cards.length}
+          </span>
+        </Box>
+        <Box display="flex" gap={.5}>
+          <UiButtonIcon
+            title="Create task"
+            size="small"
+          >
+            <AddOutlinedIcon onClick={() => setShowModal(true)} fontSize="small" sx={{ color: isHover ? "icon.main" : "transparent" }} />
+          </UiButtonIcon>
+          <UiButtonIcon
+            title="Settings"
+            size="small"
+          >
+            <MoreHorizOutlinedIcon fontSize="small" sx={{ color: isHover ? "icon.main" : "transparent" }} />
+          </UiButtonIcon>
+        </Box>
+      </Box>
 
-      <div style={{ flex: 1, minHeight: 60, padding:"12px 1rem" }}>
+      <Box style={{ flex: 1, minHeight: 60, padding: "12px 1rem" }}>
         {cards.map((card) => (
           <KanbanCard
             key={card.id}
@@ -116,46 +138,28 @@ export function KanbanColumn({
             {column.description}
           </Typography>
         )}
-      </div>
-      
-      {/* <button
-        onClick={() => setShowModal(true)}
-        style={{
-          marginTop: 12,
-          width: "100%",
-          padding: "9px 0",
-          borderRadius: 10,
-          border: `1px dashed ${column.color}55`,
-          background: "transparent",
-          color: column.color + "bb",
-          cursor: "pointer",
-          fontSize: 13,
-          fontFamily: "'Sora',sans-serif",
-          transition: "all 0.15s",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 6,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = column.color + "11";
-          e.currentTarget.style.borderStyle = "solid";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "transparent";
-          e.currentTarget.style.borderStyle = "dashed";
-        }}
-      >
-        <span style={{ fontSize: 16, fontWeight: 300, lineHeight: 1 }}>+</span>{" "}
-        Add Card
-      </button>
+        <TextField
+          multiline
+          rows={2}
+          sx={{
+            width:"100%",
+            "& .MuiInputBase-input": {
+              fontSize: "14px"
+            },
+          }}
+
+        />
+
+
+      </Box>
+
       {showModal && (
         <AddCardModal
           columnId={column.id}
           onAdd={onAddCard}
           onClose={() => setShowModal(false)}
         />
-      )} */}
-    </div>
+      )}
+    </Box>
   );
 }

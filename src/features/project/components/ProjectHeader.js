@@ -4,6 +4,7 @@ import {
   Stack,
   Tabs,
   Tab,
+  Skeleton
 } from "@mui/material";
 import { useProjectHeader } from "../hooks/useProjectHeader";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
@@ -55,9 +56,10 @@ export function ProjectHeader() {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="h5" fontWeight="600">
+          {loading ? <Skeleton animation="wave" height={32} width="30%" /> : <Typography variant="h5" fontWeight="600">
             {project.name}
-          </Typography>
+          </Typography>}
+
           <Stack direction="row" gap={1}>
             <UiButtonIconText
               icon={<ShareOutlinedIcon fontSize="small" />}
@@ -91,7 +93,7 @@ export function ProjectHeader() {
           </Tabs>
         </Box>
       </Box>
-      <ProjectInviteMember inviteDialog={inviteDialog} handleInviteDialog={handleInviteDialog}/>
+      <ProjectInviteMember inviteDialog={inviteDialog} handleInviteDialog={handleInviteDialog} />
     </>
   );
 }
