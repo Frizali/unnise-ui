@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Box, Typography, Divider, Avatar, AvatarGroup } from "@mui/material";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
+import OutlinedFlagRoundedIcon from "@mui/icons-material/OutlinedFlagRounded";
 
 const PRIORITY_META = {
-  High: { label: "High", color: "#dc2626" },
-  Medium: { label: "Medium", color: "#d97706" },
-  Low: { label: "Low", color: "#16a34a" },
+  High: { label: "High", color: "#dc2626", points: 18 },
+  Medium: { label: "Medium", color: "#d97706", points: 12 },
+  Low: { label: "Low", color: "#16a34a", points: 6 },
 };
 
 export function KanbanCard({
@@ -75,15 +76,20 @@ export function KanbanCard({
           }}
         />
       )}
-      <Box sx={{ borderLeft: `2px solid ${p.color}`, padding: "0 12px" }}>
-        <Typography fontSize={12} color="text.primary">
+      <Box
+        sx={{ borderLeft: `2px solid ${p.color}`, padding: "0 12px 0 10px", display:"flex", justifyContent:"space-between" }}
+      >
+        <Typography fontSize={12} color="text.secondary">
           {p.label}
+        </Typography>
+        <Typography fontSize={12} color="text.secondary">
+          {p.points} Points
         </Typography>
       </Box>
 
       <Box sx={{ padding: ".5rem 12px" }}>
-        <Box>
-          <Typography variant="body2" color="text.primary">
+        <Box mb={1}>
+          <Typography variant="body2" color="text.primary" fontWeight={500}>
             {card.title}
           </Typography>
           {card.description && (
@@ -91,38 +97,59 @@ export function KanbanCard({
               fontSize={14}
               color="text.secondary"
               sx={{
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
                 WebkitLineClamp: 2,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {card.description}
             </Typography>
           )}
         </Box>
+        <Box sx={{ display: "flex", justifyContent: "end" }}>
+          <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
+            <OutlinedFlagRoundedIcon
+              fontSize="small"
+              sx={{ color: "icon.main" }}
+            />
+            <Typography fontSize={14} color="text.primary">
+              31 March 2026
+            </Typography>
+          </Box>
+        </Box>
         <Divider sx={{ my: 1 }} />
-        <Box sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <AvatarGroup spacing="small">
             <Avatar sx={{ width: 24, height: 24 }} />
             <Avatar sx={{ width: 24, height: 24 }} />
             <Avatar sx={{ width: 24, height: 24 }} />
           </AvatarGroup>
-          <Box sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap:.5
-          }}>
-            <UiButtonIconText title="Comments" icon={<ChatBubbleOutlineOutlinedIcon fontSize="small" />}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <UiButtonIconText
+              title="Comments"
+              icon={<ChatOutlinedIcon fontSize="small" />}
+            >
               13
             </UiButtonIconText>
-            <UiButtonIconText title="Attachments" icon={<AttachFileOutlinedIcon fontSize="small" />}>
+            <UiButtonIconText
+              title="Attachments"
+              icon={<AttachFileOutlinedIcon fontSize="small" />}
+            >
               4
             </UiButtonIconText>
           </Box>

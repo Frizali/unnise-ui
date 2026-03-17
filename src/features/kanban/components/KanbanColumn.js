@@ -1,10 +1,12 @@
 import { KanbanCard } from "./KanbanCard";
 import { useState } from "react";
 import { AddCardModal } from "./AddCardModal";
-import { Typography, Box, TextField } from "@mui/material";
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import { Typography, Box, TextField, Tooltip } from "@mui/material";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
+import { ClickAwayListener } from "@mui/material";
+import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 
 export function KanbanColumn({
   column,
@@ -45,12 +47,13 @@ export function KanbanColumn({
         flex: "1 1 300px",
         minWidth: 300,
         maxWidth: 350,
-        border: `1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`,
+        border: `${isColOver ? "2px" : "1px"} solid ${isColOver ? column.color : "#D9D9D9"}`,
         borderRadius: 6,
         transition: "border-color 0.15s, background 0.15s",
         display: "flex",
         flexDirection: "column",
         opacity: isDragging ? 0.8 : 1,
+        background: "#FCFBFC",
       }}
     >
       {/* Draggable header */}
@@ -71,7 +74,7 @@ export function KanbanColumn({
           cursor: "grab",
           userSelect: "none",
           padding: "12px 20px",
-          borderBottom: `1px solid ${isColOver ? column.color + "70" : "#D9D9D9"}`
+          borderBottom: `${isColOver ? "2px" : "1px"} solid ${isColOver ? column.color : "#D9D9D9"}`,
         }}
       >
         <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -85,33 +88,42 @@ export function KanbanColumn({
               flexShrink: 0,
             }}
           />
-          <Typography variant="body2" color="text.primary" fontWeight={500}>{column.title}</Typography>
+          <Typography variant="body2" color="text.primary" fontWeight={500}>
+            {column.title}
+          </Typography>
+          <Typography variant="body2" color="text.primary" fontWeight={500}>
+            {cards.length}
+          </Typography>
 
-          <span
+          {/* <span
             style={{
               background: column.color + "22",
               color: column.color,
               borderRadius: 20,
               padding: "1px 8px",
               fontSize: 11,
-              fontWeight: 500
+              fontWeight: 500,
             }}
           >
             {cards.length}
-          </span>
+          </span> */}
         </Box>
-        <Box display="flex" gap={.5}>
+        <Box display="flex" gap={0.5}>
           <UiButtonIcon
+            onClick={() => setShowModal(true)}
             title="Create task"
             size="small"
           >
-            <AddOutlinedIcon onClick={() => setShowModal(true)} fontSize="small" sx={{ color: isHover ? "icon.main" : "transparent" }} />
+            <AddOutlinedIcon
+              fontSize="small"
+              sx={{ color: isHover ? "icon.main" : "transparent" }}
+            />
           </UiButtonIcon>
-          <UiButtonIcon
-            title="Settings"
-            size="small"
-          >
-            <MoreHorizOutlinedIcon fontSize="small" sx={{ color: isHover ? "icon.main" : "transparent" }} />
+          <UiButtonIcon title="More actions" size="small">
+            <MoreHorizOutlinedIcon
+              fontSize="small"
+              sx={{ color: isHover ? "icon.main" : "transparent" }}
+            />
           </UiButtonIcon>
         </Box>
       </Box>
@@ -138,28 +150,72 @@ export function KanbanColumn({
             {column.description}
           </Typography>
         )}
-        <TextField
-          multiline
-          rows={2}
-          sx={{
-            width:"100%",
-            "& .MuiInputBase-input": {
-              fontSize: "14px"
-            },
-          }}
+        {showModal && (
+          <ClickAwayListener onClickAway={() => setShowModal(false)}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "end",
+                gap: 1,
+                border: "2px solid #D9D9D9",
+                borderRadius: "6px",
+                padding: "4px 8px",
 
-        />
+                // efek focus (saat TextField aktif)
+                "&:focus-within": {
+                  borderColor: "primary.main",
+                },
+              }}
+            >
+              <TextField
+                autoFocus
+                multiline
+                rows={2}
+                placeholder="Add a task... (Press Enter to save)"
+                variant="outlined"
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    padding: 0,
+                  },
 
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
 
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+
+                  "& .MuiInputBase-input": {
+                    fontSize: "14px",
+                    padding: "4px 0",
+                  },
+                }}
+              />
+
+              <Tooltip title="Press Enter to save">
+                <UiButtonIcon size="small">
+                  <KeyboardReturnIcon fontSize="small" />
+                </UiButtonIcon>
+              </Tooltip>
+            </Box>
+          </ClickAwayListener>
+        )}
       </Box>
 
-      {showModal && (
+      {/* {showModal && (
         <AddCardModal
           columnId={column.id}
           onAdd={onAddCard}
           onClose={() => setShowModal(false)}
         />
-      )}
+      )} */}
     </Box>
   );
 }

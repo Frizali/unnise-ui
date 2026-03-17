@@ -5,6 +5,8 @@ import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { AddColumnModal } from "./AddColumnModal";
 import { useCard } from "../hooks/useCard";
+import loadingGif from "../../../assets/Unnise-Loader.gif";
+import { Box } from "@mui/material";
 
 const PRIORITY_META = {
   high: { label: "High", color: "#dc2626" },
@@ -212,61 +214,87 @@ export default function KanbanBoard() {
   };
 
   return (
-    <div
-      style={{
-        height: "100%",
-        overflowX: "auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          padding: "12px 20px",
-          overflowX: "auto",
-          alignItems: "flex-start",
-          height: "100%",
-        }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={() => {
-          setOverCol(null);
-          setCardDropTarget(null);
-          dragRef.current = { type: null, cardId: null, columnId: null };
-        }}
-      >
-        {columns.map((col) => (
-          <KanbanColumn
-            key={col.id}
-            column={col}
-            cards={getVisible(col.id)}
-            allColumns={columns}
-            onAddCard={addCard}
-            onDeleteCard={deleteCard}
-            onMoveCard={moveToColumn}
-            isColOver={overCol === col.id}
-            cardDropTargetId={cardDropTarget}
-            onColHeaderDragStart={handleColHeaderDragStart}
-            onColHeaderDragEnd={handleColHeaderDragEnd}
-            onColDragOver={handleColDragOver}
-            onColDrop={handleColDrop}
-            onCardDragStart={handleCardDragStart}
-            onCardDragEnd={handleCardDragEnd}
-            onCardDragOverCard={handleCardDragOverCard}
-            onCardDropOnCard={handleCardDropOnCard}
-            onCardDropOnColumn={handleColDrop}
-          />
-        ))}
-
-        <UiButtonIcon
-          title="Add a new column"
-          bordered={true}
-          onClick={handleShowModal}
+    <>
+      {cardsLoading ? (
+        <Box
+          sx={{
+            height: "100%",
+            width:"100%",
+            overflowX: "auto",
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center"
+          }}
         >
-          <AddOutlinedIcon />
-        </UiButtonIcon>
+          <img
+            src={loadingGif}
+            alt="loading"
+            width="60"
+            style={{ borderRadius: "6px" }}
+          />
+        </Box>
+      ) : (
+        <div
+          style={{
+            height: "100%",
+            overflowX: "auto",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              padding: "12px 20px",
+              overflowX: "auto",
+              alignItems: "flex-start",
+              height: "100%",
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => {
+              setOverCol(null);
+              setCardDropTarget(null);
+              dragRef.current = { type: null, cardId: null, columnId: null };
+            }}
+          >
+            {columns.map((col) => (
+              <KanbanColumn
+                key={col.id}
+                column={col}
+                cards={getVisible(col.id)}
+                allColumns={columns}
+                onAddCard={addCard}
+                onDeleteCard={deleteCard}
+                onMoveCard={moveToColumn}
+                isColOver={overCol === col.id}
+                cardDropTargetId={cardDropTarget}
+                onColHeaderDragStart={handleColHeaderDragStart}
+                onColHeaderDragEnd={handleColHeaderDragEnd}
+                onColDragOver={handleColDragOver}
+                onColDrop={handleColDrop}
+                onCardDragStart={handleCardDragStart}
+                onCardDragEnd={handleCardDragEnd}
+                onCardDragOverCard={handleCardDragOverCard}
+                onCardDropOnCard={handleCardDropOnCard}
+                onCardDropOnColumn={handleColDrop}
+              />
+            ))}
 
-        <AddColumnModal showModal={showModal} onClose={handleShowModal} onAddColumn={addColumn} />
-      </div>
-    </div>
+            <UiButtonIcon
+              title="Add a new column"
+              bordered={true}
+              onClick={handleShowModal}
+            >
+              <AddOutlinedIcon />
+            </UiButtonIcon>
+
+            <AddColumnModal
+              showModal={showModal}
+              onClose={handleShowModal}
+              onAddColumn={addColumn}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
