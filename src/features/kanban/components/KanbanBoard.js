@@ -7,33 +7,13 @@ import { AddColumnModal } from "./AddColumnModal";
 import { useCard } from "../hooks/useCard";
 import loadingGif from "../../../assets/Unnise-Loader.gif";
 import { Box } from "@mui/material";
-
-const PRIORITY_META = {
-  high: { label: "High", color: "#dc2626" },
-  medium: { label: "Medium", color: "#d97706" },
-  low: { label: "Low", color: "#16a34a" },
-};
-
-const MEMBERS = [
-  { id: "m1", name: "Alice", avatar: "A", color: "#6366f1" },
-  { id: "m2", name: "Bob", avatar: "B", color: "#f59e0b" },
-  { id: "m3", name: "Carol", avatar: "C", color: "#10b981" },
-  { id: "m4", name: "Dan", avatar: "D", color: "#8b5cf6" },
-];
-
-const SORT_OPTIONS = [
-  { id: "none", label: "Default" },
-  { id: "title_asc", label: "Title A → Z" },
-  { id: "title_desc", label: "Title Z → A" },
-  { id: "priority_high", label: "Priority: High first" },
-  { id: "priority_low", label: "Priority: Low first" },
-];
-
-const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+import { cardService } from "../../../services/cardService";
+import { useParams } from "react-router-dom";
 
 export default function KanbanBoard() {
-  const { columns, setColumns, reorder, createColumn } = useColumn({});
-  const { cards, setCards, cardsLoading } = useCard();
+  const { id } = useParams();
+  const { columns, columnsLoading, setColumns, reorder, createColumn } = useColumn({});
+  const { cards, cardsLoading, setCards } = useCard();
 
   const [showModal, setShowModal] = useState(false);
   const dragRef = useRef({ type: null, cardId: null, columnId: null });
@@ -132,12 +112,15 @@ export default function KanbanBoard() {
       setOverCol(null);
     } else if (d.type === "card") {
       const srcId = d.cardId;
+      const src = cards.find((c) => c.id === srcId);
 
       if (srcId) {
         setCards((prev) => {
           const pos =
             prev.filter((c) => c.columnId === targetColId && c.id !== srcId)
               .length + 1;
+
+          cardService.move(id, src.id, { cardId: src.id, columnId: targetColId, position: pos })
 
           return prev.map((c) =>
             c.id === srcId ? { ...c, columnId: targetColId, position: pos } : c,
@@ -194,6 +177,8 @@ export default function KanbanBoard() {
       siblings.splice(insertAt, 0, { ...src, columnId: col });
 
       const reindexed = siblings.map((c, i) => ({ ...c, position: i }));
+      cardService.move(id, src.id, { cardId: src.id, columnId: col, position: reindexed.find((c) => c.id === src.id).position })
+
       return [
         ...prev.filter((c) => c.columnId !== col && c.id !== srcId),
         ...reindexed,
@@ -215,15 +200,15 @@ export default function KanbanBoard() {
 
   return (
     <>
-      {cardsLoading ? (
+      {cardsLoading || columnsLoading ? (
         <Box
           sx={{
             height: "100%",
-            width:"100%",
+            width: "100%",
             overflowX: "auto",
-            display:"flex",
-            justifyContent:"center",
-            alignItems:"center"
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
           }}
         >
           <img

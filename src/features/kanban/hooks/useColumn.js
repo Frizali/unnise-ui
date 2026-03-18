@@ -20,7 +20,7 @@ export function useColumn({onAddColumn}) {
   const { id } = useParams();
   const [column, setColumn] = useState({});
   const [color, setColor] = useState("#010101");
-  const [loading, setLoading] = useState(false);
+  const [columnsLoading, setColumnsLoading] = useState(false);
   const [columns, setColumns] = useState([]);
   const showAlert = useAlert();
 
@@ -34,7 +34,7 @@ export function useColumn({onAddColumn}) {
   };
 
   const fetchColumns = useCallback(async () => {
-    setLoading(true);
+    setColumnsLoading(true);
 
     try {
       const res = await columnService.getByProject(id);
@@ -42,7 +42,7 @@ export function useColumn({onAddColumn}) {
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     } finally {
-      setLoading(false);
+      setColumnsLoading(false);
     }
   });
 
@@ -73,7 +73,7 @@ export function useColumn({onAddColumn}) {
   return {
     columns,
     setColumns,
-    loading,
+    columnsLoading,
     reorder,
     createColumn,
     color,

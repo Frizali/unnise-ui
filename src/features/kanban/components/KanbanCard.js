@@ -27,8 +27,6 @@ export function KanbanCard({
   const [dragging, setDragging] = useState(false);
   const p = PRIORITY_META[card.priority];
 
-  console.log(card);
-
   return (
     <Box
       draggable
