@@ -57,7 +57,7 @@ export default function MainLayout() {
             flexDirection: "column",
             height: "calc(100vh - 48px)",
             overflow: "auto",
-            p: 2,
+            pt:2
           }}
         >
           <Outlet />

@@ -9,6 +9,7 @@ import loadingGif from "../../../assets/Unnise-Loader.gif";
 import { Box } from "@mui/material";
 import { cardService } from "../../../services/cardService";
 import { useParams } from "react-router-dom";
+import { KanbanBoardFilter } from "./KanbanBoardFilter";
 
 export default function KanbanBoard() {
   const { id } = useParams();
@@ -219,6 +220,8 @@ export default function KanbanBoard() {
           />
         </Box>
       ) : (
+        <>
+        <KanbanBoardFilter colums={columns} tasks={cards}/>
         <div
           style={{
             height: "100%",
@@ -229,7 +232,7 @@ export default function KanbanBoard() {
             style={{
               display: "flex",
               gap: "1rem",
-              padding: "12px 20px",
+              padding: "12px 36px",
               overflowX: "auto",
               alignItems: "flex-start",
               height: "100%",
@@ -279,6 +282,7 @@ export default function KanbanBoard() {
             />
           </div>
         </div>
+        </>
       )}
     </>
   );
