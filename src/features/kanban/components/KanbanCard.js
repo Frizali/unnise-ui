@@ -15,6 +15,7 @@ const PRIORITY_META = {
 
 export function KanbanCard({
   card,
+  onUpdate,
   onDelete,
   onMoveCard,
   column,
@@ -144,10 +145,14 @@ export function KanbanCard({
               alignItems: "center",
             }}
           >
-            <AvatarGroup spacing="small">
-              <Avatar sx={{ width: 24, height: 24 }} />
-              <Avatar sx={{ width: 24, height: 24 }} />
-              <Avatar sx={{ width: 24, height: 24 }} />
+            <AvatarGroup spacing="medium">
+              {card.assignees.map((item, index) => (
+                <Avatar key={item.id ?? index} sx={{ width: 24, height: 24 }}>
+                  <Typography fontSize={12} color="white">
+                    {item.username?.[0]}
+                  </Typography>
+                </Avatar>
+              ))}
             </AvatarGroup>
             <Box
               sx={{
@@ -173,7 +178,7 @@ export function KanbanCard({
           </Box>
         </Box>
       </Box>
-      <KanbanBoardDetail showDetail={showDetail} setShowDetail={setShowDetail} columns={columns}/>
+      <KanbanBoardDetail card={card} onUpdate={onUpdate} showDetail={showDetail} setShowDetail={setShowDetail} columns={columns} />
     </>
   );
 }

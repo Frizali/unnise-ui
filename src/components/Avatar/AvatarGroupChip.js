@@ -12,15 +12,6 @@ const StyledChip = styled(Box)(({ theme }) => ({
   width: "100%",
 }));
 
-const SmallAvatar = styled(Avatar)(({ bgcolor }) => ({
-  width: 32,
-  height: 32,
-  fontSize: 12,
-  backgroundColor: bgcolor,
-  border: "2px solid #fff",
-  flexShrink: 0,
-}));
-
 const OverflowBadge = styled(Avatar)(() => ({
   width: 32,
   height: 32,
@@ -77,10 +68,8 @@ export function AvatarGroupChip({ users }) {
   useEffect(() => {
     if (parentWidth === 0) return;
 
-    console.log(parentWidth)
-
     const AVATAR_SIZE = 32;
-    const AVATAR_OVERLAP = 8;
+    // const AVATAR_OVERLAP = 8;
     const CHIP_PADDING = 14 + 10;
     const GAP = 4;
 

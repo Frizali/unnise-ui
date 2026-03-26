@@ -40,19 +40,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   }),
 );
 
-export function KanbanBoardDetail({ showDetail, setShowDetail, columns }) {
-  const [card] = useState({
-    id: "9602348c-96d5-4e0a-abe3-b45cde9345f2",
-    projectId: "47fc79ec-2d97-4605-93a8-0bc9c0e33fbe",
-    columnId: "456e6c93-96b7-42d0-9668-815635d5d25c",
-    title: "Design landing page",
-    description:
-      "Create initial layout and UI components for the landing page.",
-    startDate: null,
-    endDate: "2026-03-31T00:00:00",
-    position: 0,
-    priority: "High",
-  });
+export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, columns }) {
   const inputRef = useRef(null);
   const {
     cardId,
@@ -62,9 +50,17 @@ export function KanbanBoardDetail({ showDetail, setShowDetail, columns }) {
     members,
     handleClose,
     setCurrentTab,
+    setCardAssignees
   } = useCardDetail({ showDetail, setShowDetail });
   const [isEditing, setIsEditing] = useState(false);
-  const [assignees, setAssignees] = useState([]);
+  const [assignees, setAssignees] = useState(card.assignees);
+
+  const handleSetCardAssignees = (e, newValue) => {
+    setIsEditing(false)
+    setCardAssignees(newValue.map(a => a.id))
+    setAssignees(newValue)
+    onUpdate({ ...card, assignees : newValue })
+  }
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -189,8 +185,8 @@ export function KanbanBoardDetail({ showDetail, setShowDetail, columns }) {
                             limitTags={1}
                             options={members}
                             value={assignees}
-                            onChange={(e, newValue) => setAssignees(newValue)}
-                            onBlur={() => setIsEditing(false)}
+                            onChange={handleSetCardAssignees}
+                            onBlur={handleSetCardAssignees}
                             getOptionLabel={(option) => option.username}
                             renderOption={(props, option) => {
                               const { key, ...rest } = props;
@@ -319,7 +315,7 @@ export function KanbanBoardDetail({ showDetail, setShowDetail, columns }) {
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        <StatusSelect value={card.columnId} columns={columns}/>
+                        <StatusSelect value={card.columnId} columns={columns} />
                       </Grid>
                     </Grid>
                   </Box>

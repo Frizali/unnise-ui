@@ -7,5 +7,9 @@ export const cardService = {
 
     async move(projectId, cardId, payload){
         return await apiClient.put(`/projects/${projectId}/cards/${cardId}/move`, payload)
+    },
+
+    async setCardAssignees(projectId, cardId, payload){
+        return await apiClient.put(`/projects/${projectId}/cards/${cardId}/assignees`, payload)
     }
 }

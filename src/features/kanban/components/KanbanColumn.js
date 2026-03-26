@@ -1,6 +1,5 @@
 import { KanbanCard } from "./KanbanCard";
 import { useState } from "react";
-import { AddCardModal } from "./AddCardModal";
 import { Typography, Box, TextField, Tooltip } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
@@ -13,6 +12,7 @@ export function KanbanColumn({
   column,
   cards,
   onAddCard,
+  onUpdateCard,
   onDeleteCard,
   onMoveCard,
   allColumns,
@@ -57,7 +57,6 @@ export function KanbanColumn({
         background: "#FCFBFC",
       }}
     >
-      {/* Draggable header */}
       <Box
         draggable
         onDragStart={(e) => {
@@ -112,6 +111,7 @@ export function KanbanColumn({
           <KanbanCard
             key={card.id}
             card={card}
+            onUpdate={onUpdateCard}
             onDelete={onDeleteCard}
             onMoveCard={onMoveCard}
             column={column}
@@ -140,8 +140,6 @@ export function KanbanColumn({
                 border: "2px solid #D9D9D9",
                 borderRadius: "6px",
                 padding: "4px 8px",
-
-                // efek focus (saat TextField aktif)
                 "&:focus-within": {
                   borderColor: "primary.main",
                 },
@@ -187,14 +185,6 @@ export function KanbanColumn({
           </ClickAwayListener>
         )}
       </Box>
-
-      {/* {showModal && (
-        <AddCardModal
-          columnId={column.id}
-          onAdd={onAddCard}
-          onClose={() => setShowModal(false)}
-        />
-      )} */}
     </Box>
   );
 }

@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useAlert } from "../../../context/AlertContext";
 import { useParams } from "react-router-dom";
 import { projectService } from "../../../services/projectService";
+import { cardService } from "../../../services/cardService";
 
 const TABS = [
     { label: "Commments", value: "comments" },
@@ -16,6 +17,7 @@ export function useCardDetail({ showDetail, setShowDetail }) {
     const [currentTab, setCurrentTab] = useState("comments");
     const [members, setMembers] = useState([]);
     const [membersLooading, setMembersLooading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const cardId = searchParams.get("card");
     const isOpen = showDetail && !!cardId;
@@ -47,7 +49,25 @@ export function useCardDetail({ showDetail, setShowDetail }) {
         }
     };
 
+    const setCardAssignees = async (payload) => {
+        try {
+            await cardService.setCardAssignees(id, cardId, payload);
+        } catch (err) {
+            showAlert(err.title, err.detail, "error");
+        }
+    }
+
+    const getCardDetail = async () => {
+        setLoading(true);
+
+        try {
+            var detail = await cardService.get
+        } catch (err) {
+
+        }
+    }
+
     return {
-        cardId, isOpen, TABS, currentTab, members, handleClose, setCurrentTab
+        cardId, isOpen, TABS, currentTab, members, handleClose, setCurrentTab, setCardAssignees
     }
 }

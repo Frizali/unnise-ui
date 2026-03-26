@@ -5,7 +5,6 @@ import { useAlert } from "../../../context/AlertContext";
 
 export function useCard() {
     const { id } = useParams();
-    const { card, setCard } = useState({});
     const [ cards, setCards ] = useState([]);
     const [ cardsLoading, setCardsLoading ] = useState(false);
     const showAlert = useAlert();
@@ -23,14 +22,6 @@ export function useCard() {
             setCardsLoading(false);
         }
     });
-
-    const reorderCards = async (cards) => {
-        try{
-
-        }catch(err){
-
-        }
-    }
 
     useEffect(() => {
         fetchCards();
