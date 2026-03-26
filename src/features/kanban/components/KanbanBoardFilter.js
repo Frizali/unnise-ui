@@ -4,7 +4,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SwapVertOutlinedIcon from "@mui/icons-material/SwapVertOutlined";
-import { TaskProgressBar } from "./TaskProgressBar";
+import { TaskProgressBar } from "../../../components/Bar/TaskProgressBar";
 
 export function KanbanBoardFilter({ colums, tasks }) {
   return (

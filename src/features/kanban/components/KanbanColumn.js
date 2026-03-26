@@ -7,6 +7,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import { ClickAwayListener } from "@mui/material";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import { ColorSwatch } from "../../../components/Swatch/ColorSwatch";
 
 export function KanbanColumn({
   column,
@@ -78,35 +79,13 @@ export function KanbanColumn({
         }}
       >
         <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <Box
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: column.color,
-              boxShadow: `0 0 8px ${column.color}`,
-              flexShrink: 0,
-            }}
-          />
+          <ColorSwatch size={10} value={column.color}/>
           <Typography variant="body2" color="text.primary" fontWeight={500}>
             {column.title}
           </Typography>
           <Typography variant="body2" color="text.primary" fontWeight={500}>
             {cards.length}
           </Typography>
-
-          {/* <span
-            style={{
-              background: column.color + "22",
-              color: column.color,
-              borderRadius: 20,
-              padding: "1px 8px",
-              fontSize: 11,
-              fontWeight: 500,
-            }}
-          >
-            {cards.length}
-          </span> */}
         </Box>
         <Box display="flex" gap={0.5}>
           <UiButtonIcon

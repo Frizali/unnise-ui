@@ -1,7 +1,5 @@
 import { Box, Tooltip } from "@mui/material";
 
-const MAX_WIDTH = 140;
-
 export function TaskProgressBar({ columns, tasks }) {
   const taskCountByColumn = columns
     .map((col) => {

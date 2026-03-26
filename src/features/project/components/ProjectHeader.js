@@ -36,12 +36,8 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 );
 
 export function ProjectHeader() {
-  const {
-    project,
-    loading,
-    inviteDialog,
-    handleInviteDialog,
-  } = useProjectHeader();
+  const { project, loading, inviteDialog, handleInviteDialog } =
+    useProjectHeader();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -90,14 +86,21 @@ export function ProjectHeader() {
             aria-label="Project Menu"
             sx={{
               minHeight: 0,
-              "& .MuiTabs-indicator": {
+              "&.MuiTabs-indicator": {
                 height: "2px",
                 borderRadius: 2,
               },
             }}
           >
             {TABS.map((tab) => (
-              <AntTab sx={{textTransform:"none"}} key={tab.value} label={tab.label} value={tab.value} />
+              <AntTab
+                sx={{
+                  textTransform: "none"
+                }}
+                key={tab.value}
+                label={tab.label}
+                value={tab.value}
+              />
             ))}
           </Tabs>
         </Box>

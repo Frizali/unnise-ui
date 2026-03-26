@@ -11,16 +11,17 @@ import {
   Typography,
   TextField,
   Tab,
-  Tabs
+  Tabs,
 } from "@mui/material";
 import styled from "@emotion/styled";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { useCardDetail } from "../hooks/useCardDetail";
 import { useState, useRef, useEffect } from "react";
-import { AvatarGroupChip } from "./AvatarGroupChip";
+import { AvatarGroupChip } from "../../../components/Avatar/AvatarGroupChip";
+import StatusSelect from "../../../components/Select/StatusSelect";
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -39,9 +40,29 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   }),
 );
 
-export function KanbanBoardDetail({ showDetail, setShowDetail }) {
+export function KanbanBoardDetail({ showDetail, setShowDetail, columns }) {
+  const [card] = useState({
+    id: "9602348c-96d5-4e0a-abe3-b45cde9345f2",
+    projectId: "47fc79ec-2d97-4605-93a8-0bc9c0e33fbe",
+    columnId: "456e6c93-96b7-42d0-9668-815635d5d25c",
+    title: "Design landing page",
+    description:
+      "Create initial layout and UI components for the landing page.",
+    startDate: null,
+    endDate: "2026-03-31T00:00:00",
+    position: 0,
+    priority: "High",
+  });
   const inputRef = useRef(null);
-  const { cardId, isOpen, TABS, currentTab, members, handleClose, setCurrentTab } = useCardDetail({ showDetail, setShowDetail });
+  const {
+    cardId,
+    isOpen,
+    TABS,
+    currentTab,
+    members,
+    handleClose,
+    setCurrentTab,
+  } = useCardDetail({ showDetail, setShowDetail });
   const [isEditing, setIsEditing] = useState(false);
   const [assignees, setAssignees] = useState([]);
 
@@ -79,13 +100,15 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
           <Grid size={5} padding="0 26px">
             <Box mb="1rem">
               <Typography variant="h5" fontWeight={600} color="text.primary">
-                Design landing page
+                {card.title}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Create initial layout and UI components for the landing page.
+                {card.description}
               </Typography>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: ".5rem" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: ".5rem" }}
+            >
               <Accordion
                 defaultExpanded
                 sx={{
@@ -97,7 +120,7 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                   "&.Mui-expanded": {
                     margin: 0,
                   },
-                  borderRadius: "4px"
+                  borderRadius: "4px",
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
@@ -110,25 +133,27 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                     sx={{
                       display: "flex",
                       flexDirection: "column",
-                      gap: "12px",
                       width: "100%",
+                      gap: ".5rem",
                     }}
                   >
-                    {/* Assignees */}
+                    {/* Assignee */}
                     <Grid container>
                       <Grid item size={4.5} alignSelf="center">
                         <Typography variant="body2" color="text.primary">
-                          Assignees*
+                          Assignee
                         </Typography>
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
                         {!isEditing && assignees.length === 0 && (
-                          <Box sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            height: "40px"
-                          }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                            }}
+                          >
                             <Typography
                               variant="body2"
                               color="text.secondary"
@@ -141,12 +166,17 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                         )}
 
                         {!isEditing && assignees.length > 0 && (
-                          <Box width="100%" height="40px" sx={{
-                            display:"flex",
-                            alignItems:"center",
-                            cursor: "pointer"
-                          }} onClick={() => setIsEditing(true)}>
-                            <AvatarGroupChip users={assignees}/>
+                          <Box
+                            width="100%"
+                            height="40px"
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => setIsEditing(true)}
+                          >
+                            <AvatarGroupChip users={assignees} />
                           </Box>
                         )}
 
@@ -170,11 +200,18 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                                   key={key}
                                   {...rest}
                                   component="li"
-                                  sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                                  sx={{
+                                    display: "flex",
+                                    gap: 1,
+                                    alignItems: "center",
+                                  }}
                                 >
                                   <Avatar sx={{ width: 24, height: 24 }} />
                                   <Box sx={{ flex: 1 }}>
-                                    <Typography variant="body2" color="text.primary">
+                                    <Typography
+                                      variant="body2"
+                                      color="text.primary"
+                                    >
                                       {option.username}
                                     </Typography>
                                   </Box>
@@ -182,19 +219,27 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                               );
                             }}
                             renderInput={(params) => (
-                              <TextField inputRef={inputRef} {...params} placeholder="Select member" size="small" sx={{
-                                "& .MuiInputBase-input": {
-                                  fontSize: "14px",
-                                  height: "auto"
-                                },
-                              }} />
+                              <TextField
+                                inputRef={inputRef}
+                                {...params}
+                                placeholder="Select member"
+                                size="small"
+                                sx={{
+                                  "& .MuiInputBase-input": {
+                                    fontSize: "14px",
+                                    height: "auto",
+                                  },
+                                }}
+                              />
                             )}
                             renderTags={(value, getTagProps) =>
                               value.map((option, index) => (
                                 <Chip
                                   {...getTagProps({ index })}
                                   key={option.id}
-                                  avatar={<Avatar sx={{ width: 24, height: 24 }} />}
+                                  avatar={
+                                    <Avatar sx={{ width: 24, height: 24 }} />
+                                  }
                                   label={option.username}
                                   size="small"
                                   sx={{
@@ -204,8 +249,8 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                                     "& .MuiChip-avatarSmall": {
                                       width: 24,
                                       height: 24,
-                                      color: "white"
-                                    }
+                                      color: "white",
+                                    },
                                   }}
                                 />
                               ))
@@ -229,35 +274,52 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
                         {/* {!isEditing && assignees.length === 0 && ( */}
-                          <Box sx={{
+                        <Box
+                          sx={{
                             display: "flex",
                             alignItems: "center",
-                            height: "40px"
-                          }}>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ cursor: "pointer" }}
-                              onClick={() => setIsEditing(true)}
-                            >
-                              None
-                            </Typography>
-                          </Box>
+                            height: "40px",
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ cursor: "pointer" }}
+                            onClick={() => setIsEditing(true)}
+                          >
+                            None
+                          </Typography>
+                        </Box>
                         {/* )} */}
 
                         {!isEditing && assignees.length > 0 && (
-                          <Box width="100%" height="40px" sx={{
-                            display:"flex",
-                            alignItems:"center",
-                            cursor: "pointer"
-                          }} onClick={() => setIsEditing(true)}>
-                            
-                          </Box>
+                          <Box
+                            width="100%"
+                            height="40px"
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => setIsEditing(true)}
+                          ></Box>
                         )}
 
                         {/* {isEditing && (
                           <></>
                         )} */}
+                      </Grid>
+                    </Grid>
+                    {/* Status */}
+                    <Grid container>
+                      <Grid item size={4.5} alignSelf="center">
+                        <Typography variant="body2" color="text.primary">
+                          Status
+                        </Typography>
+                      </Grid>
+
+                      <Grid size={7.5} item height="40px" alignSelf="center">
+                        <StatusSelect value={card.columnId} columns={columns}/>
                       </Grid>
                     </Grid>
                   </Box>
@@ -273,7 +335,7 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                   "&.Mui-expanded": {
                     margin: 0,
                   },
-                  borderRadius: "4px"
+                  borderRadius: "4px",
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
@@ -281,8 +343,7 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                     Dificulty
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                </AccordionDetails>
+                <AccordionDetails></AccordionDetails>
               </Accordion>
             </Box>
           </Grid>
@@ -307,7 +368,12 @@ export function KanbanBoardDetail({ showDetail, setShowDetail }) {
                 }}
               >
                 {TABS.map((tab) => (
-                  <AntTab sx={{ textTransform: "none" }} key={tab.value} label={tab.label} value={tab.value} />
+                  <AntTab
+                    sx={{ textTransform: "none" }}
+                    key={tab.value}
+                    label={tab.label}
+                    value={tab.value}
+                  />
                 ))}
               </Tabs>
             </Box>

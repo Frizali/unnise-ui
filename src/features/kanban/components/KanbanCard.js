@@ -173,7 +173,7 @@ export function KanbanCard({
           </Box>
         </Box>
       </Box>
-      <KanbanBoardDetail showDetail={showDetail} setShowDetail={setShowDetail}/>
+      <KanbanBoardDetail showDetail={showDetail} setShowDetail={setShowDetail} columns={columns}/>
     </>
   );
 }

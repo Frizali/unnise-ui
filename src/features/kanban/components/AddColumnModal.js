@@ -3,32 +3,52 @@ import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import UiFormGroup from "../../../components/UiFormGroup/UiFormGroup";
 import UiButton from "../../../components/UiButton/UiButton";
-import { ColorSwatch } from "./ColorSwatch";
+import { ColorSwatch } from "../../../components/Swatch/ColorSwatch";
 import { useColumn } from "../hooks/useColumn";
 
 export function AddColumnModal({ showModal, onClose, onAddColumn }) {
-
-  const { color, setColor, COLOR_OPTIONS, handleChange, create } = useColumn({
-    onAddColumn
-  });
+  const { column, color, setColor, COLOR_OPTIONS, handleChange, create } =
+    useColumn({
+      onAddColumn,
+    });
 
   return (
-    <Dialog open={showModal}>
+    <Dialog maxWidth="xs" open={showModal}>
       <Box sx={{ padding: "1.5rem", boxSizing: "border-box" }}>
         <Box display="flex" justifyContent="space-between">
           <Typography variant="h5" fontWeight="600" color="text.primary">
-            New Option
+            New Column
           </Typography>
           <UiButtonIcon title="Close" onClick={onClose}>
             <CloseOutlinedIcon />
           </UiButtonIcon>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          Assign points for completing tasks, deadlines, and collaboration
-          activities.
+          A stage to organize tasks and track progress, with optional points for
+          completion and collaboration.
         </Typography>
         <Divider sx={{ my: 2 }} />
         <Box display="flex" flexDirection="column" gap={1}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              userSelect: "none",
+              padding: "12px 20px",
+              background: "#FCFBFC",
+              border: "1px solid #D9D9D9",
+              borderRadius: "4px",
+              minHeight: "37.125px",
+            }}
+          >
+            <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <ColorSwatch size={10} value={color} />
+              <Typography variant="body2" color="text.primary" fontWeight={500}>
+                {column.title}
+              </Typography>
+            </Box>
+          </Box>
           <UiFormGroup
             id="title"
             placeholder="Label Text"
@@ -45,37 +65,36 @@ export function AddColumnModal({ showModal, onClose, onAddColumn }) {
           >
             Description
           </UiFormGroup>
-          <div style={{ marginBottom: 24 }}>
-            <div
-              style={{
+          <Box mb={2}>
+            <Box
+              sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
               }}
             >
-              <Typography variant="body2" color="text.primary">
+              <Typography variant="body2" color="text.primary" mb="2px">
                 Color
               </Typography>
-            </div>
+            </Box>
 
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-                borderRadius: 12,
+                justifyContent: "space-between",
               }}
             >
               {COLOR_OPTIONS.map((c) => (
                 <ColorSwatch
+                  size={24}
                   key={c.value}
                   value={c.value}
                   selected={color === c.value}
-                  onClick={setColor}
+                  onClick={() => setColor(c.value)}
                 />
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -84,7 +103,7 @@ export function AddColumnModal({ showModal, onClose, onAddColumn }) {
             }}
             onClick={create}
           >
-            <UiButton>Save</UiButton>
+            <UiButton size="medium">Create</UiButton>
           </Box>
         </Box>
       </Box>

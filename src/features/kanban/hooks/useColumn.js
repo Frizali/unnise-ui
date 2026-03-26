@@ -71,6 +71,7 @@ export function useColumn({onAddColumn}) {
   }
 
   return {
+    column,
     columns,
     setColumns,
     columnsLoading,

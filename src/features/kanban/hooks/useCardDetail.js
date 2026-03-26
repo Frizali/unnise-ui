@@ -6,8 +6,8 @@ import { projectService } from "../../../services/projectService";
 
 const TABS = [
     { label: "Commments", value: "comments" },
-    { label: "Activity Log", value: "activity" },
     { label: "Files", value: "files" },
+    { label: "Activity Log", value: "activity" },
 ];
 
 export function useCardDetail({ showDetail, setShowDetail }) {
