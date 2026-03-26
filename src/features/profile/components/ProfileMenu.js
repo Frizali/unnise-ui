@@ -29,7 +29,7 @@ function ProfileMenu() {
           }}
           onClick={handleOpen}
         >
-          <Avatar sx={{ width: 24, height: 24 }} />
+          <Avatar sx={{ width: 26, height: 26 }} />
           <Typography fontWeight={600} color="text.primary" variant="body2">
             Frizali
           </Typography>

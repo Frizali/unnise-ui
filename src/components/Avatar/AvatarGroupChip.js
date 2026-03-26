@@ -68,7 +68,7 @@ export function AvatarGroupChip({ users }) {
   useEffect(() => {
     if (parentWidth === 0) return;
 
-    const AVATAR_SIZE = 32;
+    const AVATAR_SIZE = 26;
     // const AVATAR_OVERLAP = 8;
     const CHIP_PADDING = 14 + 10;
     const GAP = 4;
@@ -100,7 +100,7 @@ export function AvatarGroupChip({ users }) {
           <AvatarGroup>
             {visibleUsers.map((user, i) => {
               return (
-                <Avatar sx={{width:24, height:24, fontSize:"12px"}} key={user.id}>
+                <Avatar sx={{width:26, height:26, fontSize:"12px"}} key={user.id}>
                   {user.username[0].toUpperCase()}
                 </Avatar>
               )

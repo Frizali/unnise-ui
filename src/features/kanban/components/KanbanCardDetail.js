@@ -22,6 +22,7 @@ import { useCardDetail } from "../hooks/useCardDetail";
 import { useState, useRef, useEffect } from "react";
 import { AvatarGroupChip } from "../../../components/Avatar/AvatarGroupChip";
 import StatusSelect from "../../../components/Select/StatusSelect";
+import CardTimestamp from "../../../components/Card/CardTimestamp";
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -40,7 +41,13 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   }),
 );
 
-export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, columns }) {
+export function KanbanBoardDetail({
+  card,
+  onUpdate,
+  showDetail,
+  setShowDetail,
+  columns,
+}) {
   const inputRef = useRef(null);
   const {
     cardId,
@@ -50,17 +57,16 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
     members,
     handleClose,
     setCurrentTab,
-    setCardAssignees
+    setCardAssignees,
   } = useCardDetail({ showDetail, setShowDetail });
   const [isEditing, setIsEditing] = useState(false);
   const [assignees, setAssignees] = useState(card.assignees);
 
-  const handleSetCardAssignees = (e, newValue) => {
-    setIsEditing(false)
-    setCardAssignees(newValue.map(a => a.id))
-    setAssignees(newValue)
-    onUpdate({ ...card, assignees : newValue })
-  }
+  const onSetAssignees = (e, newValue) => {
+    setCardAssignees(newValue.map((a) => a.id));
+    setAssignees(newValue);
+    onUpdate({ ...card, assignees: newValue });
+  };
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -69,8 +75,24 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
   }, [isEditing]);
 
   return (
-    <Dialog open={isOpen} fullWidth maxWidth="lg">
-      <Box sx={{ padding: "18px 0" }}>
+    <Dialog
+      open={isOpen}
+      fullWidth
+      maxWidth="lg"
+      PaperProps={{
+        sx: {
+          height: "80vh",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          padding: "18px 0",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -130,52 +152,41 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
                       display: "flex",
                       flexDirection: "column",
                       width: "100%",
-                      gap: ".5rem",
+                      gap: "12px",
                     }}
                   >
                     {/* Assignee */}
                     <Grid container>
                       <Grid item size={4.5} alignSelf="center">
                         <Typography variant="body2" color="text.primary">
-                          Assignee
+                          Assignees
                         </Typography>
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        {!isEditing && assignees.length === 0 && (
+                        {!isEditing && (
                           <Box
                             sx={{
                               display: "flex",
                               alignItems: "center",
                               height: "40px",
-                            }}
-                          >
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ cursor: "pointer" }}
-                              onClick={() => setIsEditing(true)}
-                            >
-                              None
-                            </Typography>
-                          </Box>
-                        )}
-
-                        {!isEditing && assignees.length > 0 && (
-                          <Box
-                            width="100%"
-                            height="40px"
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
                               cursor: "pointer",
                             }}
                             onClick={() => setIsEditing(true)}
                           >
-                            <AvatarGroupChip users={assignees} />
+                            {assignees.length === 0 && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                None
+                              </Typography>
+                            )}
+                            {assignees.length > 0 && (
+                              <AvatarGroupChip users={assignees} />
+                            )}
                           </Box>
                         )}
-
                         {isEditing && (
                           <Autocomplete
                             multiple
@@ -185,8 +196,8 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
                             limitTags={1}
                             options={members}
                             value={assignees}
-                            onChange={handleSetCardAssignees}
-                            onBlur={handleSetCardAssignees}
+                            onChange={onSetAssignees}
+                            onBlur={() => setIsEditing(false)}
                             getOptionLabel={(option) => option.username}
                             renderOption={(props, option) => {
                               const { key, ...rest } = props;
@@ -260,6 +271,7 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
                         )}
                       </Grid>
                     </Grid>
+
                     {/* Labels */}
                     <Grid container>
                       <Grid item size={4.5} alignSelf="center">
@@ -269,43 +281,29 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        {/* {!isEditing && assignees.length === 0 && ( */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            height: "40px",
-                          }}
-                        >
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ cursor: "pointer" }}
-                            onClick={() => setIsEditing(true)}
-                          >
-                            None
-                          </Typography>
-                        </Box>
-                        {/* )} */}
-
-                        {!isEditing && assignees.length > 0 && (
+                        {!isEditing && (
                           <Box
-                            width="100%"
-                            height="40px"
                             sx={{
                               display: "flex",
                               alignItems: "center",
+                              height: "40px",
                               cursor: "pointer",
                             }}
-                            onClick={() => setIsEditing(true)}
-                          ></Box>
+                            // onClick={() => setIsEditing(true)}
+                          >
+                            {assignees.length === 0 && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                None
+                              </Typography>
+                            )}
+                          </Box>
                         )}
-
-                        {/* {isEditing && (
-                          <></>
-                        )} */}
                       </Grid>
                     </Grid>
+
                     {/* Status */}
                     <Grid container>
                       <Grid item size={4.5} alignSelf="center">
@@ -316,6 +314,70 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
                         <StatusSelect value={card.columnId} columns={columns} />
+                      </Grid>
+                    </Grid>
+
+                    {/* Due Date */}
+                    <Grid container>
+                      <Grid item size={4.5} alignSelf="center">
+                        <Typography variant="body2" color="text.primary">
+                          Due Date
+                        </Typography>
+                      </Grid>
+
+                      <Grid size={7.5} item height="40px" alignSelf="center">
+                        {!isEditing && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                              cursor: "pointer",
+                            }}
+                            // onClick={() => setIsEditing(true)}
+                          >
+                            {assignees.length === 0 && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                None
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
+                      </Grid>
+                    </Grid>
+
+                    {/* Start Date */}
+                    <Grid container>
+                      <Grid item size={4.5} alignSelf="center">
+                        <Typography variant="body2" color="text.primary">
+                          Start Date
+                        </Typography>
+                      </Grid>
+
+                      <Grid size={7.5} item height="40px" alignSelf="center">
+                        {!isEditing && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                              cursor: "pointer",
+                            }}
+                            // onClick={() => setIsEditing(true)}
+                          >
+                            {assignees.length === 0 && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                None
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
                       </Grid>
                     </Grid>
                   </Box>
@@ -341,6 +403,12 @@ export function KanbanBoardDetail({ card, onUpdate, showDetail, setShowDetail, c
                 </AccordionSummary>
                 <AccordionDetails></AccordionDetails>
               </Accordion>
+              <Box px={2}>
+                <CardTimestamp
+                  createdAt={card.createdAt}
+                  updatedAt={card.updatedAt}
+                />
+              </Box>
             </Box>
           </Grid>
           <Grid

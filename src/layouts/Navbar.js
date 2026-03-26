@@ -25,7 +25,7 @@ function Navbar({ children }) {
           <img
             src={logo}
             alt="Logo"
-            width="24"
+            width="26"
             style={{ borderRadius: "3px" }}
           />
           <Typography fontWeight={600} color="text.primary" variant="body2">

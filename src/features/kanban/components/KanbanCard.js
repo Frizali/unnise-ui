@@ -145,15 +145,28 @@ export function KanbanCard({
               alignItems: "center",
             }}
           >
-            <AvatarGroup spacing="medium">
-              {card.assignees.map((item, index) => (
-                <Avatar key={item.id ?? index} sx={{ width: 24, height: 24 }}>
+            {card.assignees.length === 1 && card.assignees[0] ? (
+              <Box sx={{ display: "flex", alignItems: "center", gap: ".25rem" }}>
+                <Avatar sx={{ width: 26, height: 26 }}>
                   <Typography fontSize={12} color="white">
-                    {item.username?.[0]}
+                    {card.assignees[0].username?.[0]?.toUpperCase()}
                   </Typography>
                 </Avatar>
-              ))}
-            </AvatarGroup>
+                <Typography fontSize={14} color="text.primary">
+                  {card.assignees[0].username}
+                </Typography>
+              </Box>
+            ) : (
+              <AvatarGroup spacing="medium">
+                {card.assignees.map((item, index) => (
+                  <Avatar key={item.id ?? index} sx={{ width: 26, height: 26 }}>
+                    <Typography fontSize={12} color="white">
+                      {item.username?.[0]?.toUpperCase()}
+                    </Typography>
+                  </Avatar>
+                ))}
+              </AvatarGroup>
+            )}
             <Box
               sx={{
                 display: "flex",
@@ -178,7 +191,13 @@ export function KanbanCard({
           </Box>
         </Box>
       </Box>
-      <KanbanBoardDetail card={card} onUpdate={onUpdate} showDetail={showDetail} setShowDetail={setShowDetail} columns={columns} />
+      <KanbanBoardDetail
+        card={card}
+        onUpdate={onUpdate}
+        showDetail={showDetail}
+        setShowDetail={setShowDetail}
+        columns={columns}
+      />
     </>
   );
 }

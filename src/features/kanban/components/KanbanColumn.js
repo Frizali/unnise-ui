@@ -54,7 +54,7 @@ export function KanbanColumn({
         display: "flex",
         flexDirection: "column",
         opacity: isDragging ? 0.8 : 1,
-        background: "#FCFBFC",
+        background: "#f5f6f8",
       }}
     >
       <Box
