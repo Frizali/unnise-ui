@@ -87,7 +87,7 @@ export default function LabelGroup({ labels = [] }) {
             }}
           >
             <Typography
-              fontSize={14}
+              fontSize={12}
               fontWeight={500}
               sx={{ color: label.color }}
             >
@@ -120,7 +120,7 @@ export default function LabelGroup({ labels = [] }) {
                   }}
                 >
                   <Typography
-                    fontSize={14}
+                    fontSize={12}
                     fontWeight={500}
                     sx={{ color: label.color }}
                   >
@@ -142,7 +142,7 @@ export default function LabelGroup({ labels = [] }) {
               flexShrink: 0,
             }}
           >
-            <Typography fontSize={14} fontWeight={500} color="text.secondary">
+            <Typography fontSize={12} fontWeight={500} color="text.secondary">
               +{hidden.length}
             </Typography>
           </Box>

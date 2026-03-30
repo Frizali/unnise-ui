@@ -1,79 +1,75 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { useAlert } from "../../../context/AlertContext";
-import { useParams } from "react-router-dom";
 import { projectService } from "../../../services/projectService";
 import { cardService } from "../../../services/cardService";
 
-const TABS = [
-  { label: "Commments", value: "comments" },
+const DETAIL_TABS = [
+  { label: "Comments", value: "comments" },
   { label: "Files", value: "files" },
   { label: "Activity Log", value: "activity" },
 ];
 
-export function useCardDetail({ showDetail, setShowDetail }) {
-  const { id } = useParams();
+export function useCardDetail({ isOpen, setIsOpen }) {
+  const { id: projectId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentTab, setCurrentTab] = useState("comments");
+  const [activeTab, setActiveTab] = useState("comments");
   const [members, setMembers] = useState([]);
-  const [projectLabels, setProjectLabels] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const cardId = searchParams.get("card");
-  const isOpen = showDetail && !!cardId;
+  const [labels, setLabels] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const showAlert = useAlert();
 
-  const handleClose = () => {
+  const cardId = searchParams.get("card");
+  const isDialogOpen = isOpen && !!cardId;
+
+  const closeDetail = () => {
     const params = new URLSearchParams(searchParams);
     params.delete("card");
     setSearchParams(params);
-    setShowDetail(false);
+    setIsOpen(false);
   };
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isDialogOpen) return;
+    loadProjectMembers();
+    loadProjectLabels();
+  }, [isDialogOpen]);
 
-    getProjectMembers();
-    getLabels();
-  }, [isOpen]);
-
-  const getProjectMembers = async () => {
-    setLoading(true);
-
+  const loadProjectMembers = async () => {
+    setIsLoading(true);
     try {
-      var members = await projectService.getMembers(id);
-      setMembers(members);
+      const data = await projectService.getMembers(projectId);
+      setMembers(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const getLabels = async () => {
-    setLoading(true);
-
+  const loadProjectLabels = async () => {
+    setIsLoading(true);
     try {
-      var labels = await projectService.getLabels(id);
-      setProjectLabels(labels);
+      const data = await projectService.getLabels(projectId);
+      setLabels(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const setCardAssignees = async (payload) => {
+  const saveCardAssignees = async (assigneeIds) => {
     try {
-      await cardService.setCardAssignees(id, cardId, payload);
+      await cardService.setCardAssignees(projectId, cardId, assigneeIds);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     }
   };
 
-  const setCardLabels = async (payload) => {
+  const saveCardLabels = async (labelIds) => {
     try {
-      await cardService.setCardLabels(id, cardId, payload);
+      await cardService.setCardLabels(projectId, cardId, labelIds);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
     }
@@ -81,14 +77,15 @@ export function useCardDetail({ showDetail, setShowDetail }) {
 
   return {
     cardId,
-    isOpen,
-    TABS,
-    currentTab,
+    isDialogOpen,
+    isLoading,
+    activeTab,
+    setActiveTab,
     members,
-    projectLabels,
-    handleClose,
-    setCurrentTab,
-    setCardAssignees,
-    setCardLabels
+    projectLabels: labels,
+    closeDetail,
+    saveCardAssignees,
+    saveCardLabels,
+    DETAIL_TABS,
   };
 }

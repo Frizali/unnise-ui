@@ -1,12 +1,19 @@
 import { Box } from "@mui/material";
-import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SwapVertOutlinedIcon from "@mui/icons-material/SwapVertOutlined";
+import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import { TaskProgressBar } from "../../../components/Bar/TaskProgressBar";
 
-export function KanbanBoardFilter({ colums, tasks }) {
+const FILTER_ACTIONS = [
+  { label: "Search", icon: <SearchOutlinedIcon fontSize="small" /> },
+  { label: "Person", icon: <AccountCircleOutlinedIcon fontSize="small" /> },
+  { label: "Filter", icon: <FilterAltOutlinedIcon fontSize="small" /> },
+  { label: "Sort", icon: <SwapVertOutlinedIcon fontSize="small" /> },
+];
+
+export function KanbanBoardFilter({ columns, cards }) {
   return (
     <Box
       sx={{
@@ -18,20 +25,13 @@ export function KanbanBoardFilter({ colums, tasks }) {
       }}
     >
       <Box sx={{ display: "flex", gap: 1, padding: ".5rem 0" }}>
-        <UiButtonIconText icon={<SearchOutlinedIcon fontSize="small" />}>
-          Search
-        </UiButtonIconText>
-        <UiButtonIconText icon={<AccountCircleOutlinedIcon fontSize="small" />}>
-          Person
-        </UiButtonIconText>
-        <UiButtonIconText icon={<FilterAltOutlinedIcon fontSize="small" />}>
-          Filter
-        </UiButtonIconText>
-        <UiButtonIconText icon={<SwapVertOutlinedIcon fontSize="small" />}>
-          Sort
-        </UiButtonIconText>
+        {FILTER_ACTIONS.map(({ label, icon }) => (
+          <UiButtonIconText key={label} icon={icon}>
+            {label}
+          </UiButtonIconText>
+        ))}
       </Box>
-      <TaskProgressBar columns={colums} tasks={tasks} />
+      <TaskProgressBar columns={columns} tasks={cards} />
     </Box>
   );
 }
