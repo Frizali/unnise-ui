@@ -26,7 +26,7 @@ export default function StatusSelect({ value, onChange, columns }) {
           textTransform: "none",
           fontSize: 14,
           justifyContent: "center",
-          fontWeight: 400,
+          fontWeight: 500,
         }}
       >
         {selected.title}
@@ -61,7 +61,7 @@ export default function StatusSelect({ value, onChange, columns }) {
                 textTransform: "none",
                 fontSize: 14,
                 mb: 0.75,
-                fontWeight: 400,
+                fontWeight: 500,
                 "&:last-child": { mb: 0 },
               }}
             >

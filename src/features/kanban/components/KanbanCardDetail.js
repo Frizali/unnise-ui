@@ -23,6 +23,7 @@ import { useState, useRef, useEffect } from "react";
 import { AvatarGroupChip } from "../../../components/Avatar/AvatarGroupChip";
 import StatusSelect from "../../../components/Select/StatusSelect";
 import CardTimestamp from "../../../components/Card/CardTimestamp";
+import LabelGroup from "../../../components/Label/LabelGroup";
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -55,24 +56,61 @@ export function KanbanBoardDetail({
     TABS,
     currentTab,
     members,
+    projectLabels,
     handleClose,
     setCurrentTab,
     setCardAssignees,
   } = useCardDetail({ showDetail, setShowDetail });
-  const [isEditing, setIsEditing] = useState(false);
-  const [assignees, setAssignees] = useState(card.assignees);
+  const [editingField, setEditingField] = useState(null);
+  const [assignees, setAssignees] = useState(card.assignees || []);
+  const [labels, setLabels] = useState(card.labels || []);
+  const [status, setStatus] = useState(card.column || null);
+  const [startDate, setStartDate] = useState(card.startDate || null);
+  const [dueDate, setDueDate] = useState(card.endDate || null);
+
+  useEffect(() => {
+    setAssignees(card.assignees || []);
+    setLabels(card.labels || []);
+    setStatus(card.status || "");
+    setStartDate(card.startDate || null);
+    setDueDate(card.endDate || null);
+  }, [card]);
+
+  useEffect(() => {
+    if (editingField && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editingField]);
+
+  const updateField = (field, value) => {
+    onUpdate({ ...card, [field]: value });
+  };
 
   const onSetAssignees = (e, newValue) => {
     setCardAssignees(newValue.map((a) => a.id));
     setAssignees(newValue);
-    onUpdate({ ...card, assignees: newValue });
+    updateField("assignees", newValue);
   };
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
+  const onSetLabels = (e, newValue) => {
+    setLabels(newValue);
+    updateField("labels", newValue);
+  };
+
+  const onSetStatus = (newStatus) => {
+    setStatus(newStatus);
+    updateField("status", newStatus);
+  };
+
+  const onSetStartDate = (date) => {
+    setStartDate(date);
+    updateField("startDate", date);
+  };
+
+  const onSetDueDate = (date) => {
+    setDueDate(date);
+    updateField("endDate", date);
+  };
 
   return (
     <Dialog
@@ -156,38 +194,24 @@ export function KanbanBoardDetail({
                     }}
                   >
                     {/* Assignee */}
-                    <Grid container>
-                      <Grid item size={4.5} alignSelf="center">
-                        <Typography variant="body2" color="text.primary">
-                          Assignees
-                        </Typography>
+                    <Grid container alignItems="flex-start">
+                      <Grid item size={4.5}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            minHeight: "40px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Typography variant="body2" color="text.primary">
+                            Assignees
+                          </Typography>
+                        </Box>
                       </Grid>
 
-                      <Grid size={7.5} item height="40px" alignSelf="center">
-                        {!isEditing && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              height: "40px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => setIsEditing(true)}
-                          >
-                            {assignees.length === 0 && (
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                None
-                              </Typography>
-                            )}
-                            {assignees.length > 0 && (
-                              <AvatarGroupChip users={assignees} />
-                            )}
-                          </Box>
-                        )}
-                        {isEditing && (
+                      <Grid size={7.5} item>
+                        {editingField == "assignees" ? (
                           <Autocomplete
                             multiple
                             autoFocus
@@ -197,8 +221,11 @@ export function KanbanBoardDetail({
                             options={members}
                             value={assignees}
                             onChange={onSetAssignees}
-                            onBlur={() => setIsEditing(false)}
+                            onBlur={() => setEditingField(null)}
                             getOptionLabel={(option) => option.username}
+                            isOptionEqualToValue={(option, value) =>
+                              option.id === value.id
+                            }
                             renderOption={(props, option) => {
                               const { key, ...rest } = props;
 
@@ -236,6 +263,13 @@ export function KanbanBoardDetail({
                                     fontSize: "14px",
                                     height: "auto",
                                   },
+                                  "& .MuiInputBase-root": {
+                                    height: "auto",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                    gap: "4px",
+                                    padding: "4px 8px",
+                                  },
                                 }}
                               />
                             )}
@@ -268,28 +302,15 @@ export function KanbanBoardDetail({
                               },
                             }}
                           />
-                        )}
-                      </Grid>
-                    </Grid>
-
-                    {/* Labels */}
-                    <Grid container>
-                      <Grid item size={4.5} alignSelf="center">
-                        <Typography variant="body2" color="text.primary">
-                          Labels
-                        </Typography>
-                      </Grid>
-
-                      <Grid size={7.5} item height="40px" alignSelf="center">
-                        {!isEditing && (
+                        ) : (
                           <Box
                             sx={{
                               display: "flex",
                               alignItems: "center",
-                              height: "40px",
+                              minHeight: "40px",
                               cursor: "pointer",
                             }}
-                            // onClick={() => setIsEditing(true)}
+                            onClick={() => setEditingField("assignees")}
                           >
                             {assignees.length === 0 && (
                               <Typography
@@ -298,6 +319,147 @@ export function KanbanBoardDetail({
                               >
                                 None
                               </Typography>
+                            )}
+                            {assignees.length > 0 && (
+                              <AvatarGroupChip users={assignees} />
+                            )}
+                          </Box>
+                        )}
+                      </Grid>
+                    </Grid>
+
+                    {/* Labels */}
+                    <Grid container alignItems="flex-start">
+                      <Grid item size={4.5}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            minHeight: "40px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Typography variant="body2" color="text.primary">
+                            Labels
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid size={7.5} item>
+                        {editingField === "labels" ? (
+                          <Autocomplete
+                            multiple
+                            autoFocus
+                            openOnFocus
+                            disablePortal={false}
+                            limitTags={1}
+                            options={projectLabels}
+                            value={labels}
+                            onChange={onSetLabels}
+                            onBlur={() => setEditingField(null)}
+                            getOptionLabel={(option) => option.name}
+                            isOptionEqualToValue={(option, value) =>
+                              option.id === value.id
+                            }
+                            renderOption={(props, option) => {
+                              const { key, ...rest } = props;
+                              return (
+                                <Box
+                                  key={key}
+                                  {...rest}
+                                  component="li"
+                                  sx={{
+                                    display: "flex",
+                                    gap: 1,
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Box
+                                    sx={{
+                                      padding: "4px 10px",
+                                      background: `${option.color}30`,
+                                      borderRadius: "4px",
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body2"
+                                      color={option.color}
+                                      fontWeight={500}
+                                    >
+                                      {option.name}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              );
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                inputRef={inputRef}
+                                {...params}
+                                placeholder="Select labels"
+                                size="small"
+                                sx={{
+                                  "& .MuiInputBase-input": {
+                                    fontSize: "14px",
+                                    height: "auto",
+                                  },
+                                  "& .MuiInputBase-root": {
+                                    height: "auto",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                    gap: "4px",
+                                    padding: "4px 8px",
+                                  },
+                                }}
+                              />
+                            )}
+                            renderTags={(value, getTagProps) =>
+                              value.map((option, index) => (
+                                <Box
+                                  {...getTagProps({ index })}
+                                  key={option.id}
+                                  sx={{
+                                    padding: "2px 8px",
+                                    background: `${option.color}30`,
+                                    borderRadius: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body2"
+                                    color={option.color}
+                                    fontWeight={500}
+                                  >
+                                    {option.name}
+                                  </Typography>
+                                </Box>
+                              ))
+                            }
+                            sx={{
+                              "& .MuiAutocomplete-tag": {
+                                margin: "0 3px 3px 0",
+                              },
+                            }}
+                          />
+                        ) : (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              minHeight: "40px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => setEditingField("labels")}
+                          >
+                            {labels.length === 0 ? (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                None
+                              </Typography>
+                            ) : (
+                              <LabelGroup labels={labels} />
                             )}
                           </Box>
                         )}
@@ -326,7 +488,9 @@ export function KanbanBoardDetail({
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        {!isEditing && (
+                        {editingField == "dueDate" ? (
+                          <></>
+                        ) : (
                           <Box
                             sx={{
                               display: "flex",
@@ -334,9 +498,9 @@ export function KanbanBoardDetail({
                               height: "40px",
                               cursor: "pointer",
                             }}
-                            // onClick={() => setIsEditing(true)}
+                            onClick={() => setEditingField("dueDate")}
                           >
-                            {assignees.length === 0 && (
+                            {dueDate === null && (
                               <Typography
                                 variant="body2"
                                 color="text.secondary"
@@ -358,7 +522,9 @@ export function KanbanBoardDetail({
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        {!isEditing && (
+                        {editingField === "startDate" ? (
+                          <></>
+                        ) : (
                           <Box
                             sx={{
                               display: "flex",
@@ -366,7 +532,7 @@ export function KanbanBoardDetail({
                               height: "40px",
                               cursor: "pointer",
                             }}
-                            // onClick={() => setIsEditing(true)}
+                            onClick={() => setEditingField("startDate")}
                           >
                             {assignees.length === 0 && (
                               <Typography
