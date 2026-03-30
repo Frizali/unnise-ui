@@ -71,6 +71,14 @@ export function useCardDetail({ showDetail, setShowDetail }) {
     }
   };
 
+  const setCardLabels = async (payload) => {
+    try {
+      await cardService.setCardLabels(id, cardId, payload);
+    } catch (err) {
+      showAlert(err.title, err.detail, "error");
+    }
+  };
+
   return {
     cardId,
     isOpen,
@@ -81,5 +89,6 @@ export function useCardDetail({ showDetail, setShowDetail }) {
     handleClose,
     setCurrentTab,
     setCardAssignees,
+    setCardLabels
   };
 }

@@ -31,10 +31,21 @@ export default function KanbanBoard() {
       const pos = prev.filter((c) => c.column === card.column).length;
       return [...prev, { ...card, position: pos }];
     });
-  const updateCard = upd => {
-    setCards(prev => prev.map(c => c.id === upd.id ? upd : c));
-  }
     
+  const updateCard = (upd) => {
+    setCards((prev) => {
+      const existing = prev.find((c) => c.id === upd.id);
+      if (existing && existing.columnId !== upd.columnId) {
+        const newPosition = prev.filter(
+          (c) => c.columnId === upd.columnId && c.id !== upd.id
+        ).length;
+        cardService.move(id, upd.id, { cardId: upd.id, columnId: upd.columnId, position: newPosition });
+        return prev.map((c) => (c.id === upd.id ? { ...upd, position: newPosition } : c));
+      }
+      return prev.map((c) => (c.id === upd.id ? upd : c));
+    });
+  };
+
   const deleteCard = (id) =>
     setCards((prev) => prev.filter((c) => c.id !== id));
   const moveToColumn = (cardId, colId) =>

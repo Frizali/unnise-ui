@@ -6,6 +6,7 @@ import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import OutlinedFlagRoundedIcon from "@mui/icons-material/OutlinedFlagRounded";
 import { useSearchParams } from "react-router-dom";
 import { KanbanBoardDetail } from "./KanbanCardDetail";
+import LabelGroup from "../../../components/Label/LabelGroup";
 
 const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },
@@ -122,6 +123,11 @@ export function KanbanCard({
               >
                 {card.description}
               </Typography>
+            )}
+          </Box>
+          <Box mb={1}>
+            {card.labels.length > 0 && (
+              <LabelGroup labels={card.labels} />
             )}
           </Box>
           <Box sx={{ display: "flex", justifyContent: "end" }}>

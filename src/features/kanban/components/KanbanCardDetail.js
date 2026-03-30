@@ -60,6 +60,7 @@ export function KanbanBoardDetail({
     handleClose,
     setCurrentTab,
     setCardAssignees,
+    setCardLabels
   } = useCardDetail({ showDetail, setShowDetail });
   const [editingField, setEditingField] = useState(null);
   const [assignees, setAssignees] = useState(card.assignees || []);
@@ -93,13 +94,14 @@ export function KanbanBoardDetail({
   };
 
   const onSetLabels = (e, newValue) => {
+    setCardLabels(newValue.map((l) => l.id));
     setLabels(newValue);
     updateField("labels", newValue);
   };
 
   const onSetStatus = (newStatus) => {
     setStatus(newStatus);
-    updateField("status", newStatus);
+    updateField("columnId", newStatus);
   };
 
   const onSetStartDate = (date) => {
@@ -475,7 +477,7 @@ export function KanbanBoardDetail({
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        <StatusSelect value={card.columnId} columns={columns} />
+                        <StatusSelect value={card.columnId} columns={columns} onChange={onSetStatus}/>
                       </Grid>
                     </Grid>
 
@@ -488,7 +490,7 @@ export function KanbanBoardDetail({
                       </Grid>
 
                       <Grid size={7.5} item height="40px" alignSelf="center">
-                        {editingField == "dueDate" ? (
+                        {editingField === "dueDate" ? (
                           <></>
                         ) : (
                           <Box
