@@ -36,6 +36,11 @@ export function useCard() {
     setCards((prev) => {
       const existing = prev.find((c) => c.id === updatedCard.id);
       const isMovingColumn = existing && existing.columnId !== updatedCard.columnId;
+      const isUpdateCard =
+        existing &&
+        ["title", "description", "startDate", "endDate"].some(
+          (field) => existing[field] !== updatedCard[field]
+        );
 
       if (isMovingColumn) {
         const newPosition = prev.filter(
@@ -49,6 +54,16 @@ export function useCard() {
         return prev.map((c) =>
           c.id === updatedCard.id ? { ...updatedCard, position: newPosition } : c
         );
+      }
+
+      if (isUpdateCard){
+        cardService.update(projectId, updatedCard.id, {
+          id: updatedCard.id,
+          title: updatedCard.title,
+          description: updatedCard.description,
+          startDate: updatedCard.startDate,
+          endDate: updatedCard.endDate
+        })
       }
 
       return prev.map((c) => (c.id === updatedCard.id ? updatedCard : c));

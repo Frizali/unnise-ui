@@ -44,7 +44,7 @@ export function TaskProgressBar({ columns, tasks }) {
                 backgroundColor: col.color,
                 transition: "height 0.2s ease",
                 borderRadius:
-                  index === 0 && index == totalColumn
+                  index === 0 && index === totalColumn
                     ? "4px"
                     : index === 0
                       ? "4px 0 0 4px"

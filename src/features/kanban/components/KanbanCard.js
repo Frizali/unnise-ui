@@ -1,13 +1,8 @@
 import { useState } from "react";
 import { Box, Typography, Divider, Avatar, AvatarGroup } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
-import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
-import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
-import OutlinedFlagRoundedIcon from "@mui/icons-material/OutlinedFlagRounded";
-import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { KanbanBoardDetail } from "./KanbanCardDetail";
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 
 const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },

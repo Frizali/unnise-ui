@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { AlertProvider } from "./context/AlertContext";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import "./index.css";
@@ -19,15 +19,15 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <AlertProvider>
-          <BrowserRouter>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <AuthProvider>
+          <AlertProvider>
+            <BrowserRouter>
               <App />
-            </LocalizationProvider>
-          </BrowserRouter>
-        </AlertProvider>
-      </AuthProvider>
+            </BrowserRouter>
+          </AlertProvider>
+        </AuthProvider>
+      </LocalizationProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );

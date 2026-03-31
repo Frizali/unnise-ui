@@ -1,4 +1,4 @@
-import { apiClient, setAccessToken } from "../lib/apiClient";
+import { apiClient } from "../lib/apiClient";
 
 export const authService = {
   async login(payload) {

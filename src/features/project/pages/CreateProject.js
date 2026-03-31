@@ -151,7 +151,7 @@ export function CreateProject({
             </Box>
           )}
 
-          {selectedTemplate == 0 && (
+          {selectedTemplate === 0 && (
             <Box
               sx={{
                 padding: "2.5rem 2rem",

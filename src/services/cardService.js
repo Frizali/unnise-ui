@@ -5,6 +5,10 @@ export const cardService = {
         return await apiClient.get(`/projects/${projectId}/cards`)
     },
 
+    async update(projectId, cardId, payload) {
+        return await apiClient.put(`/projects/${projectId}/cards/${cardId}`, payload)
+    },
+
     async move(projectId, cardId, payload) {
         return await apiClient.put(`/projects/${projectId}/cards/${cardId}/move`, payload)
     },

@@ -24,10 +24,11 @@ import StatusSelect from "../../../components/Select/StatusSelect";
 import CardTimestamp from "../../../components/Card/CardTimestamp";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { useCardDetail } from "../hooks/useCardDetail";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
+import { DifficultyVote } from "./DifficultyVote";
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -40,6 +41,12 @@ const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     "&.Mui-focusVisible": { backgroundColor: "#d1eaff" },
   }),
 );
+
+const DIFFICULTY_META = {
+  Low:    { color: "#16a34a", bg: "#dcfce7", border: "#86efac", points: 3 },
+  Medium: { color: "#d97706", bg: "#fef3c7", border: "#fcd34d", points: 6 },
+  High:   { color: "#dc2626", bg: "#fee2e2", border: "#fca5a5", points: 10 },
+};
 
 export function KanbanBoardDetail({
   card,
@@ -69,6 +76,8 @@ export function KanbanBoardDetail({
   const [status, setStatus] = useState(card.columnId || null);
   const [startDate, setStartDate] = useState(card.startDate || null);
   const [dueDate, setDueDate] = useState(card.endDate || null);
+
+  const [difficultyResult, setDifficultyResult] = useState(card.difficulty || null);
 
   useEffect(() => {
     setAssignees(card.assignees || []);
@@ -110,6 +119,15 @@ export function KanbanBoardDetail({
     setDueDate(date);
     updateField("endDate", date);
   };
+
+  const handleDifficultyResult = (winnerKey) => {
+    setDifficultyResult(winnerKey);
+    updateField("difficulty", winnerKey);
+  };
+ 
+  const diffMeta = difficultyResult ? DIFFICULTY_META[difficultyResult] : null;
+ 
+  const currentUserId = members?.[0]?.id ?? "current-user";
 
   return (
     <Dialog
@@ -202,14 +220,48 @@ export function KanbanBoardDetail({
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
-                <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
-                  <Typography color="text.primary" fontWeight={500}>
-                    Difficulty
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails />
-              </Accordion>
+
+                  <Accordion
+                    sx={accordionSx}
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
+                        <Typography color="text.primary" fontWeight={500}>
+                          Difficulty
+                        </Typography>
+
+                        {diffMeta && (
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                              padding: "2px 10px",
+                              borderRadius: "20px",
+                              background: diffMeta.bg,
+                              border: `1px solid ${diffMeta.border}`,
+                            }}
+                          >
+                            <Typography fontSize={12} fontWeight={700} color={diffMeta.color}>
+                              {difficultyResult}
+                            </Typography>
+                            <Typography fontSize={11} color={diffMeta.color}>
+                              · {diffMeta.points} pts
+                            </Typography>
+                          </Box>
+                        )}
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <DifficultyVote
+                        members={members}
+                        card={card}
+                        currentUserId={currentUserId}
+                        onUpdateDifficulty={handleDifficultyResult}
+                      />
+                    </AccordionDetails>
+                  </Accordion>
+
 
               <Box px={2}>
                 <CardTimestamp
@@ -390,17 +442,27 @@ function AssigneesField({
             isOptionEqualToValue={(o, v) => o.id === v.id}
             renderOption={(props, option) => {
               const { key, ...rest } = props;
+
               return (
                 <Box
                   key={key}
                   {...rest}
                   component="li"
-                  sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
                 >
                   <Avatar sx={{ width: 24, height: 24 }} />
-                  <Typography variant="body2" color="text.primary">
-                    {option.username}
-                  </Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {option.username}
+                    </Typography>
+                  </Box>
                 </Box>
               );
             }}
@@ -410,7 +472,19 @@ function AssigneesField({
                 {...params}
                 placeholder="Select member"
                 size="small"
-                sx={autocompleteInputSx}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontSize: "14px",
+                    height: "auto",
+                  },
+                  "& .MuiInputBase-root": {
+                    height: "auto",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "4px 8px",
+                  },
+                }}
               />
             )}
             renderTags={(value, getTagProps) =>
@@ -418,17 +492,29 @@ function AssigneesField({
                 <Chip
                   {...getTagProps({ index })}
                   key={option.id}
-                  avatar={<Avatar sx={{ width: 24, height: 24 }} />}
+                  avatar={
+                    <Avatar sx={{ width: 24, height: 24 }} />
+                  }
                   label={option.username}
                   size="small"
                   sx={{
                     borderRadius: "4px",
                     fontSize: "14px",
                     background: "transparent",
+                    "& .MuiChip-avatarSmall": {
+                      width: 24,
+                      height: 24,
+                      color: "white",
+                    },
                   }}
                 />
               ))
             }
+            sx={{
+              "& .MuiAutocomplete-tag": {
+                margin: "0 3px 3px 0",
+              },
+            }}
           />
         ) : (
           <Box
@@ -545,6 +631,11 @@ function LabelsField({
                 </Box>
               ))
             }
+            sx={{
+              "& .MuiAutocomplete-tag": {
+                margin: "0 3px 3px 0",
+              },
+            }}
           />
         ) : (
           <Box

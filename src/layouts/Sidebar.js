@@ -79,7 +79,7 @@ function Sidebar() {
       <List sx={{ flexGrow: 1 }} disablePadding dense>
         {listMenu.map((item, index) => (
           <StyledListItemButton
-            selected={selectedIndex == index}
+            selected={selectedIndex === index}
             sx={{ gap: ".25rem" }}
             key={item.title}
             onClick={(event) => handleListItemClick(event, index)}
