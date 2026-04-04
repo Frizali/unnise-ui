@@ -15,6 +15,7 @@ export function useCardDetail({ isOpen, setIsOpen }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("comments");
   const [members, setMembers] = useState([]);
+  const [comments, setComments] = useState([]);
   const [labels, setLabels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const showAlert = useAlert();
@@ -33,6 +34,7 @@ export function useCardDetail({ isOpen, setIsOpen }) {
     if (!isDialogOpen) return;
     loadProjectMembers();
     loadProjectLabels();
+    loadCardComments();
   }, [isDialogOpen]);
 
   const loadProjectMembers = async () => {
@@ -75,6 +77,18 @@ export function useCardDetail({ isOpen, setIsOpen }) {
     }
   };
 
+  const loadCardComments = async () => {
+    setIsLoading(true);
+    try {
+      const data = await cardService.getCardComments(projectId, cardId);
+      setComments(data);
+    } catch (err) {
+      showAlert(err.title, err.detail, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     cardId,
     isDialogOpen,
@@ -82,6 +96,7 @@ export function useCardDetail({ isOpen, setIsOpen }) {
     activeTab,
     setActiveTab,
     members,
+    comments,
     projectLabels: labels,
     closeDetail,
     saveCardAssignees,

@@ -29,6 +29,7 @@ import dayjs from "dayjs";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import { DifficultyVote } from "./DifficultyVote";
+import { CommentTab } from "./CommentTab";
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -63,6 +64,7 @@ export function KanbanBoardDetail({
     activeTab,
     setActiveTab,
     members,
+    comments,
     projectLabels,
     closeDetail,
     saveCardAssignees,
@@ -293,6 +295,9 @@ export function KanbanBoardDetail({
                   />
                 ))}
               </Tabs>
+              {activeTab === "comments" && (
+                <CommentTab cardId={card.id} currentUser={currentUserId} initialComments={comments}/>
+              )}
             </Box>
           </Grid>
         </Grid>
