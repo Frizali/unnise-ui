@@ -30,6 +30,7 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import ClearIcon from "@mui/icons-material/Clear";
 import { DifficultyVote } from "./DifficultyVote";
 import { CommentTab } from "./CommentTab";
+import { useAuth } from "../../../context/AuthContext";
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -44,9 +45,9 @@ const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
 );
 
 const DIFFICULTY_META = {
-  Low:    { color: "#16a34a", bg: "#dcfce7", border: "#86efac", points: 3 },
+  Low: { color: "#16a34a", bg: "#dcfce7", border: "#86efac", points: 3 },
   Medium: { color: "#d97706", bg: "#fef3c7", border: "#fcd34d", points: 6 },
-  High:   { color: "#dc2626", bg: "#fee2e2", border: "#fca5a5", points: 10 },
+  High: { color: "#dc2626", bg: "#fee2e2", border: "#fca5a5", points: 10 },
 };
 
 export function KanbanBoardDetail({
@@ -57,6 +58,7 @@ export function KanbanBoardDetail({
   columns,
 }) {
   const inputRef = useRef(null);
+  const { user } = useAuth();
 
   const {
     cardId,
@@ -79,7 +81,9 @@ export function KanbanBoardDetail({
   const [startDate, setStartDate] = useState(card.startDate || null);
   const [dueDate, setDueDate] = useState(card.endDate || null);
 
-  const [difficultyResult, setDifficultyResult] = useState(card.difficulty || null);
+  const [difficultyResult, setDifficultyResult] = useState(
+    card.difficulty || null,
+  );
 
   useEffect(() => {
     setAssignees(card.assignees || []);
@@ -126,10 +130,9 @@ export function KanbanBoardDetail({
     setDifficultyResult(winnerKey);
     updateField("difficulty", winnerKey);
   };
- 
+
   const diffMeta = difficultyResult ? DIFFICULTY_META[difficultyResult] : null;
- 
-  const currentUserId = members?.[0]?.id ?? "current-user";
+  const currentUserId = user?.sub;
 
   return (
     <Dialog
@@ -148,8 +151,23 @@ export function KanbanBoardDetail({
       >
         <DetailHeader cardId={cardId} onClose={closeDetail} />
 
-        <Grid container>
-          <Grid size={5} padding="0 26px">
+        <Grid
+          container
+          sx={{
+            flex: 1,
+            minHeight: 0,
+          }}
+        >
+          <Grid
+            size={5}
+            sx={{
+              padding: "0 26px",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              minHeight: 0,
+            }}
+          >
             <Box mb="1rem">
               <Typography variant="h5" fontWeight={600} color="text.primary">
                 {card.title}
@@ -160,7 +178,20 @@ export function KanbanBoardDetail({
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: ".5rem" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: ".5rem",
+                flex: 1,
+                overflowY: "auto",
+                minHeight: 0,
+                pr: "4px",
+                "&::-webkit-scrollbar": { width: 4 },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#E5E7EB",
+                  borderRadius: 4,
+                },
+              }}
             >
               <Accordion defaultExpanded sx={accordionSx}>
                 <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
@@ -222,48 +253,55 @@ export function KanbanBoardDetail({
                 </AccordionDetails>
               </Accordion>
 
-
-                  <Accordion
-                    sx={accordionSx}
+              <Accordion sx={accordionSx}>
+                <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flex: 1,
+                    }}
                   >
-                    <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
-                        <Typography color="text.primary" fontWeight={500}>
-                          Difficulty
+                    <Typography color="text.primary" fontWeight={500}>
+                      Difficulty
+                    </Typography>
+
+                    {diffMeta && (
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                          padding: "2px 10px",
+                          borderRadius: "20px",
+                          background: diffMeta.bg,
+                          border: `1px solid ${diffMeta.border}`,
+                        }}
+                      >
+                        <Typography
+                          fontSize={12}
+                          fontWeight={700}
+                          color={diffMeta.color}
+                        >
+                          {difficultyResult}
                         </Typography>
-
-                        {diffMeta && (
-                          <Box
-                            sx={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                              padding: "2px 10px",
-                              borderRadius: "20px",
-                              background: diffMeta.bg,
-                              border: `1px solid ${diffMeta.border}`,
-                            }}
-                          >
-                            <Typography fontSize={12} fontWeight={700} color={diffMeta.color}>
-                              {difficultyResult}
-                            </Typography>
-                            <Typography fontSize={11} color={diffMeta.color}>
-                              · {diffMeta.points} pts
-                            </Typography>
-                          </Box>
-                        )}
+                        <Typography fontSize={11} color={diffMeta.color}>
+                          · {diffMeta.points} pts
+                        </Typography>
                       </Box>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <DifficultyVote
-                        members={members}
-                        card={card}
-                        currentUserId={currentUserId}
-                        onUpdateDifficulty={handleDifficultyResult}
-                      />
-                    </AccordionDetails>
-                  </Accordion>
-
+                    )}
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <DifficultyVote
+                    members={members}
+                    card={card}
+                    currentUserId={currentUserId}
+                    onUpdateDifficulty={handleDifficultyResult}
+                  />
+                </AccordionDetails>
+              </Accordion>
 
               <Box px={2}>
                 <CardTimestamp
@@ -276,7 +314,14 @@ export function KanbanBoardDetail({
 
           <Grid
             size={7}
-            sx={{ padding: "0 26px", borderLeft: "1px solid #D9D9D9" }}
+            sx={{
+              padding: "0 26px",
+              borderLeft: "1px solid #D9D9D9",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              minHeight: 0,
+            }}
           >
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
@@ -295,8 +340,21 @@ export function KanbanBoardDetail({
                   />
                 ))}
               </Tabs>
+            </Box>
+
+            <Box
+              sx={{
+                flex: 1,
+                overflowY: "auto",
+                minHeight: 0,
+              }}
+            >
               {activeTab === "comments" && (
-                <CommentTab cardId={card.id} currentUser={currentUserId} initialComments={comments}/>
+                <CommentTab
+                  cardId={card.id}
+                  currentUser={currentUserId}
+                  initialComments={comments}
+                />
               )}
             </Box>
           </Grid>
@@ -461,10 +519,7 @@ function AssigneesField({
                 >
                   <Avatar sx={{ width: 24, height: 24 }} />
                   <Box sx={{ flex: 1 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.primary"
-                    >
+                    <Typography variant="body2" color="text.primary">
                       {option.username}
                     </Typography>
                   </Box>
@@ -497,9 +552,7 @@ function AssigneesField({
                 <Chip
                   {...getTagProps({ index })}
                   key={option.id}
-                  avatar={
-                    <Avatar sx={{ width: 24, height: 24 }} />
-                  }
+                  avatar={<Avatar sx={{ width: 24, height: 24 }} />}
                   label={option.username}
                   size="small"
                   sx={{

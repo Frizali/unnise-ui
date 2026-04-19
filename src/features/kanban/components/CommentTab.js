@@ -9,6 +9,11 @@ import {
   Chip,
   Collapse,
   CircularProgress,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Button,
 } from "@mui/material";
 import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import GifBoxOutlinedIcon from "@mui/icons-material/GifBoxOutlined";
@@ -21,7 +26,12 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import MessagingSvg from "../../../assets/Messaging-bro.svg";
 import * as signalR from "@microsoft/signalr";
+import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 
 const EMOJI_LIST = [
   "👍",
@@ -54,8 +64,8 @@ function EmojiPicker({ onSelect, onClose }) {
         bottom: "calc(100% + 8px)",
         right: 0,
         background: "#fff",
-        border: "1px solid #E5E7EB",
-        borderRadius: "10px",
+        border: "1px solid #D9D9D9",
+        borderRadius: "4px",
         boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         padding: "8px",
         display: "flex",
@@ -78,7 +88,7 @@ function EmojiPicker({ onSelect, onClose }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: "6px",
+            borderRadius: "4px",
             cursor: "pointer",
             fontSize: 18,
             "&:hover": { background: "#F3F4F6" },
@@ -103,7 +113,7 @@ function FilePreview({ files, onRemove }) {
             key={i}
             sx={{
               position: "relative",
-              border: "1px solid #E5E7EB",
+              border: "1px solid #D9D9D9",
               borderRadius: "8px",
               overflow: "hidden",
               width: isImg ? 80 : "auto",
@@ -180,7 +190,7 @@ function AttachmentDisplay({ attachments }) {
               width: 200,
               borderRadius: "8px",
               overflow: "hidden",
-              border: "1px solid #E5E7EB",
+              border: "1px solid #D9D9D9",
               flexShrink: 0,
             }}
           >
@@ -214,8 +224,11 @@ function CommentComposer({
   onCancelReply,
   placeholder = "Write a comment...",
   autoFocus = false,
+  initialText = "",
+  isEditMode = false,
+  onCancelEdit,
 }) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState(initialText);
   const [files, setFiles] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -223,10 +236,16 @@ function CommentComposer({
   const textFieldRef = useRef(null);
 
   useEffect(() => {
-    if (autoFocus && textFieldRef.current) {
+    setText(initialText);
+  }, [initialText]);
+
+  useEffect(() => {
+    if ((autoFocus || isEditMode) && textFieldRef.current) {
       textFieldRef.current.focus();
+      const len = textFieldRef.current.value.length;
+      textFieldRef.current.setSelectionRange(len, len);
     }
-  }, [autoFocus]);
+  }, [autoFocus, isEditMode]);
 
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files);
@@ -264,6 +283,10 @@ function CommentComposer({
       e.preventDefault();
       handleSubmit();
     }
+    if (e.key === "Escape") {
+      if (isEditMode && onCancelEdit) onCancelEdit();
+      if (onCancelReply) onCancelReply();
+    }
   };
 
   const isEmpty = !text.trim() && !files.length;
@@ -271,18 +294,20 @@ function CommentComposer({
   return (
     <Box
       sx={{
-        border: "1px solid #E5E7EB",
-        borderRadius: "10px",
+        border: "1px solid #D9D9D9",
+        borderRadius: "4px",
         overflow: "visible",
         background: "#fff",
         transition: "border-color 0.15s, box-shadow 0.15s",
         "&:focus-within": {
-          borderColor: "#6366F1",
-          boxShadow: "0 0 0 3px rgba(99,102,241,0.08)",
+          borderColor: isEditMode ? "#D97706" : "#315cfd",
+          //   boxShadow: isEditMode
+          //     ? "0 0 0 3px rgba(217,119,6,0.08)"
+          //     : "0 0 0 3px rgba(99,102,241,0.08)",
         },
       }}
     >
-      {replyTo && (
+      {(replyTo || isEditMode) && (
         <Box
           sx={{
             display: "flex",
@@ -290,27 +315,42 @@ function CommentComposer({
             gap: 1,
             px: 1.5,
             py: 0.75,
-            borderBottom: "1px solid #F3F4F6",
-            background: "#F9FAFB",
+            borderBottom: "1px solid #D9D9D9",
+            background: isEditMode ? "#FFFBEB" : "#F9FAFB",
             borderRadius: "10px 10px 0 0",
           }}
         >
-          <ReplyOutlinedIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
+          {isEditMode ? (
+            <EditOutlinedIcon sx={{ fontSize: 14, color: "#D97706" }} />
+          ) : (
+            <ReplyOutlinedIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
+          )}
           <Typography variant="caption" color="text.secondary">
-            Replying to <strong>{replyTo.author?.username}</strong>
+            {isEditMode ? (
+              <span>Editing comment</span>
+            ) : (
+              <span>
+                Replying to <strong>{replyTo?.author?.username}</strong>
+              </span>
+            )}
           </Typography>
           <Box sx={{ ml: "auto" }}>
-            <IconButton size="small" onClick={onCancelReply} sx={{ p: 0 }}>
+            <IconButton
+              size="small"
+              onClick={isEditMode ? onCancelEdit : onCancelReply}
+              sx={{ p: 0 }}
+            >
               <CloseOutlinedIcon sx={{ fontSize: 14 }} />
             </IconButton>
           </Box>
         </Box>
       )}
+
       <Box sx={{ px: 1.5, pt: 1 }}>
         <TextField
           inputRef={textFieldRef}
           multiline
-          minRows={replyTo ? 1 : 2}
+          minRows={replyTo || isEditMode ? 1 : 2}
           maxRows={6}
           fullWidth
           placeholder={placeholder}
@@ -320,12 +360,13 @@ function CommentComposer({
           variant="standard"
           InputProps={{ disableUnderline: true }}
           sx={{
-            "& .MuiInputBase-input": { fontSize: 14, color: "#111827" },
-            "& textarea::placeholder": { color: "#9CA3AF" },
+            "& .MuiInputBase-input": { fontSize: 14, color: "text.primary" },
+            "& textarea::placeholder": { color: "text.primary" },
           }}
         />
         <FilePreview files={files} onRemove={handleRemoveFile} />
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -333,48 +374,33 @@ function CommentComposer({
           px: 1,
           py: 0.75,
           gap: 0.25,
-          borderTop: "1px solid #F3F4F6",
+          borderTop: "1px solid #D9D9D9",
           mt: 0.5,
         }}
       >
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-        <Tooltip title="Attach file">
-          <IconButton
-            size="small"
-            onClick={() => fileInputRef.current?.click()}
-            sx={{ color: "#9CA3AF", "&:hover": { color: "#6366F1" } }}
-          >
-            <AttachFileOutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="GIF">
-          <IconButton
-            size="small"
-            sx={{ color: "#9CA3AF", "&:hover": { color: "#6366F1" } }}
-          >
-            <GifBoxOutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
-        <Box sx={{ position: "relative" }}>
-          <Tooltip title="Emoji">
-            <IconButton
-              size="small"
-              onClick={() => setShowEmoji((v) => !v)}
-              sx={{
-                color: showEmoji ? "#6366F1" : "#9CA3AF",
-                "&:hover": { color: "#6366F1" },
-              }}
+        {!isEditMode && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <UiButtonIcon
+              title="Attach File"
+              onClick={() => fileInputRef.current?.click()}
             >
-              <EmojiEmotionsOutlinedIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
+              <AttachFileOutlinedIcon fontSize="small" />
+            </UiButtonIcon>
+          </>
+        )}
+        <Box sx={{ position: "relative" }}>
+          <UiButtonIcon title="Emoji" onClick={() => setShowEmoji((v) => !v)}>
+            <EmojiEmotionsOutlinedIcon fontSize="small" />
+          </UiButtonIcon>
+
           {showEmoji && (
             <EmojiPicker
               onSelect={handleEmojiSelect}
@@ -382,34 +408,137 @@ function CommentComposer({
             />
           )}
         </Box>
+
+        {isEditMode && (
+          <Typography variant="caption" color="text.disabled" sx={{ ml: 0.5 }}>
+            Esc to cancel
+          </Typography>
+        )}
+
         <Box sx={{ ml: "auto" }}>
-          <Tooltip title={isEmpty ? "Type something first" : "Send (Enter)"}>
+          <Tooltip
+            title={
+              isEmpty
+                ? "Type something first"
+                : isEditMode
+                  ? "Save (Enter)"
+                  : "Send (Enter)"
+            }
+          >
             <span>
-              <IconButton
+              <Button
                 size="small"
                 disabled={isEmpty || submitting}
                 onClick={handleSubmit}
+                loading={submitting}
                 sx={{
-                  background: isEmpty ? "#F3F4F6" : "#6366F1",
+                  background: isEmpty
+                    ? "transparent"
+                    : isEditMode
+                      ? "#D97706"
+                      : "#315cfd",
                   color: isEmpty ? "#D1D5DB" : "#fff",
-                  borderRadius: "8px",
-                  width: 30,
-                  height: 30,
-                  "&:hover": { background: isEmpty ? "#F3F4F6" : "#4F46E5" },
+                  minWidth: "2rem",
+                  height: "2rem",
+                  display: "flex",
+                  justifyContent: "center",
+                  justifyItems: "center",
+                  "&:hover": {
+                    background: isEmpty
+                      ? ""
+                      : isEditMode
+                        ? "#B45309"
+                        : "#315cfd",
+                  },
                   transition: "all 0.15s",
                 }}
               >
-                {submitting ? (
-                  <CircularProgress size={14} sx={{ color: "#fff" }} />
+                {isEditMode ? (
+                  <EditOutlinedIcon fontSize="small" />
                 ) : (
-                  <SendOutlinedIcon sx={{ fontSize: 16 }} />
+                  <SendOutlinedIcon fontSize="small" />
                 )}
-              </IconButton>
+              </Button>
             </span>
           </Tooltip>
         </Box>
       </Box>
     </Box>
+  );
+}
+
+function CommentMenu({ comment, currentUserId, onEdit, onDelete }) {
+  const [anchor, setAnchor] = useState(null);
+  const isOwner = comment.author?.id === currentUserId;
+  if (!isOwner) return null;
+
+  return (
+    <>
+      <Tooltip title="More">
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            setAnchor(e.currentTarget);
+          }}
+          sx={{
+            ml: "auto",
+            p: 0.25,
+            color: "#9CA3AF",
+            opacity: 0,
+            ".comment-item:hover &": { opacity: 1 },
+            "&:hover": { color: "#374151" },
+          }}
+        >
+          <MoreHorizOutlinedIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+      <Menu
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={() => setAnchor(null)}
+        PaperProps={{
+          sx: {
+            borderRadius: "4px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+            minWidth: 140,
+          },
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            setAnchor(null);
+            onEdit();
+          }}
+          sx={{ gap: 1, fontSize: 13, py: 0.75 }}
+        >
+          <ListItemIcon sx={{ minWidth: 0 }}>
+            <EditOutlinedIcon sx={{ fontSize: 16, color: "#6B7280" }} />
+          </ListItemIcon>
+          <ListItemText primaryTypographyProps={{ fontSize: 13 }}>
+            Edit
+          </ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchor(null);
+            onDelete();
+          }}
+          sx={{ gap: 1, fontSize: 13, py: 0.75, color: "#DC2626" }}
+        >
+          <ListItemIcon sx={{ minWidth: 0 }}>
+            <DeleteOutlineOutlinedIcon
+              sx={{ fontSize: 16, color: "#DC2626" }}
+            />
+          </ListItemIcon>
+          <ListItemText
+            primaryTypographyProps={{ fontSize: 13, color: "#DC2626" }}
+          >
+            Delete
+          </ListItemText>
+        </MenuItem>
+      </Menu>
+    </>
   );
 }
 
@@ -419,17 +548,28 @@ function CommentItem({
   onLike,
   onPin,
   onReply,
+  onEdit,
+  onDelete,
   depth = 0,
+  isReply = false,
 }) {
   const [showReply, setShowReply] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const isLiked = comment.likes?.some((l) => l.userId === currentUserId);
   const isPinned = comment.isPinned;
 
   const handleReplySubmit = async (payload) => {
-    await onReply(payload);
+    await onReply({ ...payload, replyToId: comment.id });
     setShowReply(false);
   };
+
+  const handleEditSubmit = async ({ content }) => {
+    await onEdit(comment.id, content);
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => onDelete(comment.id);
 
   const timeAgo = (dateStr) => {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -442,7 +582,10 @@ function CommentItem({
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 1.5, mb: depth === 0 ? 0 : 0 }}>
+    <Box
+      className="comment-item"
+      sx={{ display: "flex", gap: 1.5, mb: depth === 0 ? 0 : 0 }}
+    >
       <Avatar
         src={comment.author?.avatar}
         sx={{
@@ -450,153 +593,195 @@ function CommentItem({
           height: depth === 0 ? 32 : 26,
           flexShrink: 0,
           mt: 0.25,
-          fontSize: depth === 0 ? 13 : 11,
+          fontSize: depth === 0 ? 14 : 12,
         }}
       >
         {comment.author?.username?.[0]?.toUpperCase()}
       </Avatar>
+
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Box
-          sx={{
-            background: "#F9FAFB",
-            border: `1px solid ${isPinned ? "#FDE68A" : "#F3F4F6"}`,
-            borderRadius: "10px",
-            padding: "10px 14px",
-            position: "relative",
-            ...(isPinned && { background: "#FFFBEB" }),
-          }}
-        >
-          {isPinned && (
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}
-            >
-              <PushPinIcon
+        {isEditing ? (
+          <CommentComposer
+            isEditMode
+            initialText={comment.content}
+            onSubmit={handleEditSubmit}
+            onCancelEdit={() => setIsEditing(false)}
+            autoFocus
+          />
+        ) : (
+          <Box
+            sx={{
+              background: "#F9FAFB",
+              border: `1px solid ${isPinned ? "#FDE68A" : "#D9D9D9"}`,
+              borderRadius: "4px",
+              padding: "10px 14px",
+              position: "relative",
+              ...(isPinned && { background: "#FFFBEB" }),
+            }}
+          >
+            {isPinned && (
+              <Box
                 sx={{
-                  fontSize: 11,
-                  color: "#D97706",
-                  transform: "rotate(45deg)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  mb: 0.5,
                 }}
-              />
-              <Typography
-                variant="caption"
-                sx={{ color: "#D97706", fontWeight: 600, fontSize: 10 }}
               >
-                PINNED
+                <PushPinIcon
+                  sx={{
+                    fontSize: 11,
+                    color: "#D97706",
+                    transform: "rotate(45deg)",
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#D97706", fontWeight: 600, fontSize: 10 }}
+                >
+                  PINNED
+                </Typography>
+              </Box>
+            )}
+
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
+            >
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                color="text.primary"
+              >
+                {comment.author?.username}
               </Typography>
+              <Typography variant="caption" color="text.disabled" fontSize={12}>
+                {timeAgo(comment.createdAt)}
+              </Typography>
+              {comment.isEdited && (
+                <Typography
+                  variant="caption"
+                  color="text.disabled"
+                  fontSize={11}
+                >
+                  (edited)
+                </Typography>
+              )}
+              {/* 3-dot menu — only owner sees it */}
+              <CommentMenu
+                comment={comment}
+                currentUserId={currentUserId}
+                onEdit={() => setIsEditing(true)}
+                onDelete={handleDelete}
+              />
             </Box>
-          )}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Typography
-              variant="body2"
-              fontWeight={600}
-              color="text.primary"
-              fontSize={13}
-            >
-              {comment.author?.username}
-            </Typography>
-            <Typography variant="caption" color="text.disabled" fontSize={11}>
-              {timeAgo(comment.createdAt)}
-            </Typography>
+
+            {comment.content && (
+              <Typography
+                variant="body2"
+                color="text.primary"
+                sx={{
+                  lineHeight: 1.6,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                }}
+              >
+                {comment.content}
+              </Typography>
+            )}
+            <AttachmentDisplay attachments={comment.attachments} />
           </Box>
-          {comment.content && (
-            <Typography
-              variant="body2"
-              color="text.primary"
-              fontSize={13}
-              sx={{
-                lineHeight: 1.6,
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-              }}
-            >
-              {comment.content}
-            </Typography>
-          )}
-          <AttachmentDisplay attachments={comment.attachments} />
-        </Box>
+        )}
 
         {/* Actions */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            mt: 0.5,
-            ml: 0.5,
-          }}
-        >
+        {!isEditing && (
           <Box
-            onClick={() => onLike(comment.id)}
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 0.5,
-              cursor: "pointer",
-              padding: "2px 8px",
-              borderRadius: "6px",
-              "&:hover": { background: "#F3F4F6" },
-              color: isLiked ? "#6366F1" : "#6B7280",
+              mt: 0.5,
+              ml: 0.5,
             }}
           >
-            {isLiked ? (
-              <ThumbUpIcon sx={{ fontSize: 13 }} />
-            ) : (
-              <ThumbUpOutlinedIcon sx={{ fontSize: 13 }} />
-            )}
-            <Typography
-              variant="caption"
-              fontSize={12}
-              fontWeight={isLiked ? 600 : 400}
+            <Box
+              onClick={() => onLike(comment.id)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                cursor: "pointer",
+                padding: "2px 8px",
+                borderRadius: "4px",
+                "&:hover": { background: "#F3F4F6" },
+                color: isLiked ? "#315cfd" : "#6B7280",
+              }}
             >
-              {comment.likes?.length > 0 ? comment.likes.length : ""} Like
-            </Typography>
-          </Box>
-          <Box
-            onClick={() => {
-              setShowReply((v) => !v);
-            }}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              cursor: "pointer",
-              padding: "2px 8px",
-              borderRadius: "6px",
-              "&:hover": { background: "#F3F4F6" },
-              color: "#6B7280",
-            }}
-          >
-            <ReplyOutlinedIcon sx={{ fontSize: 13 }} />
-            <Typography variant="caption" fontSize={12}>
-              Reply
-            </Typography>
-          </Box>
-          <Box
-            onClick={() => onPin(comment.id)}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              cursor: "pointer",
-              padding: "2px 8px",
-              borderRadius: "6px",
-              "&:hover": { background: "#F3F4F6" },
-              color: isPinned ? "#D97706" : "#6B7280",
-            }}
-          >
-            {isPinned ? (
-              <PushPinIcon sx={{ fontSize: 13, transform: "rotate(45deg)" }} />
-            ) : (
-              <PushPinOutlinedIcon sx={{ fontSize: 13 }} />
+              {isLiked ? (
+                <ThumbUpIcon fontSize="small" />
+              ) : (
+                <ThumbUpOutlinedIcon fontSize="small" />
+              )}
+              <Typography
+                variant="caption"
+                fontSize={14}
+                // fontWeight={isLiked ? 600 : 400}
+              >
+                {comment.likes?.length > 0 ? comment.likes.length : ""} Like
+              </Typography>
+            </Box>
+
+            {!isReply && (
+              <Box
+                onClick={() => setShowReply((v) => !v)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  cursor: "pointer",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                  "&:hover": { background: "#F3F4F6" },
+                  color: "#6B7280",
+                }}
+              >
+                <ReplyOutlinedIcon fontSize="small" />
+                <Typography variant="body2">
+                  Reply
+                </Typography>
+              </Box>
             )}
-            <Typography variant="caption" fontSize={12}>
-              Pin
-            </Typography>
+
+            {!isReply && (
+              <Box
+                onClick={() => onPin(comment.id)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  cursor: "pointer",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                  "&:hover": { background: "#F3F4F6" },
+                  color: isPinned ? "#D97706" : "#6B7280",
+                }}
+              >
+                {isPinned ? (
+                  <PushPinIcon
+                    sx={{ fontSize: 13, transform: "rotate(45deg)" }}
+                  />
+                ) : (
+                  <PushPinOutlinedIcon sx={{ fontSize: 13 }} />
+                )}
+                <Typography variant="caption" fontSize={12}>
+                  Pin
+                </Typography>
+              </Box>
+            )}
           </Box>
-        </Box>
+        )}
 
         {/* Reply Composer */}
-        <Collapse in={showReply}>
+        <Collapse in={showReply && !isEditing}>
           <Box sx={{ mt: 1, mb: 1 }}>
             <CommentComposer
               onSubmit={handleReplySubmit}
@@ -606,7 +791,6 @@ function CommentItem({
           </Box>
         </Collapse>
 
-        {/* Nested Replies */}
         {comment.replies?.length > 0 && (
           <Box>
             <Box
@@ -618,16 +802,11 @@ function CommentItem({
                 cursor: "pointer",
                 mb: 1,
                 mt: 0.5,
-                ml: 0.5,
+                // ml: 0.5,
               }}
             >
-              <Box sx={{ height: "1px", width: 20, background: "#D1D5DB" }} />
-              <Typography
-                variant="caption"
-                color="primary"
-                fontSize={12}
-                fontWeight={600}
-              >
+              {/* <Box sx={{ height: "1px", width: 20, background: "#D1D5DB" }} /> */}
+              <Typography variant="body2" color="primary" fontSize={14}>
                 {showReplies ? "Hide" : "Show"} {comment.replies.length}{" "}
                 {comment.replies.length === 1 ? "reply" : "replies"}
               </Typography>
@@ -639,7 +818,7 @@ function CommentItem({
                   flexDirection: "column",
                   gap: 1.5,
                   pl: 0.5,
-                  borderLeft: "2px solid #E5E7EB",
+                  borderLeft: "1px solid #D9D9D9",
                   ml: 1,
                 }}
               >
@@ -653,7 +832,10 @@ function CommentItem({
                     onReply={(payload) =>
                       onReply({ ...payload, replyToId: reply.id })
                     }
+                    onEdit={onEdit}
+                    onDelete={onDelete}
                     depth={depth + 1}
+                    isReply={true}
                   />
                 ))}
               </Box>
@@ -711,9 +893,20 @@ function useCommentHub({
   }, [cardId]);
 
   const sendComment = useCallback(async (payload) => {
-    // payload: { cardId, content, replyToId, attachmentUrls }
     if (hubRef.current?.state === signalR.HubConnectionState.Connected) {
       await hubRef.current.invoke("SendComment", payload);
+    }
+  }, []);
+
+  const editComment = useCallback(async (commentId, content) => {
+    if (hubRef.current?.state === signalR.HubConnectionState.Connected) {
+      await hubRef.current.invoke("EditComment", { commentId, content });
+    }
+  }, []);
+
+  const deleteComment = useCallback(async (commentId) => {
+    if (hubRef.current?.state === signalR.HubConnectionState.Connected) {
+      await hubRef.current.invoke("DeleteComment", { commentId });
     }
   }, []);
 
@@ -729,7 +922,14 @@ function useCommentHub({
     }
   }, []);
 
-  return { connected, sendComment, toggleLike, togglePin };
+  return {
+    connected,
+    sendComment,
+    editComment,
+    deleteComment,
+    toggleLike,
+    togglePin,
+  };
 }
 
 export function CommentTab({
@@ -741,6 +941,10 @@ export function CommentTab({
   const [comments, setComments] = useState(initialComments);
   const [replyTo, setReplyTo] = useState(null);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
 
   const handleReceive = useCallback((comment) => {
     setComments((prev) => {
@@ -761,17 +965,46 @@ export function CommentTab({
 
   const handleUpdate = useCallback((updated) => {
     setComments((prev) =>
-      prev.map((c) => (c.id === updated.id ? { ...c, ...updated } : c)),
+      prev.map((c) => {
+        if (c.id === updated.id) return { ...c, ...updated };
+        if (c.replies?.length) {
+          return {
+            ...c,
+            replies: c.replies.map((r) =>
+              r.id === updated.id ? { ...r, ...updated } : r,
+            ),
+          };
+        }
+        return c;
+      }),
     );
   }, []);
 
   const handleDelete = useCallback((commentId) => {
-    setComments((prev) => prev.filter((c) => c.id !== commentId));
+    setComments((prev) =>
+      prev
+        .filter((c) => c.id !== commentId)
+        .map((c) => ({
+          ...c,
+          replies: c.replies?.filter((r) => r.id !== commentId) ?? [],
+        })),
+    );
   }, []);
 
   const handleLiked = useCallback((commentId, likes) => {
     setComments((prev) =>
-      prev.map((c) => (c.id === commentId ? { ...c, likes } : c)),
+      prev.map((c) => {
+        if (c.id === commentId) return { ...c, likes };
+        if (c.replies?.length) {
+          return {
+            ...c,
+            replies: c.replies.map((r) =>
+              r.id === commentId ? { ...r, likes } : r,
+            ),
+          };
+        }
+        return c;
+      }),
     );
   }, []);
 
@@ -781,7 +1014,14 @@ export function CommentTab({
     );
   }, []);
 
-  const { connected, sendComment, toggleLike, togglePin } = useCommentHub({
+  const {
+    connected,
+    sendComment,
+    editComment,
+    deleteComment,
+    toggleLike,
+    togglePin,
+  } = useCommentHub({
     cardId,
     onReceive: handleReceive,
     onUpdate: handleUpdate,
@@ -803,6 +1043,14 @@ export function CommentTab({
     setReplyTo(null);
   };
 
+  const handleEdit = async (commentId, content) => {
+    await editComment(commentId, content);
+  };
+
+  const handleDeleteAsync = async (commentId) => {
+    await deleteComment(commentId);
+  };
+
   const pinned = comments.filter((c) => c.isPinned && !c.replyToId);
   const regular = comments.filter((c) => !c.isPinned && !c.replyToId);
 
@@ -815,7 +1063,7 @@ export function CommentTab({
         minHeight: 0,
       }}
     >
-      {!connected && (
+      {/* {!connected && (
         <Box
           sx={{
             display: "flex",
@@ -832,9 +1080,7 @@ export function CommentTab({
             Connecting to live comments...
           </Typography>
         </Box>
-      )}
-
-      {/* Comment list */}
+      )} */}
       <Box
         sx={{
           flex: 1,
@@ -843,6 +1089,7 @@ export function CommentTab({
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          pr: "4px",
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-thumb": {
             background: "#E5E7EB",
@@ -852,40 +1099,41 @@ export function CommentTab({
       >
         {comments.length === 0 && (
           <Box sx={{ textAlign: "center", py: 4 }}>
-            <Typography variant="body2" color="text.disabled">
+            <img src={MessagingSvg} alt="messaging" width={250} />
+            <Typography variant="body2" color="text.primary">
               No comments yet. Start the conversation!
             </Typography>
           </Box>
         )}
 
-        {/* Pinned */}
         {pinned.map((c) => (
           <CommentItem
             key={c.id}
             comment={c}
-            currentUserId={currentUser?.id}
+            currentUserId={currentUser?.id ?? currentUser}
             onLike={toggleLike}
             onPin={togglePin}
             onReply={handleReply}
+            onEdit={handleEdit}
+            onDelete={handleDeleteAsync}
           />
         ))}
 
-        {/* Regular */}
         {regular.map((c) => (
           <CommentItem
             key={c.id}
             comment={c}
-            currentUserId={currentUser?.id}
+            currentUserId={currentUser?.id ?? currentUser}
             onLike={toggleLike}
             onPin={togglePin}
             onReply={handleReply}
+            onEdit={handleEdit}
+            onDelete={handleDeleteAsync}
           />
         ))}
 
         <div ref={bottomRef} />
       </Box>
-
-      {/* Composer */}
       <Box sx={{ pt: 1.5, borderTop: "1px solid #F3F4F6", flexShrink: 0 }}>
         <CommentComposer
           onSubmit={handleSubmit}

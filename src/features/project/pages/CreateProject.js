@@ -102,7 +102,7 @@ export function CreateProject({
                 "&.Mui-selected": {
                   backgroundColor: "#e9f2fe",
                   color: "primary.main",
-                  borderLeft: "2px solid #2D71F8",
+                  borderLeft: "2px solid #315cfd",
                 },
               }}
               onClick={() => handleListItemClick(0)}

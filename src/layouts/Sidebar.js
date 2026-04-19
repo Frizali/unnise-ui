@@ -10,6 +10,7 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import ProjectMenu from "../features/project/components/ProjectMenu";
 import styled from "@emotion/styled";
 import { useState, cloneElement } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   borderRadius: 3,
@@ -45,64 +46,55 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
 }));
 
 function Sidebar() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const listMenu = [
     {
       title: "For you",
-      icon: (
-        <AccountCircleOutlinedIcon
-          fontSize="small"
-        />
-      ),
+      path: "/main",
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
     },
     {
       title: "Calendar",
-      icon: (
-        <CalendarMonthOutlinedIcon
-          fontSize="small"
-        />
-      ),
+      path: "/main/calendar",
+      icon: <CalendarMonthOutlinedIcon fontSize="small" />,
     },
   ];
 
   return (
-    <Box
-      sx={{
-        padding: "12px",
-      }}
-    >
-      <List sx={{ flexGrow: 1 }} disablePadding dense>
-        {listMenu.map((item, index) => (
-          <StyledListItemButton
-            selected={selectedIndex === index}
-            sx={{ gap: ".25rem" }}
-            key={item.title}
-            onClick={(event) => handleListItemClick(event, index)}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 24,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+    <Box sx={{ padding: "12px" }}>
+      <List disablePadding dense>
+        {listMenu.map((item) => {
+          const isSelected = location.pathname === item.path;
+
+          return (
+            <StyledListItemButton
+              key={item.title}
+              selected={isSelected}
+              sx={{ gap: ".25rem" }}
+              onClick={() => navigate(item.path)}
             >
-              {cloneElement(item.icon, {
-                sx: {
-                  color:
-                    selectedIndex === index ? "primary.main" : "icon.main",
-                  ...(item.icon.props.sx || {}),
-                },
-              })}
-            </ListItemIcon>
-            <ListItemText color="text.primary" primary={item.title} />
-          </StyledListItemButton>
-        ))}
+              <ListItemIcon
+                sx={{
+                  minWidth: 24,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {cloneElement(item.icon, {
+                  sx: {
+                    color: isSelected ? "primary.main" : "icon.main",
+                  },
+                })}
+              </ListItemIcon>
+
+              <ListItemText primary={item.title} />
+            </StyledListItemButton>
+          );
+        })}
+
         <ProjectMenu />
       </List>
     </Box>

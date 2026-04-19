@@ -249,7 +249,7 @@ export function ProjectInviteMember({
                               fontSize="small"
                               sx={{
                                 color: "white",
-                                background: "#2D71F8",
+                                background: "#315cfd",
                                 borderRadius: "50%",
                               }}
                             />

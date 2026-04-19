@@ -64,7 +64,7 @@ export function KanbanColumn({
         onAddClick={() => setIsAddingCard(true)}
       />
 
-      <Box style={{ flex: 1, minHeight: 60, padding: "12px 1rem" }}>
+      <Box sx={{ flex: 1, minHeight: 60, padding: "12px 1rem", gap:1, display:"flex", flexDirection:"column" }}>
         {cards.map((card) => (
           <KanbanCard
             key={card.id}

@@ -5,6 +5,7 @@ function UiButtonIcon({
   title,
   size = "medium",
   bordered = false,
+  loading = false,
   ...prop
 }) {
   const dimension = size === "small" ? "24px" : "2rem";
@@ -12,6 +13,7 @@ function UiButtonIcon({
   return (
     <Tooltip title={title} placement="bottom">
       <Button
+        loading={loading}
         color="icon.main"
         sx={{
           minWidth: dimension,
