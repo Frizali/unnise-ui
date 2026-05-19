@@ -5,12 +5,14 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SwapVertOutlinedIcon from "@mui/icons-material/SwapVertOutlined";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import { TaskProgressBar } from "../../../components/Bar/TaskProgressBar";
+import BaseIcon from "../../../components/Icon/BaseIcon";
+import { Search, CircleUserRound, Funnel, ArrowDownUp } from "lucide-react";
 
 const FILTER_ACTIONS = [
-  { label: "Search", icon: <SearchOutlinedIcon fontSize="small" /> },
-  { label: "Person", icon: <AccountCircleOutlinedIcon fontSize="small" /> },
-  { label: "Filter", icon: <FilterAltOutlinedIcon fontSize="small" /> },
-  { label: "Sort", icon: <SwapVertOutlinedIcon fontSize="small" /> },
+  { label: "Search", icon: <BaseIcon><Search /></BaseIcon> },
+  { label: "Person", icon: <BaseIcon><CircleUserRound/></BaseIcon> },
+  { label: "Filter", icon: <BaseIcon><Funnel /></BaseIcon> },
+  { label: "Sort", icon: <BaseIcon><ArrowDownUp /></BaseIcon> },
 ];
 
 export function KanbanBoardFilter({ columns, cards }) {

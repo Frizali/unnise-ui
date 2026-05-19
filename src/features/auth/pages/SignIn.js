@@ -24,10 +24,10 @@ function SignIn() {
         >
           <Box>
             <Box sx={{ marginBottom: "1rem" }}>
-              <Typography color="text.primary" variant="h4" fontWeight={700}>
+              <Typography color="text.primary" variant="h4" fontWeight={600}>
                 Sign in to
               </Typography>
-              <Typography color="primary.main" variant="h4" fontWeight={700}>
+              <Typography color="primary.main" variant="h4" fontWeight={600}>
                 Unnise
               </Typography>
             </Box>
@@ -52,7 +52,7 @@ function SignIn() {
             >
               Password
             </UiFormGroup>
-            <UiButton size="large" fullWidth={true} loading={loading} onClick={login}>
+            <UiButton size="medium16" fullWidth={true} loading={loading} onClick={login}>
               Sign In
             </UiButton>
             <Typography sx={{ textAlign: "center" }}>
@@ -81,7 +81,7 @@ function SignIn() {
             minHeight: "100vh",
           }}
         >
-          <Typography color="white" variant="h4" fontWeight={700}>
+          <Typography color="white" variant="h4" fontWeight={600}>
             Welcome Back to Unnise Your Journey to Project Mastery Continues
           </Typography>
           <Typography color="white" variant="subtitle1">

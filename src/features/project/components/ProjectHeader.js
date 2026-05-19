@@ -3,6 +3,8 @@ import { useProjectHeader } from "../hooks/useProjectHeader";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import BaseIcon from "../../../components/Icon/BaseIcon";
+import { Share2, Settings } from "lucide-react";
 import styled from "@emotion/styled";
 import { ProjectInviteMember } from "./ProjectInviteMember";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -69,12 +71,12 @@ export function ProjectHeader() {
 
           <Stack direction="row" gap={1}>
             <UiButtonIconText
-              icon={<ShareOutlinedIcon fontSize="small" />}
+              icon={<BaseIcon><Share2 /></BaseIcon>}
               onClick={handleInviteDialog}
             >
               Invite
             </UiButtonIconText>
-            <UiButtonIconText icon={<SettingsOutlinedIcon fontSize="small" />}>
+            <UiButtonIconText icon={<BaseIcon><Settings /></BaseIcon>}>
               Settings
             </UiButtonIconText>
           </Stack>

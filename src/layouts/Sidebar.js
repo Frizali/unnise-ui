@@ -11,6 +11,8 @@ import ProjectMenu from "../features/project/components/ProjectMenu";
 import styled from "@emotion/styled";
 import { useState, cloneElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Calendar, Briefcase } from "lucide-react";
+import BaseIcon from "../components/Icon/BaseIcon";
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   borderRadius: 3,
@@ -18,29 +20,15 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   boxSizing: "border-box",
   position: "relative",
 
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    left: 0,
-    top: "50%",
-    transform: "translateY(-50%)",
-    height: "40%",
-    width: 2,
-    borderRadius: 3,
-    backgroundColor: "transparent",
-    transition: "background-color 0.2s ease",
-  },
-
   "&.Mui-selected": {
-    backgroundColor: "#e9f2fe",
-    color: theme.palette.primary.main,
-  },
-
-  "&.Mui-selected::before": {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.action.hover,
   },
 
   "&:hover": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  
+  "&.Mui-selected:hover": {
     backgroundColor: theme.palette.action.hover,
   },
 }));
@@ -51,14 +39,22 @@ function Sidebar() {
 
   const listMenu = [
     {
-      title: "For you",
+      title: "Workspace",
       path: "/main",
-      icon: <AccountCircleOutlinedIcon fontSize="small" />,
+      icon: (
+        <BaseIcon>
+          <Briefcase />
+        </BaseIcon>
+      ),
     },
     {
       title: "Calendar",
       path: "/main/calendar",
-      icon: <CalendarMonthOutlinedIcon fontSize="small" />,
+      icon: (
+        <BaseIcon>
+          <Calendar />
+        </BaseIcon>
+      ),
     },
   ];
 
@@ -83,11 +79,7 @@ function Sidebar() {
                   alignItems: "center",
                 }}
               >
-                {cloneElement(item.icon, {
-                  sx: {
-                    color: isSelected ? "primary.main" : "icon.main",
-                  },
-                })}
+                {item.icon}
               </ListItemIcon>
 
               <ListItemText primary={item.title} />

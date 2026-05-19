@@ -46,10 +46,14 @@ const UiFormGroup = ({
         {...props}
       />
       {isValidationError(errorText) && (
-        <FormHelperText error>{errorText}</FormHelperText>
+        <FormHelperText sx={{fontSize:"14px"}} error>
+          {errorText}
+        </FormHelperText>
       )}
       {helperText.trim().length > 0 && (
-        <FormHelperText>{helperText}</FormHelperText>
+        <FormHelperText sx={{fontSize:"14px"}}>
+          {helperText}
+        </FormHelperText>
       )}
     </FormGroup>
   );

@@ -18,37 +18,25 @@ import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
+import { Sparkles, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import BaseIcon from "../../../components/Icon/BaseIcon";
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   borderRadius: 3,
-  padding: "4px .5rem",
-  marginLeft:"1rem",
+  padding: "4px 4px 4px 6px",
   boxSizing: "border-box",
   position: "relative",
-
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    left: 0,
-    top: "50%",
-    transform: "translateY(-50%)",
-    height: "40%",
-    width: 2,
-    borderRadius: 3,
-    backgroundColor: "transparent",
-    transition: "background-color 0.2s ease",
-  },
+  gap: "0.25rem",
 
   "&.Mui-selected": {
-    backgroundColor: "#e9f2fe",
-    color: theme.palette.primary.main,
-  },
-
-  "&.Mui-selected::before": {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.action.hover,
   },
 
   "&:hover": {
+    backgroundColor: theme.palette.action.hover,
+  },
+
+  "&.Mui-selected:hover": {
     backgroundColor: theme.palette.action.hover,
   },
 }));
@@ -69,9 +57,21 @@ const ProjectMenu = () => {
 
   return (
     <>
-      <ListItemButton sx={{ gap: "0.25rem" }}>
+      <ListItemButton
+        sx={{
+          gap: "0.25rem",
+          padding: "4px",
+          "& .MuiListItemIcon-root": {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+      >
         <ListItemIcon sx={{ minWidth: 24 }}>
-          <RocketLaunchOutlinedIcon fontSize="small" />
+          <BaseIcon>
+            <Sparkles />
+          </BaseIcon>
         </ListItemIcon>
 
         <ListItemText primary="Project" />
@@ -82,7 +82,9 @@ const ProjectMenu = () => {
             title="Create Project"
             onClick={projectState.handleOpen}
           >
-            <AddOutlinedIcon fontSize="small" />
+            <BaseIcon>
+              <Plus />
+            </BaseIcon>
           </UiButtonIcon>
 
           <UiButtonIcon
@@ -91,9 +93,13 @@ const ProjectMenu = () => {
             onClick={handleOpenMenu}
           >
             {openMenu ? (
-              <ExpandLess fontSize="small" />
+              <BaseIcon>
+                <ChevronUp />
+              </BaseIcon>
             ) : (
-              <ExpandMore fontSize="small" />
+              <BaseIcon>
+                <ChevronDown />
+              </BaseIcon>
             )}
           </UiButtonIcon>
         </Box>
@@ -107,25 +113,24 @@ const ProjectMenu = () => {
                   key={index}
                   variant="rectangular"
                   sx={{
-                    height: 28,
-                    mb: 1,
-                    ml: 4,
-                    borderRadius: "3px",
+                    height: 14,
+                    mb: 0.5,
+                    // ml: 4,
+                    borderRadius: "4px",
                   }}
                 />
               ))
             : projects.map((item) => {
-                const isSelected =
-                  location.pathname.startsWith(`/main/projects/${item.id}`);
+                const isSelected = location.pathname.startsWith(
+                  `/main/projects/${item.id}`,
+                );
 
                 return (
                   <StyledListItemButton
                     key={item.id}
-                    sx={{ pl: 4 }}
+                    // sx={{ pl: 4 }}
                     selected={isSelected}
-                    onClick={() =>
-                      navigate(`/main/projects/${item.id}`)
-                    }
+                    onClick={() => navigate(`/main/projects/${item.id}`)}
                   >
                     <Tooltip title={item.name} placement="right">
                       <ListItemText
@@ -147,6 +152,5 @@ const ProjectMenu = () => {
     </>
   );
 };
-
 
 export default ProjectMenu;

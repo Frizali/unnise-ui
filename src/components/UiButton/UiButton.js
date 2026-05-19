@@ -1,44 +1,83 @@
-import Button from "@mui/material/Button";
+import { Button, Tooltip } from "@mui/material";
 
-const variantMap = {
-  primary: { variant: "contained", color: "primary" },
-  secondary: { variant: "contained", color: "secondary" },
-  outline: { variant: "outlined", color: "primary" },
-  text: { variant: "text", color: "primary" },
-  danger: { variant: "contained", color: "error" },
+const iconSizes = {
+  small: 18,
+  medium: 22,
+  large: 26,
+};
+
+const sizeStyles = {
+  small: {
+    height: "32px",
+    fontSize: "14px",
+    padding: "0 1rem",
+  },
+  medium14: {
+    height: "40px",
+    fontSize: "14px",
+    padding: "0 1rem",
+  },
+  medium16: {
+    height: "40px",
+    fontSize: "16px",
+    padding: "0 1rem",
+  },
+  large: {
+    height: "50px",
+    fontSize: "16px",
+    padding: "0 1.25rem",
+  },
 };
 
 const UiButton = ({
   children,
-  variant = "primary",
-  size = "small",
-  loading = false,
-  iconLeft,
-  iconRight,
-  fullWidth = false,
+  color = "primary",
   disabled,
-  className,
-  ...prop
+  fullWidth = false,
+  loading = false,
+  size = "small",
+  startIcon,
+  endIcon,
+  ...props
 }) => {
+  console.log(size);
   const isDisabled = disabled || loading;
-  const config = variantMap[variant] || variantMap.primary;
+  const currentSize = sizeStyles[size] || sizeStyles.small;
+  const currentIconSize = iconSizes[size] || iconSizes.small;
 
   return (
-    <Button
-      {...config}
-      {...prop}
-      disabled={isDisabled}
-      fullWidth={fullWidth}
-      size={size}
-      startIcon={iconLeft}
-      endIcon={iconRight}
-      className={className}
-      loading={loading}
-      loadingPosition="end"
-      sx={{ boxShadow:'none', textTransform:'none' }}
-    >
-      {children}
-    </Button>
+    <Tooltip title={children} placement="top">
+      <Button
+        color={color}
+        disabled={isDisabled}
+        loading={loading}
+        loadingPosition="end"
+        startIcon={startIcon}
+        endIcon={endIcon}
+        fullWidth={fullWidth}
+        variant="contained"
+        sx={{
+          minWidth: 0,
+          boxShadow: "none",
+          textTransform: "none",
+          ...currentSize,
+          "&:hover": {
+            boxShadow: "none",
+          },
+          "& .MuiButton-startIcon": {
+            marginRight: size === "small" ? "4px" : "8px",
+            marginLeft: 0,
+
+            "& svg": {
+              width: currentIconSize,
+            },
+          },
+        }}
+        {...props}
+      >
+        {children}
+      </Button>
+    </Tooltip>
   );
 };
 

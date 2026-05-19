@@ -31,10 +31,10 @@ function SignUp() {
             }}
           >
             <Box sx={{ marginBottom: "1rem" }}>
-              <Typography color="text.primary" variant="h4" fontWeight={700}>
+              <Typography color="text.primary" variant="h4" fontWeight={600}>
                 Sign up to
               </Typography>
-              <Typography color="primary.main" variant="h4" fontWeight={700}>
+              <Typography color="primary.main" variant="h4" fontWeight={600}>
                 Unnise
               </Typography>
             </Box>
@@ -90,7 +90,7 @@ function SignUp() {
             >
               Username
             </UiFormGroup>
-            <UiButton size="large" fullWidth={true} loading={loading} onClick={register}>
+            <UiButton size="medium16" fullWidth={true} loading={loading} onClick={register}>
               Create Account
             </UiButton>
           </Box>
@@ -113,7 +113,7 @@ function SignUp() {
             minHeight: "100vh",
           }}
         >
-          <Typography color="white" variant="h4" fontWeight={700}>
+          <Typography color="white" variant="h4" fontWeight={600}>
             Start Your Adventure with Unnise — Where Projects Turn into
             Victories
           </Typography>
