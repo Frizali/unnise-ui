@@ -61,7 +61,7 @@ export function KanbanCard({
         sx={{
           backgroundColor: "white",
           border: "1px solid #D9D9D9",
-          borderRadius: "4px",
+          borderRadius: "8px",
           padding: "12px 0 4px 0",
           cursor: "pointer",
           userSelect: "none",

@@ -12,6 +12,7 @@ function UiButtonIconText({ children, icon, title = "", ...prop }) {
           display: "flex",
           justifyContent: "center",
           justifyItems: "center",
+          borderRadius:"8px",
           "&:hover": {
             backgroundColor: "#0B120E24",
           },

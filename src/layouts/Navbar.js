@@ -1,5 +1,5 @@
 import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import logo from "../assets/logo.png";
+import logo from "../assets/Unnise v2.0.svg";
 import ProfileMenu from "../features/profile/components/ProfileMenu";
 
 function Navbar({ children }) {

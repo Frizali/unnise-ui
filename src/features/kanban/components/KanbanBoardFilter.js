@@ -1,8 +1,4 @@
 import { Box } from "@mui/material";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SwapVertOutlinedIcon from "@mui/icons-material/SwapVertOutlined";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 import { TaskProgressBar } from "../../../components/Bar/TaskProgressBar";
 import BaseIcon from "../../../components/Icon/BaseIcon";

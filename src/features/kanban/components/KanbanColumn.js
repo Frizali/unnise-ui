@@ -7,6 +7,8 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { KanbanCard } from "./KanbanCard";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import { ColorSwatch } from "../../../components/Swatch/ColorSwatch";
+import { Plus, Ellipsis } from "lucide-react";
+import BaseIcon from "../../../components/Icon/BaseIcon";
 
 export function KanbanColumn({
   column,
@@ -46,7 +48,7 @@ export function KanbanColumn({
         minWidth: 300,
         maxWidth: 350,
         border: `${borderWidth} solid ${borderColor}`,
-        borderRadius: 6,
+        borderRadius: "8px",
         transition: "border-color 0.15s, background 0.15s",
         display: "flex",
         flexDirection: "column",
@@ -106,7 +108,7 @@ export function KanbanColumn({
 function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragStart, onDragEnd, onAddClick }) {
   const borderColor = isHoveredByDrag ? column.color : "#D9D9D9";
   const borderWidth = isHoveredByDrag ? "2px" : "1px";
-  const iconColor = isHovered ? "icon.main" : "transparent";
+  const iconColor = isHovered ? "default" : "transparent";
 
   return (
     <Box
@@ -134,10 +136,10 @@ function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragSta
       </Box>
       <Box display="flex" gap={0.5}>
         <UiButtonIcon onClick={onAddClick} title="Create task" size="small">
-          <AddOutlinedIcon fontSize="small" sx={{ color: iconColor }} />
+          <BaseIcon variant={iconColor}><Plus /></BaseIcon>
         </UiButtonIcon>
         <UiButtonIcon title="More actions" size="small">
-          <MoreHorizOutlinedIcon fontSize="small" sx={{ color: iconColor }} />
+          <BaseIcon variant={iconColor}><Ellipsis /></BaseIcon>
         </UiButtonIcon>
       </Box>
     </Box>
@@ -164,7 +166,7 @@ function AddCardInlineForm({ onSubmit, onCancel }) {
           alignItems: "end",
           gap: 1,
           border: "2px solid #D9D9D9",
-          borderRadius: "6px",
+          borderRadius: "8px",
           padding: "4px 8px",
           "&:focus-within": { borderColor: "primary.main" },
         }}

@@ -26,6 +26,7 @@ const UiFormGroup = ({
       <FormLabel
         sx={{
           fontSize: size === "extraSmall" ? "14px" : "1rem",
+          color: "text.primary",
         }}
         htmlFor={id}
       >
@@ -34,6 +35,9 @@ const UiFormGroup = ({
       <TextField
         size={size === "medium" ? "medium" : "small"}
         sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "8px",
+          },
           "& .MuiInputBase-input": {
             fontSize: size === "extraSmall" ? "14px" : "1rem",
           },
@@ -46,14 +50,12 @@ const UiFormGroup = ({
         {...props}
       />
       {isValidationError(errorText) && (
-        <FormHelperText sx={{fontSize:"14px"}} error>
+        <FormHelperText sx={{ fontSize: "14px" }} error>
           {errorText}
         </FormHelperText>
       )}
       {helperText.trim().length > 0 && (
-        <FormHelperText sx={{fontSize:"14px"}}>
-          {helperText}
-        </FormHelperText>
+        <FormHelperText sx={{ fontSize: "14px" }}>{helperText}</FormHelperText>
       )}
     </FormGroup>
   );

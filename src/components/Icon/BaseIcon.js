@@ -10,8 +10,10 @@ const BaseIcon = ({
   const theme = useTheme();
 
   const colors = {
+    white:"#FFFFFF",
     default: theme.palette.icon.main,
     primary: theme.palette.primary.main,
+    transparent: "transparent",
   };
 
   const color = active

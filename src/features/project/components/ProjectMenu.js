@@ -11,18 +11,14 @@ import {
 import { useProjectMenu } from "../hooks/useProjectMenu";
 import { useProject } from "../hooks/useProject";
 import { CreateProject } from "../pages/CreateProject";
-import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Sparkles, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import BaseIcon from "../../../components/Icon/BaseIcon";
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
-  borderRadius: 3,
+  borderRadius: "8px",
   padding: "4px 4px 4px 6px",
   boxSizing: "border-box",
   position: "relative",

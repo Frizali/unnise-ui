@@ -189,7 +189,7 @@ export function KanbanBoardDetail({
                 "&::-webkit-scrollbar": { width: 4 },
                 "&::-webkit-scrollbar-thumb": {
                   background: "#E5E7EB",
-                  borderRadius: 4,
+                  borderRadius: "8px",
                 },
               }}
             >
@@ -722,9 +722,12 @@ function LabelsField({
 const accordionSx = {
   boxShadow: "none",
   border: "1px solid #D9D9D9",
-  borderRadius: "4px",
+  borderRadius: "8px",
   "&::before": { display: "none" },
   "&.Mui-expanded": { margin: 0 },
+  "&:first-of-type": {
+    borderRadius: "8px",
+  },
 };
 
 const autocompleteInputSx = {

@@ -60,6 +60,7 @@ const UiButton = ({
           minWidth: 0,
           boxShadow: "none",
           textTransform: "none",
+          borderRadius: "8px",
           ...currentSize,
           "&:hover": {
             boxShadow: "none",

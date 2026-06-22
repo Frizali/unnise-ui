@@ -20,7 +20,6 @@ import GifBoxOutlinedIcon from "@mui/icons-material/GifBoxOutlined";
 import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
@@ -29,9 +28,12 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import MessagingSvg from "../../../assets/Messaging-bro.svg";
+import MessagingSvg from "../../../assets/Emails-bro.svg";
 import * as signalR from "@microsoft/signalr";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
+
+import { ThumbsUp, Reply, Paperclip, Smile, SendHorizonal } from "lucide-react";
+import BaseIcon from "../../../components/Icon/BaseIcon";
 
 const EMOJI_LIST = [
   "👍",
@@ -65,7 +67,7 @@ function EmojiPicker({ onSelect, onClose }) {
         right: 0,
         background: "#fff",
         border: "1px solid #D9D9D9",
-        borderRadius: "4px",
+        borderRadius: "8px",
         boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         padding: "8px",
         display: "flex",
@@ -88,7 +90,7 @@ function EmojiPicker({ onSelect, onClose }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: "4px",
+            borderRadius: "8px",
             cursor: "pointer",
             fontSize: 18,
             "&:hover": { background: "#F3F4F6" },
@@ -295,12 +297,12 @@ function CommentComposer({
     <Box
       sx={{
         border: "1px solid #D9D9D9",
-        borderRadius: "4px",
+        borderRadius: "8px",
         overflow: "visible",
         background: "#fff",
         transition: "border-color 0.15s, box-shadow 0.15s",
         "&:focus-within": {
-          borderColor: isEditMode ? "#D97706" : "#315cfd",
+          borderColor: isEditMode ? "#D97706" : "#4d4bfe",
           //   boxShadow: isEditMode
           //     ? "0 0 0 3px rgba(217,119,6,0.08)"
           //     : "0 0 0 3px rgba(99,102,241,0.08)",
@@ -323,7 +325,9 @@ function CommentComposer({
           {isEditMode ? (
             <EditOutlinedIcon sx={{ fontSize: 14, color: "#D97706" }} />
           ) : (
-            <ReplyOutlinedIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
+            <BaseIcon>
+              <Reply />
+            </BaseIcon>
           )}
           <Typography variant="caption" color="text.secondary">
             {isEditMode ? (
@@ -392,13 +396,17 @@ function CommentComposer({
               title="Attach File"
               onClick={() => fileInputRef.current?.click()}
             >
-              <AttachFileOutlinedIcon fontSize="small" />
+              <BaseIcon>
+                <Paperclip />
+              </BaseIcon>
             </UiButtonIcon>
           </>
         )}
         <Box sx={{ position: "relative" }}>
           <UiButtonIcon title="Emoji" onClick={() => setShowEmoji((v) => !v)}>
-            <EmojiEmotionsOutlinedIcon fontSize="small" />
+            <BaseIcon>
+              <Smile />
+            </BaseIcon>
           </UiButtonIcon>
 
           {showEmoji && (
@@ -432,11 +440,12 @@ function CommentComposer({
                 onClick={handleSubmit}
                 loading={submitting}
                 sx={{
+                  borderRadius: "8px",
                   background: isEmpty
                     ? "transparent"
                     : isEditMode
                       ? "#D97706"
-                      : "#315cfd",
+                      : "#4d4bfe",
                   color: isEmpty ? "#D1D5DB" : "#fff",
                   minWidth: "2rem",
                   height: "2rem",
@@ -448,7 +457,7 @@ function CommentComposer({
                       ? ""
                       : isEditMode
                         ? "#B45309"
-                        : "#315cfd",
+                        : "#4d4bfe",
                   },
                   transition: "all 0.15s",
                 }}
@@ -456,7 +465,9 @@ function CommentComposer({
                 {isEditMode ? (
                   <EditOutlinedIcon fontSize="small" />
                 ) : (
-                  <SendOutlinedIcon fontSize="small" />
+                  <BaseIcon variant={isEmpty ? "default" : "white"}>
+                    <SendHorizonal />
+                  </BaseIcon>
                 )}
               </Button>
             </span>
@@ -499,7 +510,7 @@ function CommentMenu({ comment, currentUserId, onEdit, onDelete }) {
         onClose={() => setAnchor(null)}
         PaperProps={{
           sx: {
-            borderRadius: "4px",
+            borderRadius: "8px",
             boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
             minWidth: 140,
           },
@@ -613,7 +624,7 @@ function CommentItem({
             sx={{
               background: "#F9FAFB",
               border: `1px solid ${isPinned ? "#FDE68A" : "#D9D9D9"}`,
-              borderRadius: "4px",
+              borderRadius: "8px",
               padding: "10px 14px",
               position: "relative",
               ...(isPinned && { background: "#FFFBEB" }),
@@ -647,11 +658,7 @@ function CommentItem({
             <Box
               sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
             >
-              <Typography
-                variant="body2"
-                fontWeight={600}
-                color="text.primary"
-              >
+              <Typography variant="body2" fontWeight={600} color="text.primary">
                 {comment.author?.username}
               </Typography>
               <Typography variant="caption" color="text.disabled" fontSize={12}>
@@ -711,22 +718,19 @@ function CommentItem({
                 gap: 0.5,
                 cursor: "pointer",
                 padding: "2px 8px",
-                borderRadius: "4px",
+                borderRadius: "8px",
                 "&:hover": { background: "#F3F4F6" },
-                color: isLiked ? "#315cfd" : "#6B7280",
+                color: isLiked ? "#4d4bfe" : "#6B7280",
               }}
             >
-              {isLiked ? (
-                <ThumbUpIcon fontSize="small" />
-              ) : (
-                <ThumbUpOutlinedIcon fontSize="small" />
-              )}
-              <Typography
-                variant="caption"
-                fontSize={14}
-                // fontWeight={isLiked ? 600 : 400}
-              >
-                {comment.likes?.length > 0 ? comment.likes.length : ""} Like
+              <ThumbsUp
+                size={20}
+                strokeWidth={2}
+                stroke={isLiked ? "#4d4bfe" : "#626C7A"}
+              />
+
+              <Typography fontSize={14}>
+                {comment.likes?.length > 0 ? comment.likes.length : ""}
               </Typography>
             </Box>
 
@@ -739,19 +743,19 @@ function CommentItem({
                   gap: 0.5,
                   cursor: "pointer",
                   padding: "2px 8px",
-                  borderRadius: "4px",
+                  borderRadius: "8px",
                   "&:hover": { background: "#F3F4F6" },
                   color: "#6B7280",
                 }}
               >
-                <ReplyOutlinedIcon fontSize="small" />
-                <Typography variant="body2">
-                  Reply
-                </Typography>
+                <BaseIcon>
+                  <Reply />
+                </BaseIcon>
+                <Typography variant="body2">Reply</Typography>
               </Box>
             )}
 
-            {!isReply && (
+            {/* {!isReply && (
               <Box
                 onClick={() => onPin(comment.id)}
                 sx={{
@@ -760,7 +764,7 @@ function CommentItem({
                   gap: 0.5,
                   cursor: "pointer",
                   padding: "2px 8px",
-                  borderRadius: "4px",
+                  borderRadius: "8px",
                   "&:hover": { background: "#F3F4F6" },
                   color: isPinned ? "#D97706" : "#6B7280",
                 }}
@@ -776,7 +780,7 @@ function CommentItem({
                   Pin
                 </Typography>
               </Box>
-            )}
+            )} */}
           </Box>
         )}
 
@@ -1093,14 +1097,14 @@ export function CommentTab({
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-thumb": {
             background: "#E5E7EB",
-            borderRadius: 4,
+            borderRadius: "8px",
           },
         }}
       >
         {comments.length === 0 && (
           <Box sx={{ textAlign: "center", py: 4 }}>
-            <img src={MessagingSvg} alt="messaging" width={250} />
-            <Typography variant="body2" color="text.primary">
+            <img src={MessagingSvg} alt="messaging" width="60%" />
+            <Typography color="text.primary">
               No comments yet. Start the conversation!
             </Typography>
           </Box>

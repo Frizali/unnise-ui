@@ -79,7 +79,7 @@ export default function LabelGroup({ labels = [] }) {
             sx={{
               px: "10px",
               py: "4px",
-              borderRadius: "4px",
+              borderRadius: "8px",
               background: `${label.color}30`,
               cursor: "default",
               whiteSpace: "nowrap",
@@ -135,7 +135,7 @@ export default function LabelGroup({ labels = [] }) {
             sx={{
               px: "10px",
               py: "4px",
-              borderRadius: "4px",
+              borderRadius: "8px",
               background: "rgba(0,0,0,0.06)",
               cursor: "pointer",
               whiteSpace: "nowrap",

@@ -1,8 +1,6 @@
 import { Box, Typography, Stack, Tabs, Tab, Skeleton } from "@mui/material";
 import { useProjectHeader } from "../hooks/useProjectHeader";
 import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import BaseIcon from "../../../components/Icon/BaseIcon";
 import { Share2, Settings } from "lucide-react";
 import styled from "@emotion/styled";
@@ -89,7 +87,7 @@ export function ProjectHeader() {
             sx={{
               minHeight: 0,
               "&.MuiTabs-indicator": {
-                height: "2px",
+                height: "1px",
                 borderRadius: 2,
               },
             }}

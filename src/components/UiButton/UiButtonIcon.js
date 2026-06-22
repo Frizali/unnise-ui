@@ -23,6 +23,7 @@ function UiButtonIcon({
           display: "flex",
           justifyContent: "center",
           justifyItems: "center",
+          borderRadius:"8px",
           border: bordered ? "1px solid #D9D9D9" : "none",
           "&:hover": {
             backgroundColor: "#0B120E24",

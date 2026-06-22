@@ -5,17 +5,14 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ProjectMenu from "../features/project/components/ProjectMenu";
 import styled from "@emotion/styled";
-import { useState, cloneElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Calendar, Briefcase } from "lucide-react";
 import BaseIcon from "../components/Icon/BaseIcon";
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
-  borderRadius: 3,
+  borderRadius: "8px",
   padding: "4px",
   boxSizing: "border-box",
   position: "relative",

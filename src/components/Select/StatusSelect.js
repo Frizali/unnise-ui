@@ -19,10 +19,10 @@ export default function StatusSelect({ value, onChange, columns }) {
         onClick={handleOpen}
         sx={{
           width: "100%",
-          height:"100%",
+          height: "100%",
           color: "white",
           background: selected.color,
-          borderRadius: "0",
+          borderRadius: "8px",
           textTransform: "none",
           fontSize: 14,
           justifyContent: "center",
@@ -57,7 +57,7 @@ export default function StatusSelect({ value, onChange, columns }) {
               sx={{
                 color: "white",
                 background: opt.color,
-                borderRadius: "0",
+                borderRadius: "8px",
                 textTransform: "none",
                 fontSize: 14,
                 mb: 0.75,
