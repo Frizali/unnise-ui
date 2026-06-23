@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import { columnService } from "../../../services/columnService";
 import { useParams } from "react-router-dom";
 import { useAlert } from "../../../context/AlertContext";
+import hubClient from "../../../lib/hubClient";
 
 export const COLOR_OPTIONS = [
   { value: "#6366f1", label: "Indigo" },
@@ -38,9 +39,44 @@ export function useColumn() {
     loadColumns();
   }, [projectId]);
 
+  useEffect(() => {
+    if (!projectId) return;
+
+    hubClient.joinProjectRoom(projectId).catch(() => {});
+
+    const handleColumnCreated = (column) => {
+      setColumns((prev) => {
+        if (prev.find((c) => c.id === column.id)) return prev;
+        return [...prev, column];
+      });
+    };
+
+    const handleColumnsReordered = (items) => {
+      setColumns((prev) => {
+        const mapped = prev.map((c) => {
+          const item = items.find((i) => i.id === c.id);
+          return item ? { ...c, position: item.position } : c;
+        });
+        return mapped.sort((a, b) => a.position - b.position);
+      });
+    };
+
+    hubClient.on("ColumnCreated", handleColumnCreated);
+    hubClient.on("ColumnsReordered", handleColumnsReordered);
+
+    return () => {
+      hubClient.off("ColumnCreated", handleColumnCreated);
+      hubClient.off("ColumnsReordered", handleColumnsReordered);
+      hubClient.leaveProjectRoom(projectId).catch(() => {});
+    };
+  }, [projectId]);
+
   const reorderColumns = async (reorderedColumns) => {
     try {
-      await columnService.reorder(projectId, reorderedColumns);
+      await hubClient.invoke("ReorderColumns", {
+        projectId,
+        columns: reorderedColumns.map(({ id, position }) => ({ id, position })),
+      });
     } catch {
       loadColumns();
     }
@@ -48,19 +84,19 @@ export function useColumn() {
 
   const createColumn = async (columnData) => {
     try {
-      return await columnService.create(projectId, { projectId, ...columnData });
+      return await hubClient.invoke("CreateColumn", {
+        projectId,
+        title: columnData.title,
+        description: columnData.description ?? null,
+        color: columnData.color,
+      });
     } catch {
       loadColumns();
     }
   };
 
   const addColumn = async (columnData) => {
-    const nextPosition =
-      columns.length > 0 ? Math.max(...columns.map((c) => c.position)) + 1 : 1;
-
-    const newColumn = { ...columnData, position: nextPosition };
-    const created = await createColumn(newColumn);
-    if (created) setColumns((prev) => [...prev, created]);
+    await createColumn(columnData);
   };
 
   const swapColumnPositions = (sourceId, targetId) => {

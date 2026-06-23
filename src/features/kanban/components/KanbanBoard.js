@@ -9,7 +9,7 @@ import { useColumn } from "../hooks/useColumn";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import loadingGif from "../../../assets/Unnise-Loader.gif";
+import loadingGif from "../../../assets/unnise_loading.gif";
 
 export default function KanbanBoard() {
   const { id: projectId } = useParams();

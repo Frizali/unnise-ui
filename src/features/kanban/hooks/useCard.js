@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cardService } from "../../../services/cardService";
 import { useAlert } from "../../../context/AlertContext";
+import hubClient from "../../../lib/hubClient";
 
 export function useCard() {
   const { id: projectId } = useParams();
@@ -25,11 +26,50 @@ export function useCard() {
     loadCards();
   }, [projectId]);
 
-  const addCard = (card) => {
-    setCards((prev) => {
-      const positionInColumn = prev.filter((c) => c.columnId === card.columnId).length;
-      return [...prev, { ...card, position: positionInColumn }];
-    });
+  useEffect(() => {
+    if (!projectId) return;
+
+    hubClient.joinProjectRoom(projectId).catch(() => {});
+
+    const handleCardCreated = (card) => {
+      setCards((prev) => {
+        if (prev.find((c) => c.id === card.id)) return prev;
+        return [...prev, card];
+      });
+    };
+
+    const handleCardMoved = (cardId, columnId, position) => {
+      setCards((prev) =>
+        prev.map((c) => (c.id === cardId ? { ...c, columnId, position } : c))
+      );
+    };
+
+    hubClient.on("CardCreated", handleCardCreated);
+    hubClient.on("CardMoved", handleCardMoved);
+
+    return () => {
+      hubClient.off("CardCreated", handleCardCreated);
+      hubClient.off("CardMoved", handleCardMoved);
+      hubClient.leaveProjectRoom(projectId).catch(() => {});
+    };
+  }, [projectId]);
+
+  const addCard = async (card) => {
+    const payload = {
+      projectId,
+      columnId: card.columnId,
+      title: card.title,
+      description: card.description ?? null,
+      startDate: card.startDate ?? null,
+      endDate: card.endDate ?? null,
+      assigneeIds: card.assigneeIds ?? [],
+    };
+
+    try {
+      await hubClient.invoke("CreateCard", payload);
+    } catch (err) {
+      showAlert("Card create failed", err.message ?? "Unable to create card", "error");
+    }
   };
 
   const updateCard = (updatedCard) => {
@@ -46,11 +86,14 @@ export function useCard() {
         const newPosition = prev.filter(
           (c) => c.columnId === updatedCard.columnId && c.id !== updatedCard.id
         ).length;
-        cardService.move(projectId, updatedCard.id, {
+        hubClient.invoke("MoveCard", {
+          projectId,
           cardId: updatedCard.id,
           columnId: updatedCard.columnId,
           position: newPosition,
-        });
+        }).catch((err) =>
+          showAlert("Card move failed", err.message ?? "Unable to move card", "error")
+        );
         return prev.map((c) =>
           c.id === updatedCard.id ? { ...updatedCard, position: newPosition } : c
         );
@@ -74,25 +117,39 @@ export function useCard() {
     setCards((prev) => prev.filter((c) => c.id !== cardId));
   };
 
-  const moveCardToColumn = (cardId, targetColumnId) => {
+  const moveCardToColumn = async (cardId, targetColumnId) => {
+    let newPosition = 0;
     setCards((prev) => {
-      const newPosition = prev.filter((c) => c.columnId === targetColumnId).length;
+      newPosition = prev.filter((c) => c.columnId === targetColumnId).length;
       return prev.map((c) =>
         c.id === cardId ? { ...c, columnId: targetColumnId, position: newPosition } : c
       );
     });
+
+    try {
+      await hubClient.invoke("MoveCard", {
+        projectId,
+        cardId,
+        columnId: targetColumnId,
+        position: newPosition,
+      });
+    } catch (err) {
+      showAlert("Card move failed", err.message ?? "Unable to move card", "error");
+    }
   };
 
-  const reorderCardWithinColumn = (sourceCardId, targetCardId, projectId) => {
-    setCards((prev) => {
-      const targetCard = prev.find((c) => c.id === targetCardId);
-      if (!targetCard) return prev;
+  const reorderCardWithinColumn = async (sourceCardId, targetCardId) => {
+    let payload;
+    const newCards = (() => {
+      const current = cards;
+      const targetCard = current.find((c) => c.id === targetCardId);
+      if (!targetCard) return current;
 
       const columnId = targetCard.columnId;
-      const sourceCard = prev.find((c) => c.id === sourceCardId);
-      if (!sourceCard) return prev;
+      const sourceCard = current.find((c) => c.id === sourceCardId);
+      if (!sourceCard) return current;
 
-      const siblings = prev
+      const siblings = current
         .filter((c) => c.columnId === columnId && c.id !== sourceCardId)
         .sort((a, b) => a.position - b.position);
 
@@ -101,35 +158,49 @@ export function useCard() {
 
       const reindexed = siblings.map((c, i) => ({ ...c, position: i }));
       const movedCard = reindexed.find((c) => c.id === sourceCardId);
-
-      cardService.move(projectId, sourceCard.id, {
-        cardId: sourceCard.id,
+      payload = {
+        projectId,
+        cardId: sourceCardId,
         columnId,
-        position: movedCard.position,
-      });
+        position: movedCard?.position ?? 0,
+      };
 
       return [
-        ...prev.filter((c) => c.columnId !== columnId && c.id !== sourceCardId),
+        ...current.filter((c) => c.columnId !== columnId && c.id !== sourceCardId),
         ...reindexed,
       ];
-    });
+    })();
+
+    setCards(newCards);
+
+    if (payload) {
+      try {
+        await hubClient.invoke("MoveCard", payload);
+      } catch (err) {
+        showAlert("Card reorder failed", err.message ?? "Unable to reorder card", "error");
+      }
+    }
   };
 
-  const moveCardToColumnByDrop = (sourceCardId, targetColumnId, projectId) => {
+  const moveCardToColumnByDrop = async (sourceCardId, targetColumnId) => {
+    let newPosition = 0;
     setCards((prev) => {
-      const newPosition =
-        prev.filter((c) => c.columnId === targetColumnId && c.id !== sourceCardId).length + 1;
-
-      cardService.move(projectId, sourceCardId, {
-        cardId: sourceCardId,
-        columnId: targetColumnId,
-        position: newPosition,
-      });
-
+      newPosition = prev.filter((c) => c.columnId === targetColumnId && c.id !== sourceCardId).length + 1;
       return prev.map((c) =>
         c.id === sourceCardId ? { ...c, columnId: targetColumnId, position: newPosition } : c
       );
     });
+
+    try {
+      await hubClient.invoke("MoveCard", {
+        projectId,
+        cardId: sourceCardId,
+        columnId: targetColumnId,
+        position: newPosition,
+      });
+    } catch (err) {
+      showAlert("Card move failed", err.message ?? "Unable to move card", "error");
+    }
   };
 
   const getCardsByColumn = (columnId) =>
