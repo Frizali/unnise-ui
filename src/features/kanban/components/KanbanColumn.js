@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Typography, Box, TextField, Tooltip } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Typography, Box, TextField, Tooltip, Menu, MenuItem } from "@mui/material";
 import { ClickAwayListener } from "@mui/material";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import { KanbanCard } from "./KanbanCard";
 import UiButtonIcon from "../../../components/UiButton/UiButtonIcon";
 import { ColorSwatch } from "../../../components/Swatch/ColorSwatch";
@@ -19,6 +19,8 @@ export function KanbanColumn({
   onAddCard,
   onUpdateCard,
   onDeleteCard,
+  onUpdateColumn,
+  onDeleteColumn,
   onMoveCard,
   onColumnDragStart,
   onColumnDragEnd,
@@ -64,6 +66,8 @@ export function KanbanColumn({
         onDragStart={(e) => { onColumnDragStart(e, column.id); setIsDragging(true); }}
         onDragEnd={(e) => { onColumnDragEnd(e); setIsDragging(false); }}
         onAddClick={() => setIsAddingCard(true)}
+        onUpdateColumn={onUpdateColumn}
+        onDeleteColumn={onDeleteColumn}
       />
 
       <Box sx={{ flex: 1, minHeight: 60, padding: "12px 1rem", gap:1, display:"flex", flexDirection:"column" }}>
@@ -105,10 +109,59 @@ export function KanbanColumn({
 }
 
 
-function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragStart, onDragEnd, onAddClick }) {
+function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragStart, onDragEnd, onAddClick, onUpdateColumn, onDeleteColumn }) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(column.title);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
+  useEffect(() => {
+    setDraftTitle(column.title);
+  }, [column.title]);
+
   const borderColor = isHoveredByDrag ? column.color : "#D9D9D9";
   const borderWidth = isHoveredByDrag ? "2px" : "1px";
   const iconColor = isHovered ? "default" : "transparent";
+  const menuOpen = Boolean(menuAnchor);
+
+  const handleMenuOpen = (event) => {
+    event.stopPropagation();
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleMenuClose = () => setMenuAnchor(null);
+
+  const handleDeleteColumn = () => {
+    handleMenuClose();
+    onDeleteColumn?.(column.id);
+  };
+
+  const handleStartEditing = (event) => {
+    event.stopPropagation();
+    setIsEditingTitle(true);
+  };
+
+  const handleCancelEditing = () => {
+    setDraftTitle(column.title);
+    setIsEditingTitle(false);
+  };
+
+  const handleSaveTitle = () => {
+    const normalized = draftTitle.trim();
+    if (normalized && normalized !== column.title) {
+      onUpdateColumn?.(column.id, normalized);
+    }
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSaveTitle();
+    }
+    if (event.key === "Escape") {
+      handleCancelEditing();
+    }
+  };
 
   return (
     <Box
@@ -125,23 +178,71 @@ function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragSta
         borderBottom: `${borderWidth} solid ${borderColor}`,
       }}
     >
-      <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        <ColorSwatch size={10} value={column.color} />
-        <Typography variant="body2" color="text.primary" fontWeight={500}>
-          {column.title}
-        </Typography>
-        <Typography variant="body2" color="text.primary" fontWeight={500}>
-          {cardCount}
-        </Typography>
-      </Box>
-      <Box display="flex" gap={0.5}>
-        <UiButtonIcon onClick={onAddClick} title="Create task" size="small">
-          <BaseIcon variant={iconColor}><Plus /></BaseIcon>
-        </UiButtonIcon>
-        <UiButtonIcon title="More actions" size="small">
-          <BaseIcon variant={iconColor}><Ellipsis /></BaseIcon>
-        </UiButtonIcon>
-      </Box>
+      {isEditingTitle ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, width: "100%" }}>
+          <TextField
+            autoFocus
+            value={draftTitle}
+            onChange={(e) => setDraftTitle(e.target.value)}
+            onBlur={handleSaveTitle}
+            onKeyDown={handleTitleKeyDown}
+            variant="standard"
+            size="small"
+            fullWidth
+            inputProps={{ style: { fontSize: 14, fontWeight: 500, padding: 0 } }}
+            sx={{ minWidth: 120 }}
+          />
+          <UiButtonIcon title="Save" size="small" onClick={handleSaveTitle}>
+            <CheckIcon fontSize="small" />
+          </UiButtonIcon>
+          <UiButtonIcon title="Cancel" size="small" onClick={handleCancelEditing}>
+            <CloseIcon fontSize="small" />
+          </UiButtonIcon>
+        </Box>
+      ) : (
+        <>
+          <Box sx={{ display: "flex", gap: "8px", alignItems: "center", flex: 1, minWidth: 0 }}>
+            <ColorSwatch size={10} value={column.color} />
+            <Typography
+              variant="body2"
+              color="text.primary"
+              fontWeight={500}
+              onDoubleClick={handleStartEditing}
+              sx={{ cursor: "text", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            >
+              {column.title}
+            </Typography>
+            <Typography variant="body2" color="text.primary" fontWeight={500}>
+              {cardCount}
+            </Typography>
+          </Box>
+          <Box display="flex" gap={0.5}>
+            <UiButtonIcon onClick={onAddClick} title="Create task" size="small">
+              <BaseIcon variant={iconColor}><Plus /></BaseIcon>
+            </UiButtonIcon>
+            <UiButtonIcon title="More actions" size="small" onClick={handleMenuOpen}>
+              <BaseIcon variant={iconColor}><Ellipsis /></BaseIcon>
+            </UiButtonIcon>
+            <Menu
+              anchorEl={menuAnchor}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <MenuItem
+                onClick={(event) => {
+                  handleMenuClose();
+                  handleStartEditing(event);
+                }}
+              >
+                Update column
+              </MenuItem>
+              <MenuItem onClick={handleDeleteColumn}>Delete column</MenuItem>
+            </Menu>
+          </Box>
+        </>
+      )}
     </Box>
   );
 }

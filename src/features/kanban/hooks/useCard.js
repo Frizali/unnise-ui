@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cardService } from "../../../services/cardService";
 import { useAlert } from "../../../context/AlertContext";
+import { useAuth } from "../../../context/AuthContext";
 import hubClient from "../../../lib/hubClient";
 
 export function useCard() {
@@ -54,7 +55,15 @@ export function useCard() {
     };
   }, [projectId]);
 
+  const { user } = useAuth();
+
   const addCard = async (card) => {
+    const assigneeIds = card.assigneeIds?.length
+      ? card.assigneeIds
+      : user?.sub
+      ? [user.sub]
+      : [];
+
     const payload = {
       projectId,
       columnId: card.columnId,
@@ -62,7 +71,7 @@ export function useCard() {
       description: card.description ?? null,
       startDate: card.startDate ?? null,
       endDate: card.endDate ?? null,
-      assigneeIds: card.assigneeIds ?? [],
+      assigneeIds,
     };
 
     try {

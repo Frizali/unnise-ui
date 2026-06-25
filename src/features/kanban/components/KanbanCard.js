@@ -8,6 +8,7 @@ const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },
   Medium: { label: "Medium", color: "#d97706", points: 12 },
   Low: { label: "Low", color: "#16a34a", points: 6 },
+  default: { label: "No Priority", color: "#9CA3AF", points: 0 },
 };
 
 export function KanbanCard({
@@ -26,7 +27,7 @@ export function KanbanCard({
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDragging, setIsDragging] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const priority = PRIORITY_META[card.priority];
+  const priority = PRIORITY_META[card.priority] || PRIORITY_META.default;
 
   const openDetail = () => {
     const params = new URLSearchParams(searchParams);

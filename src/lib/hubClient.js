@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 
 let connection = null;
 const listeners = new Map();
@@ -11,7 +11,11 @@ function getHubUrl() {
 }
 
 async function ensureConnection() {
-  if (connection) return connection;
+  if (connection && connection.state === HubConnectionState.Connected) return connection;
+
+  if (connection && connection.state === HubConnectionState.Disconnected) {
+    connection = null;
+  }
 
   connection = new HubConnectionBuilder()
     .withUrl(getHubUrl(), {

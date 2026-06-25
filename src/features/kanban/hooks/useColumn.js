@@ -61,12 +61,28 @@ export function useColumn() {
       });
     };
 
+    const handleColumnUpdated = (updatedColumn) => {
+      setColumns((prev) =>
+        prev.map((column) =>
+          column.id === updatedColumn.id ? { ...column, ...updatedColumn } : column
+        )
+      );
+    };
+
+    const handleColumnDeleted = (columnId) => {
+      setColumns((prev) => prev.filter((column) => column.id !== columnId));
+    };
+
     hubClient.on("ColumnCreated", handleColumnCreated);
     hubClient.on("ColumnsReordered", handleColumnsReordered);
+    hubClient.on("ColumnUpdated", handleColumnUpdated);
+    hubClient.on("ColumnDeleted", handleColumnDeleted);
 
     return () => {
       hubClient.off("ColumnCreated", handleColumnCreated);
       hubClient.off("ColumnsReordered", handleColumnsReordered);
+      hubClient.off("ColumnUpdated", handleColumnUpdated);
+      hubClient.off("ColumnDeleted", handleColumnDeleted);
       hubClient.leaveProjectRoom(projectId).catch(() => {});
     };
   }, [projectId]);
@@ -99,6 +115,37 @@ export function useColumn() {
     await createColumn(columnData);
   };
 
+  const updateColumn = async (columnId, title) => {
+    setColumns((prev) =>
+      prev.map((column) => (column.id === columnId ? { ...column, title } : column))
+    );
+
+    try {
+      await hubClient.invoke("UpdateColumn", {
+        projectId,
+        columnId,
+        title,
+      });
+    } catch (err) {
+      showAlert("Unable to update column", err.message ?? "Please try again", "error");
+      loadColumns();
+    }
+  };
+
+  const deleteColumn = async (columnId) => {
+    setColumns((prev) => prev.filter((column) => column.id !== columnId));
+
+    try {
+      await hubClient.invoke("DeleteColumn", {
+        projectId,
+        columnId,
+      });
+    } catch (err) {
+      showAlert("Unable to delete column", err.message ?? "Please try again", "error");
+      loadColumns();
+    }
+  };
+
   const swapColumnPositions = (sourceId, targetId) => {
     setColumns((prev) => {
       const arr = [...prev];
@@ -123,6 +170,8 @@ export function useColumn() {
     swapColumnPositions,
     reorderColumns,
     createColumn,
+    updateColumn,
+    deleteColumn,
   };
 }
 

@@ -300,7 +300,6 @@ function CommentComposer({
         borderRadius: "8px",
         overflow: "visible",
         background: "#fff",
-        transition: "border-color 0.15s, box-shadow 0.15s",
         "&:focus-within": {
           borderColor: isEditMode ? "#D97706" : "#4d4bfe",
           //   boxShadow: isEditMode
@@ -1138,7 +1137,7 @@ export function CommentTab({
 
         <div ref={bottomRef} />
       </Box>
-      <Box sx={{ pt: 1.5, borderTop: "1px solid #F3F4F6", flexShrink: 0 }}>
+      <Box sx={{ pt: 1.5, flexShrink: 0 }}>
         <CommentComposer
           onSubmit={handleSubmit}
           replyTo={replyTo}

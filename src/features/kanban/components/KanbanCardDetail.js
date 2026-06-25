@@ -329,7 +329,10 @@ export function KanbanBoardDetail({
                 onChange={(_, val) => setActiveTab(val)}
                 sx={{
                   minHeight: 0,
-                  "& .MuiTabs-indicator": { height: "1px", borderRadius: 2 },
+                  "&.MuiTabs-indicator": {
+                    height: "1px",
+                    borderRadius: 2,
+                  },
                 }}
               >
                 {DETAIL_TABS.map((tab) => (

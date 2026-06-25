@@ -32,6 +32,8 @@ export default function KanbanBoard() {
     isLoading: columnsLoading,
     addColumn,
     swapColumnPositions,
+    updateColumn,
+    deleteColumn,
   } = useColumn();
 
   const {
@@ -87,6 +89,8 @@ export default function KanbanBoard() {
               onAddCard={addCard}
               onUpdateCard={updateCard}
               onDeleteCard={deleteCard}
+              onUpdateColumn={updateColumn}
+              onDeleteColumn={deleteColumn}
               onMoveCard={moveCardToColumn}
               isHoveredByDrag={hoveredColumnId === column.id}
               dropTargetCardId={dropTargetCardId}
