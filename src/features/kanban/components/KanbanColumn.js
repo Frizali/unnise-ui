@@ -70,7 +70,7 @@ export function KanbanColumn({
         onDeleteColumn={onDeleteColumn}
       />
 
-      <Box sx={{ flex: 1, minHeight: 60, padding: "12px 1rem", gap:1, display:"flex", flexDirection:"column" }}>
+      <Box sx={{ flex: 1, minHeight: 60, padding: "12px 1rem", gap: 1, display: "flex", flexDirection: "column" }}>
         {cards.map((card) => (
           <KanbanCard
             key={card.id}
@@ -88,12 +88,6 @@ export function KanbanColumn({
           />
         ))}
 
-        {cards.length === 0 && !isAddingCard && (
-          <Typography variant="body2" color="text.primary">
-            {column.description}
-          </Typography>
-        )}
-
         {isAddingCard && (
           <AddCardInlineForm
             onSubmit={(title) => {
@@ -103,6 +97,12 @@ export function KanbanColumn({
             onCancel={() => setIsAddingCard(false)}
           />
         )}
+
+        <ColumnDescription
+          columnId={column.id}
+          description={column.description}
+          onUpdateColumn={onUpdateColumn}
+        />
       </Box>
     </Box>
   );
@@ -148,7 +148,7 @@ function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragSta
   const handleSaveTitle = () => {
     const normalized = draftTitle.trim();
     if (normalized && normalized !== column.title) {
-      onUpdateColumn?.(column.id, normalized);
+      onUpdateColumn?.(column.id, { title: normalized });
     }
     setIsEditingTitle(false);
   };
@@ -229,19 +229,97 @@ function ColumnHeader({ column, cardCount, isHovered, isHoveredByDrag, onDragSta
               onClose={handleMenuClose}
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  boxShadow: "0px 8px 24px rgba(15, 23, 42, 0.08)",
+                  border: "1px solid rgba(0, 0, 0, 0.04)",
+                },
+              }}
             >
               <MenuItem
                 onClick={(event) => {
                   handleMenuClose();
                   handleStartEditing(event);
                 }}
+                sx={{ fontSize: 14 }}
               >
                 Update column
               </MenuItem>
-              <MenuItem onClick={handleDeleteColumn}>Delete column</MenuItem>
+              <MenuItem onClick={handleDeleteColumn} sx={{ fontSize: 14 }}>
+                Delete column
+              </MenuItem>
             </Menu>
           </Box>
         </>
+      )}
+    </Box>
+  );
+}
+
+export function ColumnDescription({ columnId, description, onUpdateColumn }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftDescription, setDraftDescription] = useState(description ?? "");
+
+  useEffect(() => {
+    setDraftDescription(description ?? "");
+  }, [description]);
+
+  const handleCancelDescription = () => {
+    setDraftDescription(description ?? "");
+    setIsEditing(false);
+  };
+
+  const handleSaveDescription = () => {
+    const normalized = draftDescription.trim();
+    const nextValue = normalized || null;
+
+    if (nextValue !== (description ?? null)) {
+      onUpdateColumn?.(columnId, { description: nextValue });
+    }
+
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSaveDescription();
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      handleCancelDescription();
+    }
+  };
+
+  return (
+    <Box
+      onDoubleClick={() => setIsEditing(true)}
+    >
+      {isEditing ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, width: "100%" }}>
+          <TextField
+            autoFocus
+            value={draftDescription}
+            onChange={(e) => setDraftDescription(e.target.value)}
+            onBlur={handleSaveDescription}
+            onKeyDown={handleKeyDown}
+            variant="standard"
+            size="small"
+            fullWidth
+            inputProps={{ style: { fontSize: 14, fontWeight: 500, padding: 0 } }}
+            sx={{ minWidth: 120 }}
+          />
+          <UiButtonIcon title="Save" size="small" onClick={handleSaveDescription}>
+            <CheckIcon fontSize="small" />
+          </UiButtonIcon>
+          <UiButtonIcon title="Cancel" size="small" onClick={handleCancelDescription}>
+            <CloseIcon fontSize="small" />
+          </UiButtonIcon>
+        </Box>
+      ) : (
+        <Typography variant="body2" color="text.primary">
+          {description || "Add a description... (Double click to edit)"}
+        </Typography>
       )}
     </Box>
   );

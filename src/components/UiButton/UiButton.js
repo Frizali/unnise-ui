@@ -8,7 +8,7 @@ const iconSizes = {
 
 const sizeStyles = {
   small: {
-    height: "32px",
+    height: "37px",
     fontSize: "14px",
     padding: "0 1rem",
   },
@@ -40,7 +40,6 @@ const UiButton = ({
   endIcon,
   ...props
 }) => {
-  console.log(size);
   const isDisabled = disabled || loading;
   const currentSize = sizeStyles[size] || sizeStyles.small;
   const currentIconSize = iconSizes[size] || iconSizes.small;

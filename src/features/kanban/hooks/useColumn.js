@@ -45,6 +45,7 @@ export function useColumn() {
     hubClient.joinProjectRoom(projectId).catch(() => {});
 
     const handleColumnCreated = (column) => {
+      console.log("Column created:", column);
       setColumns((prev) => {
         if (prev.find((c) => c.id === column.id)) return prev;
         return [...prev, column];
@@ -115,16 +116,23 @@ export function useColumn() {
     await createColumn(columnData);
   };
 
-  const updateColumn = async (columnId, title) => {
+  const updateColumn = async (columnId, updates) => {
+    const normalizedUpdates = typeof updates === "string" ? { title: updates } : updates;
+    const currentColumn = columns.find((column) => column.id === columnId);
+
     setColumns((prev) =>
-      prev.map((column) => (column.id === columnId ? { ...column, title } : column))
+      prev.map((column) =>
+        column.id === columnId ? { ...column, ...normalizedUpdates } : column
+      )
     );
 
     try {
       await hubClient.invoke("UpdateColumn", {
         projectId,
         columnId,
-        title,
+        title: normalizedUpdates.title ?? currentColumn?.title ?? null,
+        description: normalizedUpdates.description ?? currentColumn?.description ?? null,
+        color: normalizedUpdates.color ?? currentColumn?.color ?? null,
       });
     } catch (err) {
       showAlert("Unable to update column", err.message ?? "Please try again", "error");

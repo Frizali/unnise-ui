@@ -61,7 +61,15 @@ export function ProjectInviteMember({
 
         <Stack direction="row" gap={0.5} alignItems="stretch" mb={2}>
           <Autocomplete
-            sx={{ flex: 1 }}
+            sx={{
+              flex: 1,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "8px",
+              },
+            }}
             options={options}
             loading={loading}
             inputValue={keyword}
@@ -115,6 +123,12 @@ export function ProjectInviteMember({
                   "& .MuiInputBase-input": {
                     fontSize: "14px",
                   },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderRadius: "8px",
+                  },
                 }}
                 slotProps={{
                   input: {
@@ -135,7 +149,6 @@ export function ProjectInviteMember({
 
           <UiButton
             loading={sendingInvite}
-            sx={{ whiteSpace: "nowrap", alignSelf: "stretch" }}
             onClick={handleSendInvite}
           >
             Send invite
