@@ -621,10 +621,10 @@ function CommentItem({
         ) : (
           <Box
             sx={{
-              background: "#F9FAFB",
-              border: `1px solid ${isPinned ? "#FDE68A" : "#D9D9D9"}`,
+              // background: "#F9FAFB",
+              // border: `1px solid ${isPinned ? "#FDE68A" : "#D9D9D9"}`,
               borderRadius: "8px",
-              padding: "10px 14px",
+              // padding: "10px 14px",
               position: "relative",
               ...(isPinned && { background: "#FFFBEB" }),
             }}
@@ -655,15 +655,15 @@ function CommentItem({
             )}
 
             <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
+              sx={{ display: "flex", mb: 0.5, flexDirection: "column" }}
             >
               <Typography variant="body2" fontWeight={600} color="text.primary">
                 {comment.author?.username}
               </Typography>
-              <Typography variant="caption" color="text.disabled" fontSize={12}>
+              <Typography variant="caption" color="text.secondary" fontSize={12}>
                 {timeAgo(comment.createdAt)}
               </Typography>
-              {comment.isEdited && (
+              {/* {comment.isEdited && (
                 <Typography
                   variant="caption"
                   color="text.disabled"
@@ -671,14 +671,14 @@ function CommentItem({
                 >
                   (edited)
                 </Typography>
-              )}
+              )} */}
               {/* 3-dot menu — only owner sees it */}
-              <CommentMenu
+              {/* <CommentMenu
                 comment={comment}
                 currentUserId={currentUserId}
                 onEdit={() => setIsEditing(true)}
                 onDelete={handleDelete}
-              />
+              /> */}
             </Box>
 
             {comment.content && (

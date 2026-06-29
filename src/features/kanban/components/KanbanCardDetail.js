@@ -13,6 +13,7 @@ import {
   TextField,
   Tab,
   Tabs,
+  Link,
 } from "@mui/material";
 import styled from "@emotion/styled";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -24,6 +25,8 @@ import StatusSelect from "../../../components/Select/StatusSelect";
 import CardTimestamp from "../../../components/Card/CardTimestamp";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { useCardDetail } from "../hooks/useCardDetail";
+import { Link as RouterLink } from "react-router-dom";
+import { Link as LucideLink } from "lucide-react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -68,11 +71,16 @@ export function KanbanBoardDetail({
     members,
     comments,
     projectLabels,
+    project,
     closeDetail,
     saveCardAssignees,
     saveCardLabels,
     DETAIL_TABS,
   } = useCardDetail({ isOpen: showDetail, setIsOpen: setShowDetail });
+
+  const projectName = project?.name || "";
+  const projectId = project?.id || "";
+  const columnName = columns?.find((c) => c.id === card.columnId)?.title || "";
 
   const [editingField, setEditingField] = useState(null);
   const [assignees, setAssignees] = useState(card.assignees || []);
@@ -149,7 +157,13 @@ export function KanbanBoardDetail({
           flexDirection: "column",
         }}
       >
-        <DetailHeader cardId={cardId} onClose={closeDetail} />
+        <DetailHeader
+          projectName={projectName}
+          columnName={columnName}
+          projectId={projectId}
+          cardId={cardId}
+          onClose={closeDetail}
+        />
 
         <Grid
           container
@@ -253,55 +267,12 @@ export function KanbanBoardDetail({
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
-                <AccordionSummary expandIcon={<ExpandMoreOutlinedIcon />}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      flex: 1,
-                    }}
-                  >
-                    <Typography color="text.primary" fontWeight={500}>
-                      Difficulty
-                    </Typography>
-
-                    {diffMeta && (
-                      <Box
-                        sx={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          padding: "2px 10px",
-                          borderRadius: "20px",
-                          background: diffMeta.bg,
-                          border: `1px solid ${diffMeta.border}`,
-                        }}
-                      >
-                        <Typography
-                          fontSize={12}
-                          fontWeight={700}
-                          color={diffMeta.color}
-                        >
-                          {difficultyResult}
-                        </Typography>
-                        <Typography fontSize={11} color={diffMeta.color}>
-                          · {diffMeta.points} pts
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
                   <DifficultyVote
                     members={members}
                     card={card}
                     currentUserId={currentUserId}
                     onUpdateDifficulty={handleDifficultyResult}
                   />
-                </AccordionDetails>
-              </Accordion>
 
               <Box px={2}>
                 <CardTimestamp
@@ -367,7 +338,21 @@ export function KanbanBoardDetail({
   );
 }
 
-function DetailHeader({ cardId, onClose }) {
+function DetailHeader({ projectName, columnName, cardId, projectId, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const url = `${window.location.origin}/main/projects/${projectId}/board?card=${cardId}`;
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch (err) {
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -378,7 +363,42 @@ function DetailHeader({ cardId, onClose }) {
         marginBottom: "1rem",
       }}
     >
-      <Typography fontSize={12}>{cardId}</Typography>
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 1,
+          cursor: "default",
+          "&:hover .copyIcon": { opacity: 1 },
+        }}
+      >
+        <Link
+          component={RouterLink}
+          to={`/main/projects/${projectId}/board?card=${cardId}`}
+          underline="hover"
+          sx={{ fontSize: 14, color: "text.secondary" }}
+        >
+          {`${projectName} / ${columnName} / ${cardId}`}
+        </Link>
+
+        {/* <UiButtonIcon><LucideLink size={14} /></UiButtonIcon> */}
+        <Box
+          className="copyIcon"
+          onClick={handleCopy}
+          sx={{
+            opacity: 0,
+            transition: "opacity 150ms",
+            display: "inline-flex",
+            alignItems: "center",
+            ml: 0.5,
+            cursor: "pointer",
+          }}
+          role="button"
+          title={copied ? "Copied" : "Copy link"}
+        >
+          <LucideLink size={14} color={copied ? "#16a34a" : undefined} />
+        </Box>
+      </Box>
       <Box sx={{ display: "flex", gap: ".5rem" }}>
         <UiButtonIcon title="More Actions" bordered={true}>
           <MoreHorizOutlinedIcon />

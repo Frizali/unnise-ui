@@ -8,7 +8,7 @@ const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },
   Medium: { label: "Medium", color: "#d97706", points: 12 },
   Low: { label: "Low", color: "#16a34a", points: 6 },
-  default: { label: "No Priority", color: "#9CA3AF", points: 0 },
+  default: { label: "No Difficulty", color: "#9CA3AF", points: 0 },
 };
 
 export function KanbanCard({

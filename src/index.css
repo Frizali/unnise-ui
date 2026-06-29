@@ -4,3 +4,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; 
 }
+
+::selection {
+  background: #4d4bfe;
+  color: #fff;
+}
+
+::-moz-selection {
+  background: #4d4bfe;
+  color: #fff;
+}
