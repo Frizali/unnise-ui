@@ -95,7 +95,7 @@ export function DifficultyVote({
   const allVoted =
     members.length > 0 && members.every((m) => getMemberVote(m.id) !== null);
   const votedCount = members.filter((m) => getMemberVote(m.id) !== null).length;
-  
+
 
   const haveDeadlinePassed = deadlineReached;
 
@@ -228,25 +228,40 @@ export function DifficultyVote({
             flexWrap: "wrap",
           }}
         >
-          <Typography
-            color={!userHasVoted && isVotingOpen ? "#dc2626" : "text.primary"}
-            fontWeight={500}
-          >
-            Difficulty
-          </Typography>
 
-          <Box
-            sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 0.5,
-
-            }}
-          >
-            <Typography fontSize={14} sx={{ color: !userHasVoted ? "#dc2626" : "text.primary", fontWeight: 500 }}>
-              Time left {timeLeftText}
+          {revealed && winnerOption && (
+            <Typography
+              color={winnerOption.color}
+              fontWeight={500}
+            >
+              {winnerOption.label}
             </Typography>
-          </Box>
+          )}
+
+          {!revealed && !winnerOption && (
+            <Typography
+              color={!userHasVoted && isVotingOpen ? "#dc2626" : "text.primary"}
+              fontWeight={500}
+            >
+              Difficulty
+            </Typography>
+          )}
+
+          {!revealed && !winnerOption && (
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.5,
+
+              }}
+            >
+              <Typography fontSize={14} sx={{ color: !userHasVoted ? "#dc2626" : "text.primary", fontWeight: 500 }}>
+                Time left {timeLeftText}
+              </Typography>
+            </Box>
+          )}
+
         </Box>
       </AccordionSummary>
       <AccordionDetails>
@@ -289,7 +304,7 @@ export function DifficultyVote({
                 >
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 1, justifyContent: "center", alignItems: "center" }}>
                     <Tooltip title={opt.label} placement="bottom">
-                      <Astroid size={20} color={opt.color} />
+                      <Astroid size={24} color={opt.color} />
                     </Tooltip>
                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 0.25 }}>
                       <Typography
@@ -301,20 +316,20 @@ export function DifficultyVote({
                       <Typography fontSize={14} color={isSelected || isWinner ? opt.color : "text.secondary"} sx={{ display: "block" }}>
                         {opt.points} points
                       </Typography>
-                      <Typography fontSize={11} color="text.secondary">
+                      {/* <Typography fontSize={11} color="text.secondary">
                         {tally[opt.key] ?? 0} votes
-                      </Typography>
+                      </Typography> */}
                     </Box>
                   </Box>
                 </Box>
               );
             })}
           </Box>
-            {voteDeadline && (
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                Voting ends on {deadlineLabel} · {timeLeftText}
-              </Typography>
-            )}
+          {voteDeadline && (
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+              Voting ends on {deadlineLabel} · {timeLeftText}
+            </Typography>
+          )}
           <Box>
             <Typography
               variant="body2"

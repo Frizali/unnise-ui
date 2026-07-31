@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { KanbanColumn } from "./KanbanColumn";
 import { AddColumnModal } from "./AddColumnModal";
@@ -59,7 +59,7 @@ export default function KanbanBoard() {
   if (cardsLoading || columnsLoading) {
     return (
       <Box sx={{ height: "100%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <img src={loadingGif} alt="loading" width="60" style={{ borderRadius: "6px" }} />
+        <CircularProgress />
       </Box>
     );
   }

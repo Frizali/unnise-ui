@@ -70,7 +70,7 @@ const ProjectMenu = () => {
           </BaseIcon>
         </ListItemIcon>
 
-        <ListItemText primary="Project" />
+        <ListItemText primary="Projects" />
 
         <Box sx={{ display: "flex", gap: ".25rem" }}>
           <UiButtonIcon
@@ -108,12 +108,12 @@ const ProjectMenu = () => {
                 <Skeleton
                   key={index}
                   variant="rectangular"
-                  sx={{
+                  sx={(theme) => ({
                     height: 14,
                     mb: 0.5,
-                    // ml: 4,
                     borderRadius: "4px",
-                  }}
+                    backgroundColor: theme.palette.action.hover,
+                  })}
                 />
               ))
             : projects.map((item) => {

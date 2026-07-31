@@ -43,7 +43,7 @@ export function AddColumnModal({ isOpen, onClose, onAddColumn }) {
               padding: "12px 20px",
               background: "#FCFBFC",
               border: "1px solid #D9D9D9",
-              borderRadius: "4px",
+              borderRadius: "8px",
               minHeight: "37.125px",
             }}
           >

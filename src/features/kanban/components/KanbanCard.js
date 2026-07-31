@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Typography, Divider, Avatar, AvatarGroup } from "@mui/material";
+import { Box, Typography, Divider, Avatar, AvatarGroup, Tooltip } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { KanbanBoardDetail } from "./KanbanCardDetail";
@@ -190,19 +190,21 @@ function CardFooter({ card }) {
       >
         <CardAssignees assignees={card.assignees} />
         {card.endDate && (
-          <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
-            {/* <CalendarTodayOutlinedIcon
-              fontSize="small"
-              sx={{ color: "icon.main" }}
-            /> */}
-            <Typography fontSize={14} color="text.primary">
-              {new Date(card.endDate).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </Typography>
-          </Box>
+          <Tooltip title="Due Date" arrow>
+            <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
+              {/* <CalendarTodayOutlinedIcon
+                fontSize="small"
+                sx={{ color: "icon.main" }}
+              /> */}
+              <Typography fontSize={14} color="text.primary">
+                {new Date(card.endDate).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </Typography>
+            </Box>
+          </Tooltip>
         )}
         {/* <Box sx={{ display: "flex", gap: 0.5 }}>
           <UiButtonIconText
@@ -245,11 +247,13 @@ function CardAssignees({ assignees = [] }) {
   return (
     <AvatarGroup spacing="medium">
       {assignees.map((user, index) => (
-        <Avatar key={user.id ?? index} sx={{ width: 26, height: 26 }}>
-          <Typography fontSize={12} color="white">
-            {user.username?.[0]?.toUpperCase()}
-          </Typography>
-        </Avatar>
+        <Tooltip key={user.id ?? index} title={user.username} arrow>
+          <Avatar key={user.id ?? index} sx={{ width: 26, height: 26 }}>
+            <Typography fontSize={12} color="white">
+              {user.username?.[0]?.toUpperCase()}
+            </Typography>
+          </Avatar>
+        </Tooltip>
       ))}
     </AvatarGroup>
   );

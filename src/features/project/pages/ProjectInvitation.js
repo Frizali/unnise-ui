@@ -1,7 +1,7 @@
 import { useProjectInvitation } from "../hooks/useProjectInvitation";
 import { Avatar, Box, Typography, Link } from "@mui/material";
 import UiButton from "../../../components/UiButton/UiButton";
-import logo from "../../../assets/logo.png";
+import logo from "../../../assets/Unnise v2.0.svg";
 
 export function ProjectInvitation() {
   const { user, invitation, loading, acceptInvitation } =
@@ -21,7 +21,7 @@ export function ProjectInvitation() {
       {invitation !== null && (
         <Box
           sx={{
-            borderRadius: 1.5,
+            borderRadius: "16px",
             maxWidth: "500px",
             padding: "3rem",
             display: "flex",

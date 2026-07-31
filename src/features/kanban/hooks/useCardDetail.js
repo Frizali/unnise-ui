@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useAlert } from "../../../context/AlertContext";
 import { projectService } from "../../../services/projectService";
@@ -18,11 +18,12 @@ export function useCardDetail({ isOpen, setIsOpen }) {
   const [comments, setComments] = useState([]);
   const [labels, setLabels] = useState([]);
   const [project, setProject] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingCount, setLoadingCount] = useState(0);
   const showAlert = useAlert();
 
   const cardId = searchParams.get("card");
   const isDialogOpen = isOpen && !!cardId;
+  const isLoading = loadingCount > 0;
 
   const closeDetail = () => {
     const params = new URLSearchParams(searchParams);
@@ -31,49 +32,41 @@ export function useCardDetail({ isOpen, setIsOpen }) {
     setIsOpen(false);
   };
 
-  useEffect(() => {
-    if (!isDialogOpen) return;
-    loadProjectMembers();
-    loadProjectLabels();
-    loadProject();
-    loadCardComments();
-  }, [isDialogOpen]);
-
-  const loadProject = async () => {
-    setIsLoading(true);
+  const withLoading = useCallback(async (request) => {
+    setLoadingCount((prev) => prev + 1);
     try {
-      const data = await projectService.getById(projectId);
+      return await request();
+    } finally {
+      setLoadingCount((prev) => prev - 1);
+    }
+  }, []);
+
+  const loadProject = useCallback(async () => {
+    try {
+      const data = await withLoading(() => projectService.getById(projectId));
       setProject(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [projectId, showAlert, withLoading]);
 
-  const loadProjectMembers = async () => {
-    setIsLoading(true);
+  const loadProjectMembers = useCallback(async () => {
     try {
-      const data = await projectService.getMembers(projectId);
+      const data = await withLoading(() => projectService.getMembers(projectId));
       setMembers(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [projectId, showAlert, withLoading]);
 
-  const loadProjectLabels = async () => {
-    setIsLoading(true);
+  const loadProjectLabels = useCallback(async () => {
     try {
-      const data = await projectService.getLabels(projectId);
+      const data = await withLoading(() => projectService.getLabels(projectId));
       setLabels(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [projectId, showAlert, withLoading]);
 
   const saveCardAssignees = async (assigneeIds) => {
     try {
@@ -91,17 +84,32 @@ export function useCardDetail({ isOpen, setIsOpen }) {
     }
   };
 
-  const loadCardComments = async () => {
-    setIsLoading(true);
+  const loadCardComments = useCallback(async () => {
     try {
-      const data = await cardService.getCardComments(projectId, cardId);
+      const data = await withLoading(() =>
+        cardService.getCardComments(projectId, cardId),
+      );
       setComments(data);
     } catch (err) {
       showAlert(err.title, err.detail, "error");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [cardId, projectId, showAlert, withLoading]);
+
+  useEffect(() => {
+    if (!isDialogOpen) return;
+    loadProjectMembers();
+    loadProjectLabels();
+    loadProject();
+    loadCardComments();
+  }, [
+    isDialogOpen,
+    projectId,
+    cardId,
+    loadProjectMembers,
+    loadProjectLabels,
+    loadProject,
+    loadCardComments,
+  ]);
 
   return {
     cardId,

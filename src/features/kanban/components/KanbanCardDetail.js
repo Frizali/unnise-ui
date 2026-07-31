@@ -6,14 +6,17 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Button,
   Chip,
   Dialog,
   Grid,
+  Skeleton,
   Typography,
   TextField,
   Tab,
   Tabs,
   Link,
+  ClickAwayListener,
 } from "@mui/material";
 import styled from "@emotion/styled";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -26,7 +29,7 @@ import CardTimestamp from "../../../components/Card/CardTimestamp";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { useCardDetail } from "../hooks/useCardDetail";
 import { Link as RouterLink } from "react-router-dom";
-import { Link as LucideLink } from "lucide-react";
+import { Link as LucideLink, Check, X } from "lucide-react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -34,6 +37,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { DifficultyVote } from "./DifficultyVote";
 import { CommentTab } from "./CommentTab";
 import { useAuth } from "../../../context/AuthContext";
+import BaseIcon from "../../../components/Icon/BaseIcon";
+import UiButtonIconText from "../../../components/UiButton/UiButtonIconText";
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -46,6 +51,10 @@ const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     "&.Mui-focusVisible": { backgroundColor: "#d1eaff" },
   }),
 );
+
+const LoadingSkeleton = styled(Skeleton)(({ theme }) => ({
+  backgroundColor: theme.palette.action.hover,
+}));
 
 const DIFFICULTY_META = {
   Low: { color: "#16a34a", bg: "#dcfce7", border: "#86efac", points: 3 },
@@ -66,6 +75,7 @@ export function KanbanBoardDetail({
   const {
     cardId,
     isDialogOpen,
+    isLoading,
     activeTab,
     setActiveTab,
     members,
@@ -83,6 +93,10 @@ export function KanbanBoardDetail({
   const columnName = columns?.find((c) => c.id === card.columnId)?.title || "";
 
   const [editingField, setEditingField] = useState(null);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [titleDraft, setTitleDraft] = useState(card.title || "");
+  const [descriptionDraft, setDescriptionDraft] = useState(card.description || "");
   const [assignees, setAssignees] = useState(card.assignees || []);
   const [labels, setLabels] = useState(card.labels || []);
   const [status, setStatus] = useState(card.columnId || null);
@@ -99,6 +113,8 @@ export function KanbanBoardDetail({
     setStatus(card.columnId || "");
     setStartDate(card.startDate || null);
     setDueDate(card.endDate || null);
+    setTitleDraft(card.title || "");
+    setDescriptionDraft(card.description || "");
   }, [card]);
 
   useEffect(() => {
@@ -106,6 +122,33 @@ export function KanbanBoardDetail({
   }, [editingField]);
 
   const updateField = (field, value) => onUpdate({ ...card, [field]: value });
+
+  const handleSaveTitle = () => {
+    const nextTitle = titleDraft.trim();
+    if (!nextTitle) {
+      setTitleDraft(card.title || "");
+      setEditingTitle(false);
+      return;
+    }
+
+    onUpdate({ ...card, title: nextTitle });
+    setEditingTitle(false);
+  };
+
+  const handleCancelTitle = () => {
+    setTitleDraft(card.title || "");
+    setEditingTitle(false);
+  };
+
+  const handleSaveDescription = () => {
+    onUpdate({ ...card, description: descriptionDraft.trim() || null });
+    setEditingDescription(false);
+  };
+
+  const handleCancelDescription = () => {
+    setDescriptionDraft(card.description || "");
+    setEditingDescription(false);
+  };
 
   const handleAssigneesChange = (_, newValue) => {
     saveCardAssignees(newValue.map((a) => a.id));
@@ -141,6 +184,55 @@ export function KanbanBoardDetail({
 
   const diffMeta = difficultyResult ? DIFFICULTY_META[difficultyResult] : null;
   const currentUserId = user?.sub;
+
+  if (isLoading) {
+    return (
+      <Dialog
+        open={isDialogOpen}
+        fullWidth
+        maxWidth="lg"
+        PaperProps={{ sx: { height: "80vh" } }}
+      >
+        <Box
+          sx={{
+            padding: "18px 26px",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <LoadingSkeleton variant="text" width="30%" height={24} />
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <LoadingSkeleton variant="circular" width={36} height={36} />
+              <LoadingSkeleton variant="circular" width={36} height={36} />
+            </Box>
+          </Box>
+
+          <Grid container spacing={2} sx={{ flex: 1, minHeight: 0 }}>
+            <Grid size={5} sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              <LoadingSkeleton variant="text" width="100%" height={24} />
+              <LoadingSkeleton variant="rectangular" height={200} />
+              <LoadingSkeleton variant="rectangular" height={60} />
+              <LoadingSkeleton variant="text" width="40%" height={24} />
+              <LoadingSkeleton variant="text" width="30%" height={24} />
+            </Grid>
+            <Grid size={7} sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              <LoadingSkeleton variant="text" width="40%" height={24} />
+              <LoadingSkeleton variant="rectangular" height={300} />
+            </Grid>
+          </Grid>
+        </Box>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog
@@ -183,12 +275,152 @@ export function KanbanBoardDetail({
             }}
           >
             <Box mb="1rem">
-              <Typography variant="h5" fontWeight={600} color="text.primary">
-                {card.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {card.description}
-              </Typography>
+              {editingTitle ? (
+                <ClickAwayListener onClickAway={handleCancelTitle}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
+                      gap: 1,
+                      border: "2px solid #D9D9D9",
+                      borderRadius: "8px",
+                      padding: "4px 8px",
+                      background: "#fff",
+                      "&:focus-within": { borderColor: "primary.main" },
+                    }}
+                  >
+                    <TextField
+                      autoFocus
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={titleDraft}
+                      onChange={(e) => setTitleDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSaveTitle();
+                        }
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          handleCancelTitle();
+                        }
+                      }}
+                      variant="outlined"
+                      sx={{
+                        "& .MuiOutlinedInput-root": { padding: 0 },
+                        "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "& .MuiInputBase-input": {
+                          fontSize: "24px",
+                          lineHeight: 1.3,
+                          fontWeight: 600,
+                          padding: "4px 0",
+                          color: "text.primary",
+                        },
+                      }}
+                    />
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <UiButtonIcon title="Cancel" onClick={handleCancelTitle}>
+                        <BaseIcon><X /></BaseIcon>
+                      </UiButtonIcon>
+                      <UiButtonIcon title="Save" onClick={handleSaveTitle}>
+                        <BaseIcon><Check /></BaseIcon>
+                      </UiButtonIcon>
+                    </Box>
+                  </Box>
+                </ClickAwayListener>
+              ) : (
+                <Box onDoubleClick={() => setEditingTitle(true)} sx={{ cursor: "text" }}>
+                  <Typography variant="h5" fontWeight={600} color="text.primary">
+                    {card.title}
+                  </Typography>
+                </Box>
+              )}
+
+              {editingDescription ? (
+                <ClickAwayListener onClickAway={handleCancelDescription}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
+                      gap: 1,
+                      border: "2px solid #D9D9D9",
+                      borderRadius: "8px",
+                      padding: "4px 8px",
+                      background: "#fff",
+                      "&:focus-within": { borderColor: "primary.main" },
+                    }}
+                  >
+                    <TextField
+                      autoFocus
+                      fullWidth
+                      multiline
+                      placeholder="Add a description to this card..."
+                      minRows={3}
+                      maxRows={8}
+                      value={descriptionDraft}
+                      onChange={(e) => setDescriptionDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSaveDescription();
+                        }
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          handleCancelDescription();
+                        }
+                      }}
+                      variant="outlined"
+                      sx={{
+                        "& .MuiOutlinedInput-root": { padding: 0 },
+                        "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "& .MuiInputBase-input": {
+                          fontSize: "14px",
+                          color: "text.primary",
+                          lineHeight: 1.6,
+                          padding: "4px 0",
+                        },
+                      }}
+                    />
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <UiButtonIcon title="Cancel" onClick={handleCancelDescription}>
+                        <BaseIcon><X /></BaseIcon>
+                      </UiButtonIcon>
+                      <UiButtonIcon title="Save" onClick={handleSaveDescription}>
+                        <BaseIcon><Check /></BaseIcon>
+                      </UiButtonIcon>
+                    </Box>
+                  </Box>
+                </ClickAwayListener>
+              ) : (
+                <Box
+                  onDoubleClick={() => setEditingDescription(true)}
+                  sx={{
+                    width: "100%",
+                    cursor: "text",
+                    minHeight: "24px",
+                    borderRadius: "6px",
+                    p: card.description ? 0 : 0.5,
+                  }}
+                >
+                  {!card.description ? (
+                    <Typography variant="body2" color="text.secondary">
+                      Add a description to this card...
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" color="text.primary" sx={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                      {card.description}
+                    </Typography>
+                  )}
+                </Box>
+              )}
             </Box>
 
             <Box
@@ -267,12 +499,12 @@ export function KanbanBoardDetail({
                 </AccordionDetails>
               </Accordion>
 
-                  <DifficultyVote
-                    members={members}
-                    card={card}
-                    currentUserId={currentUserId}
-                    onUpdateDifficulty={handleDifficultyResult}
-                  />
+              <DifficultyVote
+                members={members}
+                card={card}
+                currentUserId={currentUserId}
+                onUpdateDifficulty={handleDifficultyResult}
+              />
 
               <Box px={2}>
                 <CardTimestamp

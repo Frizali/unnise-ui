@@ -18,6 +18,7 @@ import { useProjectInviteMember } from "../hooks/useProjectInviteMember";
 import UiButton from "../../../components/UiButton/UiButton";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import { Crown } from "lucide-react";
 
 export function ProjectInviteMember({
   children,
@@ -249,24 +250,7 @@ export function ProjectInviteMember({
                           <Typography variant="body2" color="text.primary">
                             Owner
                           </Typography>
-                          <Box
-                            sx={{
-                              width: 24,
-                              height: 24,
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <CheckCircleOutlineOutlinedIcon
-                              fontSize="small"
-                              sx={{
-                                color: "white",
-                                background: "#315cfd",
-                                borderRadius: "50%",
-                              }}
-                            />
-                          </Box>
+                          <Crown size={20} color="#4d4bfe" />
                         </Box>
                       )}
                     </Box>

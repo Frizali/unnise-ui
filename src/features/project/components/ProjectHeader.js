@@ -60,7 +60,9 @@ export function ProjectHeader() {
           }}
         >
           {loading ? (
-            <Skeleton animation="wave" height={32} width="30%" />
+            <Skeleton animation="wave" height={32} width="30%" sx={(theme) => ({
+              backgroundColor: theme.palette.action.hover,
+            })} />
           ) : (
             <Typography variant="h5" fontWeight="600">
               {project.name}

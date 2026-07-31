@@ -185,7 +185,7 @@ export function useColumn() {
 
 export function useColumnForm({ onSubmit } = {}) {
   const [form, setForm] = useState({ title: "", description: "" });
-  const [color, setColor] = useState("#010101");
+  const [color, setColor] = useState(COLOR_OPTIONS[0].value);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -198,7 +198,7 @@ export function useColumnForm({ onSubmit } = {}) {
 
   const reset = () => {
     setForm({ title: "", description: "" });
-    setColor("#010101");
+    setColor(COLOR_OPTIONS[0].value);
   };
 
   return { form, color, setColor, handleChange, handleSubmit, reset };

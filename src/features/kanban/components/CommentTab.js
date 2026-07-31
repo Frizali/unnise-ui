@@ -492,12 +492,13 @@ function CommentMenu({ comment, currentUserId, onEdit, onDelete }) {
             setAnchor(e.currentTarget);
           }}
           sx={{
-            ml: "auto",
             p: 0.25,
             color: "#9CA3AF",
-            opacity: 0,
-            ".comment-item:hover &": { opacity: 1 },
-            "&:hover": { color: "#374151" },
+            borderRadius: "999px",
+            "&:hover": {
+              color: "#374151",
+              backgroundColor: "#F3F4F6",
+            },
           }}
         >
           <MoreHorizOutlinedIcon sx={{ fontSize: 16 }} />
@@ -566,6 +567,7 @@ function CommentItem({
   const [showReply, setShowReply] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const isLiked = comment.likes?.some((l) => l.userId === currentUserId);
   const isPinned = comment.isPinned;
 
@@ -594,7 +596,18 @@ function CommentItem({
   return (
     <Box
       className="comment-item"
-      sx={{ display: "flex", gap: 1.5, mb: depth === 0 ? 0 : 0 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      sx={(theme) => ({
+        display: "flex",
+        gap: 1.5,
+        mb: depth === 0 ? 0 : 0,
+        alignItems: "flex-start",
+        borderRadius: "8px",
+        padding: "6px 8px",
+        transition: "background-color 180ms ease",
+        backgroundColor: isHovered && !isReply ? theme.palette.action.hover : "transparent",
+      })}
     >
       <Avatar
         src={comment.author?.avatar}
@@ -604,6 +617,7 @@ function CommentItem({
           flexShrink: 0,
           mt: 0.25,
           fontSize: depth === 0 ? 14 : 12,
+          transition: "border-color 180ms ease",
         }}
       >
         {comment.author?.username?.[0]?.toUpperCase()}
@@ -620,14 +634,17 @@ function CommentItem({
           />
         ) : (
           <Box
-            sx={{
-              // background: "#F9FAFB",
-              // border: `1px solid ${isPinned ? "#FDE68A" : "#D9D9D9"}`,
-              borderRadius: "8px",
-              // padding: "10px 14px",
+            sx={(theme) => ({
+              borderRadius: "10px",
               position: "relative",
-              ...(isPinned && { background: "#FFFBEB" }),
-            }}
+              transition: "background-color 180ms ease, box-shadow 180ms ease",
+              // backgroundColor: isHovered
+              //   ? theme.palette.action.hover
+              //   : isPinned
+              //     ? "#FFFBEB"
+              //     : "transparent",
+              ...(isPinned && { border: "1px solid #FDE68A" }),
+            })}
           >
             {isPinned && (
               <Box
@@ -655,30 +672,72 @@ function CommentItem({
             )}
 
             <Box
-              sx={{ display: "flex", mb: 0.5, flexDirection: "column" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1,
+              }}
             >
-              <Typography variant="body2" fontWeight={600} color="text.primary">
-                {comment.author?.username}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" fontSize={12}>
-                {timeAgo(comment.createdAt)}
-              </Typography>
-              {/* {comment.isEdited && (
-                <Typography
-                  variant="caption"
-                  color="text.disabled"
-                  fontSize={11}
-                >
-                  (edited)
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight={500} color="text.primary">
+                  {comment.author?.username}
                 </Typography>
-              )} */}
-              {/* 3-dot menu — only owner sees it */}
-              {/* <CommentMenu
-                comment={comment}
-                currentUserId={currentUserId}
-                onEdit={() => setIsEditing(true)}
-                onDelete={handleDelete}
-              /> */}
+                <Typography variant="caption" color="text.secondary" fontSize={12}>
+                  {timeAgo(comment.createdAt)}
+                </Typography>
+              </Box>
+
+              {/* <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  opacity: isHovered || showReply || isEditing ? 1 : 0,
+                  transform:
+                    isHovered || showReply || isEditing
+                      ? "translateY(0)"
+                      : "translateY(-2px)",
+                  pointerEvents:
+                    isHovered || showReply || isEditing ? "auto" : "none",
+                  transition: "opacity 160ms ease, transform 160ms ease",
+                }}
+              >
+                {!isReply && (
+                  <Button
+                    size="small"
+                    onClick={() => setShowReply((v) => !v)}
+                    startIcon={
+                      <BaseIcon>
+                        <Reply />
+                      </BaseIcon>
+                    }
+                    sx={{
+                      minWidth: 0,
+                      px: 0.75,
+                      py: 0.25,
+                      borderRadius: "999px",
+                      color: "#6B7280",
+                      textTransform: "none",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      "&:hover": {
+                        backgroundColor: "#F3F4F6",
+                        color: "#111827",
+                      },
+                    }}
+                  >
+                    Reply
+                  </Button>
+                )}
+
+                <CommentMenu
+                  comment={comment}
+                  currentUserId={currentUserId}
+                  onEdit={() => setIsEditing(true)}
+                  onDelete={handleDelete}
+                />
+              </Box> */}
             </Box>
 
             {comment.content && (
@@ -705,11 +764,11 @@ function CommentItem({
               display: "flex",
               alignItems: "center",
               gap: 0.5,
-              mt: 0.5,
-              ml: 0.5,
+              // mt: 0.5,
+              // ml: 0.5,
             }}
           >
-            <Box
+            {/* <Box
               onClick={() => onLike(comment.id)}
               sx={{
                 display: "flex",
@@ -752,7 +811,7 @@ function CommentItem({
                 </BaseIcon>
                 <Typography variant="body2">Reply</Typography>
               </Box>
-            )}
+            )} */}
 
             {/* {!isReply && (
               <Box
@@ -803,13 +862,12 @@ function CommentItem({
                 alignItems: "center",
                 gap: 0.5,
                 cursor: "pointer",
-                mb: 1,
                 mt: 0.5,
                 // ml: 0.5,
               }}
             >
               {/* <Box sx={{ height: "1px", width: 20, background: "#D1D5DB" }} /> */}
-              <Typography variant="body2" color="primary" fontSize={14}>
+              <Typography variant="body2" color="text.secondary" fontSize={14}>
                 {showReplies ? "Hide" : "Show"} {comment.replies.length}{" "}
                 {comment.replies.length === 1 ? "reply" : "replies"}
               </Typography>
@@ -819,7 +877,7 @@ function CommentItem({
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: 1.5,
+                  gap: 0.5,
                   pl: 0.5,
                   borderLeft: "1px solid #D9D9D9",
                   ml: 1,
@@ -1091,7 +1149,7 @@ export function CommentTab({
           padding: "1rem 0",
           display: "flex",
           flexDirection: "column",
-          gap: 2,
+          gap: 1,
           pr: "4px",
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-thumb": {

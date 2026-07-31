@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import { Check } from "lucide-react"
 
 export function ColorSwatch({ size = 10, value, selected, ...props }) {
   return (
@@ -14,11 +14,14 @@ export function ColorSwatch({ size = 10, value, selected, ...props }) {
         background: value,
         boxShadow: `0 0 8px ${value}`,
         flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
       {...props}
     >
       {selected && (
-        <CheckOutlinedIcon fontSize="small" sx={{color:"white"}}/>
+        <Check size={16} color="white"/>
       )}
     </Box>
   );
