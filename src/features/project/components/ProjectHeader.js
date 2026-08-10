@@ -22,16 +22,16 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     textTransform: "none",
     fontWeight: 400,
     color: theme.palette.text.primary,
-    "&:hover": {
-      color: theme.palette.primary.main,
-      opacity: 1,
-    },
+    // "&:hover": {
+    //   color: theme.palette.primary.main,
+    //   opacity: 1,
+    // },
     "&.Mui-selected": {
-      color: theme.palette.primary.main,
+      color: theme.palette.text.primary
     },
-    "&.Mui-focusVisible": {
-      backgroundColor: "#d1eaff",
-    },
+    // "&.Mui-focusVisible": {
+    //   backgroundColor: "#d1eaff",
+    // },
   }),
 );
 

@@ -3,6 +3,7 @@ import { Box, Typography, Divider, Avatar, AvatarGroup, Tooltip } from "@mui/mat
 import { useSearchParams } from "react-router-dom";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { KanbanBoardDetail } from "./KanbanCardDetail";
+import { CircleAlert } from "lucide-react";
 
 const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },
@@ -118,10 +119,10 @@ function CardPriorityBar({ priority }) {
         justifyContent: "space-between",
       }}
     >
-      <Typography fontSize={12} color="text.secondary">
+      <Typography fontSize={12} sx={{ color: priority.color }}>
         {priority.label}
       </Typography>
-      <Typography fontSize={12} color="text.secondary">
+      <Typography fontSize={12} sx={{ color: priority.color }}>
         {priority.points} Points
       </Typography>
     </Box>
@@ -189,23 +190,28 @@ function CardFooter({ card }) {
         }}
       >
         <CardAssignees assignees={card.assignees} />
-        {card.endDate && (
-          <Tooltip title="Due Date" arrow>
-            <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
-              {/* <CalendarTodayOutlinedIcon
-                fontSize="small"
-                sx={{ color: "icon.main" }}
-              /> */}
-              <Typography fontSize={14} color="text.primary">
-                {new Date(card.endDate).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </Typography>
-            </Box>
-          </Tooltip>
-        )}
+        {card.endDate && (() => {
+          const dueDate = new Date(card.endDate);
+          const isOverdue =
+            !card.isCompleted &&
+            !Number.isNaN(dueDate.getTime()) &&
+            dueDate.getTime() < Date.now();
+
+          return (
+            <Tooltip title={isOverdue ? "Due Date (Overdue)" : "Due Date"} arrow>
+              <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
+                {isOverdue && <CircleAlert size={16} color="#dc2626" />}
+                <Typography fontSize={14} color="text.primary">
+                  {new Date(card.endDate).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </Typography>
+              </Box>
+            </Tooltip>
+          );
+        })()}
         {/* <Box sx={{ display: "flex", gap: 0.5 }}>
           <UiButtonIconText
             title="Comments"

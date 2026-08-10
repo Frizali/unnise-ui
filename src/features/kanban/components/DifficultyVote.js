@@ -11,7 +11,7 @@ import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { useState, useEffect, useMemo } from "react";
 import dayjs from "dayjs";
-import { Astroid } from "lucide-react";
+import { Astroid, Grid } from "lucide-react";
 import { voteService } from "../../../services/voteService";
 
 const DIFFICULTY_OPTIONS = [
@@ -229,7 +229,7 @@ export function DifficultyVote({
           }}
         >
 
-          {revealed && winnerOption && (
+          {winnerOption && (
             <Typography
               color={winnerOption.color}
               fontWeight={500}
@@ -265,7 +265,14 @@ export function DifficultyVote({
         </Box>
       </AccordionSummary>
       <AccordionDetails>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {voteDeadline && (
+            <Box sx={{ display: "flex", alignItems: "center", minHeight: "40px" }}>
+              <Typography variant="body2" color="text.primary">
+                Voting ends on {deadlineLabel}
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ display: "flex", gap: 1 }}>
             {DIFFICULTY_OPTIONS.map((opt) => {
               const isSelected = currentUserVote === opt.key;
@@ -325,20 +332,15 @@ export function DifficultyVote({
               );
             })}
           </Box>
-          {voteDeadline && (
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-              Voting ends on {deadlineLabel} · {timeLeftText}
-            </Typography>
-          )}
           <Box>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              mb={0.75}
-              display="block"
-            >
-              Status ({votedCount}/{members.length})
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", minHeight: "40px" }}>
+              <Typography
+                variant="body2"
+                color="text.primary"
+              >
+                Status {votedCount}/{members.length}
+              </Typography>
+            </Box>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {members.map((member) => {
                 const memberVote = getMemberVote(member.id);

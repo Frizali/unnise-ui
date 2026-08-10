@@ -47,8 +47,11 @@ const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     textTransform: "none",
     fontWeight: 400,
     color: theme.palette.text.primary,
-    "&:hover": { color: theme.palette.primary.main, opacity: 1 },
-    "&.Mui-focusVisible": { backgroundColor: "#d1eaff" },
+    "&:hover": { color: theme.palette.text.primary, opacity: 1 },
+    "&.Mui-selected": {
+      color: theme.palette.text.primary
+    },
+    // "&.Mui-focusVisible": { backgroundColor: "#d1eaff" },
   }),
 );
 
@@ -191,7 +194,7 @@ export function KanbanBoardDetail({
         open={isDialogOpen}
         fullWidth
         maxWidth="lg"
-        PaperProps={{ sx: { height: "80vh" } }}
+        PaperProps={{ sx: { height: "80vh", borderRadius: "8px" } }}
       >
         <Box
           sx={{
@@ -239,7 +242,7 @@ export function KanbanBoardDetail({
       open={isDialogOpen}
       fullWidth
       maxWidth="lg"
-      PaperProps={{ sx: { height: "80vh" } }}
+      PaperProps={{ sx: { height: "80vh", borderRadius: "8px" } }}
     >
       <Box
         sx={{
@@ -294,7 +297,6 @@ export function KanbanBoardDetail({
                       autoFocus
                       fullWidth
                       multiline
-                      rows={2}
                       value={titleDraft}
                       onChange={(e) => setTitleDraft(e.target.value)}
                       onKeyDown={(e) => {
@@ -334,7 +336,16 @@ export function KanbanBoardDetail({
                   </Box>
                 </ClickAwayListener>
               ) : (
-                <Box onDoubleClick={() => setEditingTitle(true)} sx={{ cursor: "text" }}>
+                <Box
+                  onDoubleClick={() => setEditingTitle(true)}
+                  sx={{
+                    cursor: "text",
+                    borderRadius: "8px",
+                    p: 0.5,
+                    transition: "background-color 0.2s ease",
+                    "&:hover": { backgroundColor: "action.hover" },
+                  }}
+                >
                   <Typography variant="h5" fontWeight={600} color="text.primary">
                     {card.title}
                   </Typography>
@@ -360,8 +371,7 @@ export function KanbanBoardDetail({
                       autoFocus
                       fullWidth
                       multiline
-                      placeholder="Add a description to this card..."
-                      minRows={3}
+                      placeholder="Add a description..."
                       maxRows={8}
                       value={descriptionDraft}
                       onChange={(e) => setDescriptionDraft(e.target.value)}
@@ -406,13 +416,15 @@ export function KanbanBoardDetail({
                     width: "100%",
                     cursor: "text",
                     minHeight: "24px",
-                    borderRadius: "6px",
-                    p: card.description ? 0 : 0.5,
+                    borderRadius: "8px",
+                    p: 0.5,
+                    transition: "background-color 0.2s ease",
+                    "&:hover": { backgroundColor: "action.hover" },
                   }}
                 >
                   {!card.description ? (
                     <Typography variant="body2" color="text.secondary">
-                      Add a description to this card...
+                      Add a description...
                     </Typography>
                   ) : (
                     <Typography variant="body2" color="text.primary" sx={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
@@ -887,29 +899,38 @@ function LabelsField({
             isOptionEqualToValue={(o, v) => o.id === v.id}
             renderOption={(props, option) => {
               const { key, ...rest } = props;
+
               return (
-                <Box
-                  key={key}
-                  {...rest}
-                  component="li"
-                  sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                >
+                <li key={key} {...rest} style={{ width: "100%" }}>
                   <Box
                     sx={{
-                      padding: "4px 10px",
-                      background: `${option.color}30`,
-                      borderRadius: "4px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      width: "100%",
+                      gap: .5
                     }}
                   >
-                    <Typography
-                      variant="body2"
-                      color={option.color}
-                      fontWeight={500}
+                    <Box
+                      sx={{
+                        padding: "4px 10px",
+                        background: `${option.color}30`,
+                        borderRadius: "4px",
+                      }}
                     >
-                      {option.name}
+                      <Typography
+                        variant="body2"
+                        color={option.color}
+                        fontWeight={500}
+                      >
+                        {option.name}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {option.description || "No description"}
                     </Typography>
                   </Box>
-                </Box>
+                </li>
               );
             }}
             renderInput={(params) => (
