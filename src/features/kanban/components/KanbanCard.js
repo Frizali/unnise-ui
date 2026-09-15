@@ -3,7 +3,7 @@ import { Box, Typography, Divider, Avatar, AvatarGroup, Tooltip } from "@mui/mat
 import { useSearchParams } from "react-router-dom";
 import LabelGroup from "../../../components/Label/LabelGroup";
 import { KanbanBoardDetail } from "./KanbanCardDetail";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Astroid } from "lucide-react";
 
 const PRIORITY_META = {
   High: { label: "High", color: "#dc2626", points: 18 },
@@ -64,7 +64,7 @@ export function KanbanCard({
           backgroundColor: "white",
           border: "1px solid #D9D9D9",
           borderRadius: "8px",
-          padding: "12px 0 4px 0",
+          padding: priority.label !== "No Difficulty" ? "12px 0 4px 0" : "4px 0 4px 0",
           cursor: "pointer",
           userSelect: "none",
           transform: isDropTarget ? "translateY(-3px)" : "none",
@@ -111,21 +111,27 @@ function DropIndicator({ color }) {
 
 function CardPriorityBar({ priority }) {
   return (
-    <Box
-      sx={{
-        borderLeft: `2px solid ${priority.color}`,
-        padding: "0 12px 0 10px",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
-      <Typography fontSize={12} sx={{ color: priority.color }}>
-        {priority.label}
-      </Typography>
-      <Typography fontSize={12} sx={{ color: priority.color }}>
-        {priority.points} Points
-      </Typography>
-    </Box>
+    <>
+      {priority.label !== "No Difficulty" && (
+        <Box
+          sx={{
+            // borderLeft: `2px solid ${priority.color}`,
+            padding: "0 12px 0 10px",
+            display: "flex",
+            gap: "4px"
+            // justifyContent: "space-between",
+          }}
+        >
+          <Astroid size={16} color={priority.color} />
+          <Typography fontSize={12} sx={{ color: priority.color }}>
+            {priority.label}
+          </Typography>
+          {/* <Typography fontSize={12} sx={{ color: priority.color }}>
+          {priority.points} Points
+        </Typography> */}
+        </Box>
+      )}
+    </>
   );
 }
 

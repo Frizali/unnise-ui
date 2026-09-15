@@ -507,6 +507,14 @@ export function KanbanBoardDetail({
                       onChange={handleStartDateChange}
                       onBlur={() => setEditingField(null)}
                     />
+                    <DetailRow label="Difficulty">
+                      <Typography variant="body2">{card.difficulty}</Typography>
+                    </DetailRow>
+                    <DetailRow label="Created By">
+                      <Typography variant="body2" color="text.primary">
+                        {card.createdBy?.username || "Unknown"}
+                      </Typography>
+                    </DetailRow>
                   </Box>
                 </AccordionDetails>
               </Accordion>

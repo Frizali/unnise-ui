@@ -55,14 +55,14 @@ export function useCard() {
     };
   }, [projectId]);
 
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   const addCard = async (card) => {
-    const assigneeIds = card.assigneeIds?.length
-      ? card.assigneeIds
-      : user?.sub
-      ? [user.sub]
-      : [];
+    // const assigneeIds = card.assigneeIds?.length
+    //   ? card.assigneeIds
+    //   : user?.sub
+    //   ? [user.sub]
+    //   : [];
 
     const payload = {
       projectId,
@@ -71,7 +71,7 @@ export function useCard() {
       description: card.description ?? null,
       startDate: card.startDate ?? null,
       endDate: card.endDate ?? null,
-      assigneeIds,
+      assigneeIds: [],
     };
 
     try {
